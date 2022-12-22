@@ -1,10 +1,13 @@
 import React from 'react';
 
 import Scratch from '../lib/components/Scratch';
+import styles from '/styles/Home.module.css'
 
 export default function (props: any) {
   console.log(props)
-  return <Scratch/>
+  return <Scratch>
+    <img className={styles.img} src={'./3cb5543f33dc5da33a5c778a.webp'}></img>
+  </Scratch>
 }
 
 // import firestore & utils
