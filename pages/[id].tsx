@@ -5,35 +5,36 @@ import { useRouter } from 'next/router';
 import Scratch from '../lib/components/Scratch';
 import styles from '/styles/Home.module.css'
 
-export default function CardPage(props: any) {
+export default function CardPage({ data, image }: any) {
   let scratchRef = useRef<HTMLDivElement>(null);
-  let [counter, setCounter] = useState(props.left);
+  let [counter, setCounter] = useState(data?.left ?? 0);
 
+  // obtain card id from the query
   let { id } = useRouter().query;
 
   useEffect(() => {
     if (!counter) 
-      deleteObject(ref(storage, `${id}.webp`)), 
+      deleteObject(storageRef(storage, `${id}.webp`)), 
       scratchRef.current?.remove();
     else setTimeout(() => setCounter(counter - 1), 1000);
 
-    const docRef = doc(db, "cards", id as string);
-    setDoc(docRef, { left: counter });
+    const docRef = databaseRef(database, 'cards/' + id);
+    set(docRef, { left: counter });
   });
 
   return <div>
     <Scratch ref={scratchRef} style={{ position: 'fixed', top: '0px' }}>
-      <img className={styles.img} src={'./3cb5543f33dc5da33a5c778a.webp'}></img>
+      <img className={styles.img} src={image}></img>
     </Scratch>
     <p className={styles.counter}>{counter}</p>
   </div>
 }
 
 // import firestore & utils
-import { db, storage } from '../lib/firebase';
+import { database, storage } from '../lib/firebase';
 
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { ref, deleteObject } from "firebase/storage";
+import { ref as databaseRef, get, set, child, getDatabase, onValue } from "firebase/database";
+import { ref as storageRef, getDownloadURL, deleteObject } from "firebase/storage";
 
 // obtain cloud data on server during the request of the page
 export async function getServerSideProps(context: any) {
@@ -41,9 +42,18 @@ export async function getServerSideProps(context: any) {
   let { id } = context.params;
 
   // connect with firestore
-  const docRef = doc(db, "cards", id);
-  let data = await getDoc(docRef).then(snap => snap.data());
+  const docRef = databaseRef(database, 'cards/' + id);
+  let data = await get(docRef).then(snap => snap.val());
 
-  // return data
-  return { props: { ... data } }
+  // if there is a record && time left, pull the image
+  if (data && data.left) {
+    // connect with firestore
+    const imageRef = storageRef(storage, `${id}.webp`);
+    let image = await getDownloadURL(imageRef);
+    // && pass it to the page
+    return { props: { data, image } } 
+  }
+
+  // return 404 instead
+  return { notFound: true }
 }
