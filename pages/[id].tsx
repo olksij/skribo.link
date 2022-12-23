@@ -14,7 +14,7 @@ export default function CardPage({ data, image }: any) {
 
   useEffect(() => {
     if (!counter) 
-      deleteObject(storageRef(storage, `${id}.webp`)), 
+      deleteObject(storageRef(storage, `${id}`)), 
       scratchRef.current?.remove();
     else setTimeout(() => setCounter(counter - 1), 1000);
 
@@ -33,7 +33,7 @@ export default function CardPage({ data, image }: any) {
 // import firestore & utils
 import { database, storage } from '../lib/firebase';
 
-import { ref as databaseRef, get, set, child, getDatabase, onValue } from "firebase/database";
+import { ref as databaseRef, get, set } from "firebase/database";
 import { ref as storageRef, getDownloadURL, deleteObject } from "firebase/storage";
 
 // obtain cloud data on server during the request of the page
@@ -48,7 +48,7 @@ export async function getServerSideProps(context: any) {
   // if there is a record && time left, pull the image
   if (data && data.left) {
     // connect with firestore
-    const imageRef = storageRef(storage, `${id}.webp`);
+    const imageRef = storageRef(storage, `cards/${id}`);
     let image = await getDownloadURL(imageRef);
     // && pass it to the page
     return { props: { data, image } } 
