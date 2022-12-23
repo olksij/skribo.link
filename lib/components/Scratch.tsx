@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState }  from 'react';
+import React, { useEffect, useRef, forwardRef, ForwardedRef }  from 'react';
 
 import styles from '/styles/Home.module.css'
 
@@ -6,7 +6,7 @@ import IMG from '../../pages/scratch.webp';
 
 type PointerEvent = { mouse?: MouseEvent, touch?: TouchEvent }
 
-export default function ScratchCard({ children }: any) {
+export default forwardRef(function ScratchCard({ children, style }: any, ref: ForwardedRef<HTMLDivElement>) {
   // HTMLElement references
   let canvasRef = useRef<HTMLCanvasElement>(null);
   let coverRef = useRef<HTMLImageElement>(null);
@@ -76,15 +76,12 @@ export default function ScratchCard({ children }: any) {
   const scratchEnd = (event: PointerEvent) => {
     array(event).forEach(({ identifier }) => delete position.current[identifier])}
 
-
-  return (
-    <div>
-      {children}
-      <canvas className={styles.canvas} ref={canvasRef}/>
-      <img ref={coverRef} className={styles.img} src={IMG.src}/>
-    </div>
-  );
-}
+  return <div ref={ref} style={style}>
+    {children}
+    <canvas className={styles.canvas} ref={canvasRef}/>
+    <img ref={coverRef} className={styles.img} src={IMG.src}/>
+  </div>;
+});
 
 const array = ({ mouse, touch }: PointerEvent) => (touch ? Array.from(touch?.changedTouches) 
   : [{ clientX: mouse!.clientX, clientY: mouse!.clientY, identifier: '#' }]);
