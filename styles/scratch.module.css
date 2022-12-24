@@ -1,0 +1,21 @@
+.status {
+  margin: 45vh auto;
+  color: white;
+  align-content: center;
+}
+
+.img {
+  width: 100vw;
+  height: 100vh;
+  object-fit: scale-down;
+  position: fixed;
+}
+
+
+.canvas {
+  position: fixed;
+}
+
+.counter {
+  position: fixed;
+}

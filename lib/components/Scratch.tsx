@@ -1,20 +1,19 @@
 import React, { useEffect, useRef, forwardRef, ForwardedRef }  from 'react';
 
-import styles from '/styles/Home.module.css'
-
-import IMG from '../../pages/scratch.webp';
+import styles from '/styles/scratch.module.css'
 
 type PointerEvent = { mouse?: MouseEvent, touch?: TouchEvent }
 
-export default forwardRef(function ScratchCard({ children, style }: any, ref: ForwardedRef<HTMLDivElement>) {
+export default forwardRef(function ScratchCard({ src, style }: any, ref: ForwardedRef<HTMLDivElement>) {
   // HTMLElement references
   let canvasRef = useRef<HTMLCanvasElement>(null);
-  let coverRef = useRef<HTMLImageElement>(null);
+  let imgRef = useRef<HTMLImageElement>(null);
 
   // stores records for mouse and touch pointers
   let position  = useRef<Record<string, { x: number, y: number }>>({})
 
-  useEffect(() =>  {
+  const defineCanvas = () => {
+    console.log('fff')
     // define
     const canvas  = canvasRef.current!;
     const context = canvas.getContext("2d")!;
@@ -37,13 +36,18 @@ export default forwardRef(function ScratchCard({ children, style }: any, ref: Fo
     ).forEach(listener => canvas.addEventListener(...listener));
     
     // fill the canvas with a 🖼️ cover
-    context.drawImage(coverRef.current!, 0, 0, innerWidth, innerHeight)
-    coverRef.current!.remove()
+    context.fillStyle = '#888888'
+    context.fillRect(0, 0, innerWidth, innerHeight)
+    context.filter = `blur(${innerWidth/4}px)`;
+    context.drawImage(imgRef.current!, 0, 0, innerWidth, innerHeight)
+    context.filter = "blur(0px)";
+
+    imgRef.current!.setAttribute('style', 'display: flex');
 
     // setup scratch brush
-    context.lineWidth = 60;
-    context.lineJoin = "round";
-  }, [canvasRef, coverRef]);
+    context.lineWidth = innerWidth/20;
+    context.lineJoin = "round";    
+  }
 
   // fired when a new pointer is touched the scratch surface
   const scratchStart = (event: PointerEvent) => array(event).forEach(point => {
@@ -73,13 +77,16 @@ export default forwardRef(function ScratchCard({ children, style }: any, ref: Fo
     })  
   };
 
+  useEffect(() => {
+    imgRef.current?.complete && defineCanvas()
+  }, [imgRef])
+
   const scratchEnd = (event: PointerEvent) => {
     array(event).forEach(({ identifier }) => delete position.current[identifier])}
 
   return <div ref={ref} style={style}>
-    {children}
+    <img style={{ display: 'none' }} src={src} onLoad={defineCanvas} ref={imgRef} className={styles.img} />
     <canvas className={styles.canvas} ref={canvasRef}/>
-    <img ref={coverRef} className={styles.img} src={IMG.src}/>
   </div>;
 });
 

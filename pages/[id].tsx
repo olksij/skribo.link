@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/router';
 
-import Scratch from '../lib/components/Scratch';
-import styles from '/styles/Home.module.css'
+import Scratch from '../lib/components/scratch';
+import styles from '/styles/home.module.css'
 
 export default function CardPage({ data, image }: any) {
   let scratchRef = useRef<HTMLDivElement>(null);
@@ -23,9 +23,7 @@ export default function CardPage({ data, image }: any) {
   });
 
   return <div>
-    <Scratch ref={scratchRef} style={{ position: 'fixed', top: '0px' }}>
-      <img className={styles.img} src={image}></img>
-    </Scratch>
+    <Scratch ref={scratchRef} src={image} style={{ position: 'fixed', top: '0px' }} />
     <p className={styles.counter}>{counter}</p>
   </div>
 }
