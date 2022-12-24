@@ -1,4 +1,4 @@
-.container {
+div.container {
   display: flex;
   gap: 8px
 }
@@ -6,7 +6,41 @@
 .container::before, .container > div, .container::after {
   height: 8px;
   width: 8px;
-  background: red;
   content: '';
+  background: #E0E0EB;
   border-radius: 4px;
+}
+
+.container::before {
+  animation: loading 1.2s 0s infinite;
+}
+
+.container > div {
+  animation: loading 1.2s .4s infinite;
+}
+
+.container::after {
+  animation: loading 1.2s .8s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background: #2C2A33;
+  }
+
+  25% {
+    background: #2C2A33;
+  }
+
+  50% {
+    background: #CECEE0
+  }
+
+  75% {
+    background: #CECEE0
+  }
+
+  100% {
+    background: #E0E0EB
+  }
 }
