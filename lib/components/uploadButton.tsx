@@ -29,7 +29,7 @@ export default function UploadButton() {
     uploadBytes(imageRef, file).then((snapshot) => {
       const docRef = databaseRef(database, `cards/${id}`);
       set(docRef, { left: 24 });
-      textRef.current!.value = `https://scratch.oleksii.xyz/${id}`;
+      textRef.current!.value = `https://skribo.oleksii.xyz/${id}`;
       setState(2)
     });
   }

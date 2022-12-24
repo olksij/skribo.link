@@ -2,12 +2,18 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/router';
 
+import { textFont } from './_app';
+import { displayFont } from './_app';
+
 import Scratch from '../lib/components/scratch';
-import styles from '/styles/home.module.css'
+import styles from '/styles/card.module.css'
 
 export default function CardPage({ data, image }: any) {
   let scratchRef = useRef<HTMLDivElement>(null);
   let [counter, setCounter] = useState(data?.left ?? 0);
+
+  let [isLoading, setLoading] = useState<boolean>(true);
+  let [isScratched, setScratched] = useState<boolean>(false);
 
   // obtain card id from the query
   let { id } = useRouter().query;
@@ -22,9 +28,17 @@ export default function CardPage({ data, image }: any) {
     set(docRef, { left: counter });
   });
 
-  return <div>
-    <Scratch ref={scratchRef} src={image} style={{ position: 'fixed', top: '0px' }} />
-    <p className={styles.counter}>{counter}</p>
+  let note;
+  if (!isScratched) note = <div className={ styles.scratchNote }><p className={displayFont.className}>Scratch to unveil</p></div>;
+  if (isLoading)    note = <div className={ styles.loadingNote }><p className={displayFont.className}>Loading</p></div>;
+
+  return <div style={{ display: 'flex', justifyContent: 'center', height: '100%' }} className={textFont.className}>
+    <Scratch setLoading={setLoading} setScratched={setScratched} src={image} style={{ position: 'fixed', top: '0', left: '0' }} />
+    {note}
+    <div className={styles.topBar}>
+      <img src="/logo.svg"/>
+      <p className={styles.counter}>{counter + 's'}</p>
+    </div>
   </div>
 }
 
