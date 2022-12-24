@@ -1,0 +1,66 @@
+.container {
+  display: flex;
+  width: 100%;
+  height: 56px;
+  justify-content: center;
+}
+
+.label {
+  position: relative;
+  height: 56px;
+  width: 100%;
+  max-width: 320px;
+  border-radius: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+.loading {
+  height: 48px;
+  width: 128px;
+
+  cursor: progress;
+}
+
+.label::before {
+  mix-blend-mode: luminosity;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  content: "";
+  border-radius: 28px;
+
+  background-color: #F5F5F5;
+}
+
+.label::after {
+  mix-blend-mode: overlay;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  content: "";
+  border-radius: 28px;
+  box-shadow: 
+    0 0 0 1px #0003,
+    0 4px 8px 0 #0001,
+    0 8px 32px 0 #0008;
+}
+
+.label > div {
+  position: absolute;
+  align-items: center;
+  display: flex;
+  height: 100%;
+  gap: 12px;
+  color: #2C2A33;
+  font-size: 18px;
+}
+
+.label > div > img {
+  height: 24px;
+  width: 24px;
+}
