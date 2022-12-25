@@ -17,6 +17,7 @@ export default function CardPage({ data, image }: any) {
 
   // obtain card id from the query
   let { id } = useRouter().query;
+  console.log(id)
 
   useEffect(() => {
     if (!counter) 
@@ -52,6 +53,7 @@ import { ref as storageRef, getDownloadURL, deleteObject } from "firebase/storag
 export async function getServerSideProps(context: any) {
   // obtain context parameters
   let { id } = context.params;
+  console.log(id)
 
   // connect with firestore
   const docRef = databaseRef(database, 'cards/' + id);
