@@ -11,27 +11,34 @@ import { ref as storageRef, uploadBytes } from "firebase/storage";
 
 import { useRef, useState } from 'react';
 import Loading from './loading';
+import { encryptData, genKeys } from '../crypto';
 
 export default function UploadButton() {
   let [state, setState] = useState<number>(0)
-  let [link, setLink] = useState<string | null>()
   
   let textRef = useRef<HTMLInputElement>(null)
   let stateRef = useRef<HTMLParagraphElement>(null)
 
   const pickedFile = (e: any) => {
-    let file = e.target.files[0] as File;
-    let id = Math.random().toString(36).substring(6) + Date.now().toString(36);
-    let imageRef = storageRef(storage, `cards/${id}`);
-
     setState(1);
+   
+    encrypt(e.target.files[0]).then(data => {
+      const imageRef = storageRef (storage,  `cards/${data.id}`);
+      const docRef   = databaseRef(database, `cards/${data.id}`);
 
-    uploadBytes(imageRef, file).then((snapshot) => {
-      const docRef = databaseRef(database, `cards/${id}`);
-      set(docRef, { left: 24 });
-      textRef.current!.value = `https://skribo.oleksii.xyz/${id}`;
-      setState(2)
-    });
+      uploadBytes(imageRef, data.blob).then((snapshot) => {
+        set(docRef, { 
+          accessToken: data.accessToken,
+          importAlgorithm: data.importAlgorithm,
+          encryptAlgorithm: data.encryptAlgorithm,
+          iv: data.iv,
+          timeLeft: 24,
+        });
+        textRef.current!.value = `https://skribo.oleksii.xyz/${data.id + data.secret}`;
+        
+        setState(2)
+      });  
+    })
   }
 
   let buttonContent = state == 1 ? <Loading/> : <div>
@@ -52,4 +59,18 @@ export default function UploadButton() {
     <input className={styles.link + ' ' + textFont.className} tabIndex={-1} readOnly ref={textRef} id="input" type="text" />
     <input type="file" id="file" onChange={pickedFile} accept="image/*" style={{ opacity: '0', width: '0', height: '0' }}/>
   </div>
+}
+
+async function encrypt(file: File) {
+  let reader = new FileReader();
+  reader.readAsArrayBuffer(file); 
+
+  // resolve the [ArrayBuffer] form [file]
+  var data = await new Promise<ProgressEvent<FileReader>>(resolve => 
+    reader.onload = resolve).then(e => e.target!.result) as ArrayBuffer;
+  
+  let keys = await genKeys();
+  let { data: encrypted, iv } = await encryptData(keys.encryptKey, data);
+
+  return { ...keys, blob: new Blob([encrypted]), iv };
 }
