@@ -11,7 +11,7 @@ import { ref as storageRef, uploadBytes } from "firebase/storage";
 
 import { useRef, useState } from 'react';
 import Loading from './loading';
-import { encryptData, genKeys } from '../crypto';
+import { encryptData, genKeys, obtainAccessToken } from '../crypto';
 
 export default function UploadButton() {
   let [state, setState] = useState<number>(0)
@@ -71,7 +71,8 @@ async function encrypt(file: File) {
     reader.onload = resolve).then(e => e.target!.result) as ArrayBuffer;
   
   let keys = await genKeys();
+  let accessToken = await obtainAccessToken(keys.secret);
   let { data: encrypted, iv } = await encryptData(keys.encryptKey, data);
 
-  return { ...keys, blob: new Blob([encrypted]), iv };
+  return { ...keys, blob: new Blob([encrypted]), iv, accessToken };
 }

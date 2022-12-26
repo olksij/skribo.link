@@ -6,36 +6,53 @@ import { displayFont } from './_app';
 import Scratch from '../lib/components/scratch';
 import styles from '/styles/card.module.css'
 
-export default function CardPage({ id, secret, data }: any) {
-  let scratchRef = useRef<HTMLDivElement>(null);
-  let [counter, setCounter] = useState(data?.timeLeft ?? 0);
+export default function CardPage({ id, secret }: any) {
+  let [counter, setCounter] = useState<number | null>(null);
+
+  let dataRef = useRef<Record<string, any> | null>(null);
 
   let [isScratched, setScratched] = useState<boolean>(false);
   let [image, setImage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!counter)
+    if (counter === null) return;
+
+    if (counter == 0)
       deleteObject(storageRef(storage, `cards/${id}`)), 
-      scratchRef.current?.remove();
-    else setTimeout(() => setCounter(counter - 1), 1000);
+      setImage(null);
+    else setTimeout(() => setCounter(counter! - 1), 1000);
 
     const docRef = databaseRef(database, 'cards/' + id);
-    set(docRef, { ...data, timeLeft: counter });
-  });
+    set(docRef, { ...dataRef.current, timeLeft: counter });
+  }, [counter])
 
   let note;
   if (!isScratched) note = <div className={ styles.scratchNote }><p className={displayFont.className}>Scratch to unveil</p></div>;
   if (!image)       note = <div className={ styles.loadingNote }><p className={displayFont.className}>Loading</p></div>;
   
   useEffect(() => {
-    getBytes(storageRef(storage, `cards/${id}`)).then(async encrypted => {
-      // decrypt the image
-      let keys = await deriveKeys(secret, data.importAlgorithm, data.encryptAlgorithm, new Uint8Array(data.salt));
-      let image = await decryptData(keys.encryptKey, new Uint8Array(data.iv), encrypted);
+    // get the access token from secret so client can access database
+    obtainAccessToken(secret).then(async accessToken => {
+      // sign in to firebase so server can allow access to the data
+      await fetch('api/jwt', { method: 'POST', body: JSON.stringify({id, accessToken }) })
+      .then(async response => signInWithCustomToken(auth, await response.json()));
+
+      // connect with firestore
+      const docRef = databaseRef(database, 'cards/' + id);
+      let data = await get(docRef).then(snap => snap.val());
+
+      console.log('data', data)
+
+      let keys = await deriveKeys(secret, data.importAlgorithm, data.encryptAlgorithm, new Uint8Array(data.salt))
+      dataRef.current = data, setCounter(data.timeLeft)
       
-      // set the image to rerender scratch
-      setImage(URL.createObjectURL(new Blob([image])));
-    }).catch(console.error);
+      getBytes(storageRef(storage, `cards/${id}`)).then(async encrypted => {
+        // decrypt the image
+        let image = await decryptData(keys.encryptKey, new Uint8Array(data.iv), encrypted);
+        // set the image to rerender scratch
+        setImage(URL.createObjectURL(new Blob([image])));
+      });  
+    });
   }, []);
 
   return <div style={{ display: 'flex', justifyContent: 'center', height: '100%' }} className={textFont.className}>
@@ -49,11 +66,12 @@ export default function CardPage({ id, secret, data }: any) {
 }
 
 // import firestore & utils
-import { database, storage } from '../lib/firebase';
+import { auth, database, storage } from '../lib/firebase';
 
 import { ref as databaseRef, get, set } from "firebase/database";
 import { ref as storageRef, deleteObject, getBytes } from "firebase/storage";
-import { decryptData, deriveKeys } from '../lib/crypto';
+import { decryptData, deriveKeys, obtainAccessToken } from '../lib/crypto';
+import { signInWithCustomToken } from 'firebase/auth';
 
 // obtain cloud data on server during the request of the page
 export async function getServerSideProps(context: any) {
@@ -62,12 +80,5 @@ export async function getServerSideProps(context: any) {
 
   let [id, secret] = [link.substring(0, 8), link.substring(8, 16)]
 
-  // connect with firestore
-  const docRef = databaseRef(database, 'cards/' + id);
-  let data = await get(docRef).then(snap => snap.val());
-
-  // if there is a record && time left, pass it to the page
-  return (data && data.timeLeft) 
-    ? { props: { id, secret, data } } 
-    : { notFound: true };
+  return { props: { id, secret } } 
 }
