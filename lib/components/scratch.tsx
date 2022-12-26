@@ -4,7 +4,7 @@ import styles from '/styles/scratch.module.css'
 
 type PointerEvent = { mouse?: MouseEvent, touch?: TouchEvent }
 
-export default function ScratchCard({ setLoading, setScratched, src, style }: any) {
+export default function ScratchCard({ setScratched, image, style }: any) {
   // HTMLElement references
   let canvasRef = useRef<HTMLCanvasElement>(null);
   let imgRef = useRef<HTMLImageElement>(null);
@@ -14,7 +14,6 @@ export default function ScratchCard({ setLoading, setScratched, src, style }: an
   let position  = useRef<Record<string, { x: number, y: number }>>({})
 
   const defineCanvas = () => {
-    setLoading(false);
     defined.current = true;
 
     // define
@@ -90,14 +89,14 @@ export default function ScratchCard({ setLoading, setScratched, src, style }: an
   };
 
   useEffect(() => {
-    imgRef.current?.complete && !defined.current && defineCanvas()
-  }, [imgRef, defineCanvas])
+    image && !defined.current && defineCanvas()
+  }, [image, defineCanvas])
 
   const scratchEnd = (event: PointerEvent) => {
     array(event).forEach(({ identifier }) => delete position.current[identifier])}
 
   return <div style={style}>
-    <img style={{ display: 'none' }} src={src} onLoad={defineCanvas} ref={imgRef} className={styles.img} />
+    <img style={{ display: 'none' }} src={image} onLoad={defineCanvas} ref={imgRef} className={styles.img} />
     <canvas className={styles.canvas} ref={canvasRef}/>
   </div>;
 };

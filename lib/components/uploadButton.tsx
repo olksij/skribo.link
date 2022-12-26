@@ -32,9 +32,10 @@ export default function UploadButton() {
           importAlgorithm: data.importAlgorithm,
           encryptAlgorithm: data.encryptAlgorithm,
           iv: data.iv,
+          salt: data.salt,
           timeLeft: 24,
         });
-        textRef.current!.value = `https://skribo.oleksii.xyz/${data.id + data.secret}`;
+        textRef.current!.value = window.origin + '/' + data.id + data.secret;
         
         setState(2)
       });  

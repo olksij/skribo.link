@@ -39,19 +39,20 @@ export async function encryptData(key: CryptoKey, data: ArrayBuffer) {
   return { data: await crypto.subtle.encrypt({ name: encryptAlgorithm.name, iv }, key, data), iv };
 }
 
-export async function deriveKeys(secret: string, importAlgorithm: Argorithm, encryptAlgorithm: Argorithm) {
+export async function deriveKeys(secret: string, importAlgorithm: Argorithm, encryptAlgorithm: Argorithm, salt?: Uint8Array) {
   let key = deserialize(secret);
   let subtle = crypto.subtle;
 
-  let algorithm = { ...importAlgorithm, salt: crypto.getRandomValues(new Uint8Array(256)), info: new Uint8Array(0) } 
+  let algorithm = { ...importAlgorithm, salt: salt ?? crypto.getRandomValues(new Uint8Array(256)), info: new Uint8Array(0) } 
 
   // generate tokens from the secret used in link
   let accessToken = await subtle.digest('SHA-256', key).then(b => new Uint8Array(b));
 
   let importedKey = await subtle.importKey('raw', key, algorithm, false, ['deriveKey']);
+  console.log(importedKey, algorithm.salt)
   let encryptKey = await subtle.deriveKey(algorithm, importedKey, encryptAlgorithm, false, ['encrypt', 'decrypt']);  
 
-  return { accessToken, encryptKey };
+  return { accessToken, encryptKey, salt: algorithm.salt };
 }
 
 
