@@ -47,12 +47,12 @@ export default function ScratchCard({ setScratched, image, style }: any) {
 
     image.setAttribute('style', 'display: flex; opacity: 0');
 
-    [canvas, image].forEach((el, i) => { el.animate(
+    [canvas, image].forEach((el, i) => el.animate(
       [{ opacity: 0 }, { opacity: 1 }],
-      { duration: (i+1) * 200, delay: i * 200, easing: 'cubic-bezier(0.5, 0, 0, 1)' }
-    ); console.log(el, (i+1) * 100)});
+      { duration: (i+1) * 600, delay: i * 600, easing: 'cubic-bezier(0.5, 0, 0, 1)' }
+    ));
 
-    setTimeout(() => image.setAttribute('style', 'display: flex'), 800)
+    setTimeout(() => image.setAttribute('style', 'display: flex'), 1600)
 
     // setup scratch brush
     context.lineWidth = innerWidth/15;
@@ -90,13 +90,13 @@ export default function ScratchCard({ setScratched, image, style }: any) {
 
   useEffect(() => {
     image && !defined.current && defineCanvas()
-  }, [image, defineCanvas])
+  }, [image])
 
   const scratchEnd = (event: PointerEvent) => {
     array(event).forEach(({ identifier }) => delete position.current[identifier])}
 
   return <div style={style}>
-    <img style={{ display: 'none' }} src={image} onLoad={defineCanvas} ref={imgRef} className={styles.img} />
+    <img style={{ display: 'none' }} src={image} ref={imgRef} className={styles.img} />
     <canvas className={styles.canvas} ref={canvasRef}/>
   </div>;
 };

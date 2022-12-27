@@ -16,12 +16,13 @@ function deserialize(data: string) {
   return array;
 }
 
-function genID() {
+function serialize(data: Uint8Array) {
   let string = '';
-  crypto.getRandomValues(new Uint8Array(8))
-    .forEach(num => string += characters[num % 64]);
+  data.forEach(num => string += characters[num % 64]);
   return string;
 }
+
+const genID = () => serialize(crypto.getRandomValues(new Uint8Array(8)));
 
 export async function genKeys() {
   // generate random strings which both are parts of shareable link
@@ -41,7 +42,7 @@ export async function encryptData(key: CryptoKey, data: ArrayBuffer) {
 
 // generate tokens from the secret used in link
 export async function obtainAccessToken(secret: string) {
-  return await crypto.subtle.digest('SHA-256', deserialize(secret)).then(b => new Uint8Array(b));
+  return await crypto.subtle.digest('SHA-256', deserialize(secret)).then(b => serialize(new Uint8Array(b)));
 }
 
 export async function deriveKeys(secret: string, importAlgorithm: Argorithm, encryptAlgorithm: Argorithm, salt?: Uint8Array) {
@@ -51,7 +52,6 @@ export async function deriveKeys(secret: string, importAlgorithm: Argorithm, enc
   let algorithm = { ...importAlgorithm, salt: salt ?? crypto.getRandomValues(new Uint8Array(256)), info: new Uint8Array(0) } 
 
   let importedKey = await subtle.importKey('raw', key, algorithm, false, ['deriveKey']);
-  console.log(importedKey, algorithm.salt)
   let encryptKey = await subtle.deriveKey(algorithm, importedKey, encryptAlgorithm, false, ['encrypt', 'decrypt']);  
 
   return { encryptKey, salt: algorithm.salt };

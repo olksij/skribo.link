@@ -15,7 +15,7 @@ export default function CardPage({ id, secret }: any) {
   let [image, setImage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (counter === null) return;
+    if (counter === null || !isScratched) return;
 
     if (counter == 0)
       deleteObject(storageRef(storage, `cards/${id}`)), 
@@ -24,11 +24,11 @@ export default function CardPage({ id, secret }: any) {
 
     const docRef = databaseRef(database, 'cards/' + id);
     set(docRef, { ...dataRef.current, timeLeft: counter });
-  }, [counter])
+  }, [counter, isScratched])
 
   let note;
-  if (!isScratched) note = <div className={ styles.scratchNote }><p className={displayFont.className}>Scratch to unveil</p></div>;
-  if (!image)       note = <div className={ styles.loadingNote }><p className={displayFont.className}>Loading</p></div>;
+  if (!isScratched) note = "Scratch to unveil";
+  if (!image)       note = "Loading";
   
   useEffect(() => {
     // get the access token from secret so client can access database
@@ -40,8 +40,6 @@ export default function CardPage({ id, secret }: any) {
       // connect with firestore
       const docRef = databaseRef(database, 'cards/' + id);
       let data = await get(docRef).then(snap => snap.val());
-
-      console.log('data', data)
 
       let keys = await deriveKeys(secret, data.importAlgorithm, data.encryptAlgorithm, new Uint8Array(data.salt))
       dataRef.current = data, setCounter(data.timeLeft)
@@ -55,12 +53,16 @@ export default function CardPage({ id, secret }: any) {
     });
   }, []);
 
-  return <div style={{ display: 'flex', justifyContent: 'center', height: '100%' }} className={textFont.className}>
-    <Scratch image={image} setScratched={setScratched} style={{ position: 'fixed', top: '0', left: '0' }} />
-    {note}
+  return <div className={styles.container}>
+    <div className={styles.content + ' ' + (image && styles.fullscreen)}>
+      <Scratch image={image} setScratched={setScratched} />
+    </div>
+    { note && <div className={ image ? styles.scratchNote : styles.loadingNote }>
+      <p className={displayFont.className}>{note}</p>
+    </div> }
     <div className={styles.topBar}>
       <img src="/logo.svg"/>
-      <p className={styles.counter}>{counter + 's'}</p>
+      <p className={textFont.className + ' ' + styles.counter}>{counter ? counter + 's' : ''}</p>
     </div>
   </div>
 }

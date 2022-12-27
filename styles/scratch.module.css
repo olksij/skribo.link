@@ -5,12 +5,15 @@
 }
 
 .img {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   object-fit: scale-down;
   position: fixed;
 }
 
 .canvas {
-  position: fixed;
+  position: absolute;
+  pointer-events: all;
+  width: 100%;
+  height: 100%;
 }

@@ -1,3 +1,9 @@
+.container {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
 .topBar {
   display: flex;
   position: fixed;
@@ -55,4 +61,48 @@
 .loadingNote::after {
   mix-blend-mode: overlay;
   box-shadow: var(--shadow);
+}
+
+.content {
+  position: relative;
+  margin: 24px;
+  margin-top: 76px;
+  width: 100%;
+  display: flex;
+  border-radius: 16px;
+  transition: .6s cubic-bezier(0.5, 0, 0, 1);
+}
+
+.content.fullscreen {
+  margin: 0px;
+}
+
+.content::before {
+  position: absolute;
+  backdrop-filter: blur(4px);
+  width: 100%;
+  height: 100%;
+  content: '';
+  transition: .3s ease-in-out;
+
+}
+
+.content.fullscreen::before {
+  opacity: 0;
+}
+
+.content::after {
+  background: #8E8EAD;
+  mix-blend-mode: overlay;
+  width: 100%;
+  content: '';
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  transition: .3s ease-in-out;
+}
+
+.content.fullscreen::after {
+  border-radius: 0;
+  background-color: #8E8EAD00;
 }
