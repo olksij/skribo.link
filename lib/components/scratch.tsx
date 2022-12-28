@@ -4,7 +4,7 @@ import styles from '/styles/scratch.module.css'
 
 type PointerEvent = { mouse?: MouseEvent, touch?: TouchEvent }
 
-export default function ScratchCard({ setScratched, image, style }: any) {
+export default function ScratchCard({ setScratched, image }: { setScratched: any, image: Blob | null }) {
   // HTMLElement references
   let canvasRef = useRef<HTMLCanvasElement>(null);
   let imgRef = useRef<HTMLImageElement>(null);
@@ -13,12 +13,12 @@ export default function ScratchCard({ setScratched, image, style }: any) {
   // stores records for mouse and touch pointers
   let position  = useRef<Record<string, { x: number, y: number }>>({})
 
-  const defineCanvas = () => {
+  const defineCanvas = async () => {
     defined.current = true;
+    let bitmapImage = await createImageBitmap(image!);
 
     // define
     const canvas  = canvasRef.current!;
-    const image   = imgRef.current!;
     const context = canvas.getContext("2d")!;
 
     // update width of canvas so it fills the screen
@@ -42,17 +42,17 @@ export default function ScratchCard({ setScratched, image, style }: any) {
     context.fillStyle = '#888888'
     context.fillRect(0, 0, innerWidth, innerHeight)
     context.filter = `blur(${innerWidth/4}px)`;
-    context.drawImage(image, 0, 0, innerWidth, innerHeight)
+    context.drawImage(bitmapImage, 0, 0, innerWidth, innerHeight)
     context.filter = "blur(0px)";
 
-    image.setAttribute('style', 'display: flex; opacity: 0');
+    imgRef.current!.setAttribute('style', 'display: flex; opacity: 0');
 
-    [canvas, image].forEach((el, i) => el.animate(
+    [canvas, imgRef.current!].forEach((el, i) => el.animate(
       [{ opacity: 0 }, { opacity: 1 }],
       { duration: (i+1) * 600, delay: i * 600, easing: 'cubic-bezier(0.5, 0, 0, 1)' }
     ));
 
-    setTimeout(() => image.setAttribute('style', 'display: flex'), 1600)
+    setTimeout(() => imgRef.current!.setAttribute('style', 'display: flex'), 1600)
 
     // setup scratch brush
     context.lineWidth = innerWidth/15;
@@ -89,14 +89,20 @@ export default function ScratchCard({ setScratched, image, style }: any) {
   };
 
   useEffect(() => {
-    image && !defined.current && defineCanvas()
+    if (image && !defined.current) defineCanvas()
+    if (!image && defined.current) {
+      const canvas  = canvasRef.current!;
+      const context = canvas.getContext("2d")!;
+      context.clearRect(0, 0, innerWidth, innerHeight); 
+      imgRef.current?.remove(); 
+    }
   }, [image])
 
   const scratchEnd = (event: PointerEvent) => {
     array(event).forEach(({ identifier }) => delete position.current[identifier])}
 
-  return <div style={style}>
-    <img style={{ display: 'none' }} src={image} ref={imgRef} className={styles.img} />
+  return <div>
+    <img style={{ display: 'none' }} src={image ? URL.createObjectURL(image) : ''} ref={imgRef} className={styles.img} />
     <canvas className={styles.canvas} ref={canvasRef}/>
   </div>;
 };

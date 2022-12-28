@@ -12,7 +12,7 @@ export default function CardPage({ id, secret }: any) {
   let dataRef = useRef<Record<string, any> | null>(null);
 
   let [isScratched, setScratched] = useState<boolean>(false);
-  let [image, setImage] = useState<string | null>(null);
+  let [image, setImage] = useState<Blob | null>(null);
 
   useEffect(() => {
     if (counter === null || !isScratched) return;
@@ -29,6 +29,7 @@ export default function CardPage({ id, secret }: any) {
   let note;
   if (!isScratched) note = "Scratch to unveil";
   if (!image)       note = "Loading";
+  if (!image && isScratched) note = "Time is out";
   
   useEffect(() => {
     // get the access token from secret so client can access database
@@ -48,7 +49,7 @@ export default function CardPage({ id, secret }: any) {
         // decrypt the image
         let image = await decryptData(keys.encryptKey, new Uint8Array(data.iv), encrypted);
         // set the image to rerender scratch
-        setImage(URL.createObjectURL(new Blob([image])));
+        setImage(new Blob([image]));
       });  
     });
   }, []);
