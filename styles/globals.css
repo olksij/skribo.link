@@ -23,9 +23,8 @@ body {
     linear-gradient(#D4D4F2,#D4D4F2);
 }
 
-#__next * {
+*:not(script):not(style):not(title) {
   user-select: none;
-  pointer-events: none;
   display: flex;
 }
 

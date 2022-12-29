@@ -9,7 +9,7 @@
 }
 
 .container>* {
-  transition: opacity .3s cubic-bezier(.5, 0, 0, 1);
+  transition: opacity .2s cubic-bezier(.5, 0, 0, 1);
 }
 
 .container.active, .container.hover {
