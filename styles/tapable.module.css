@@ -6,6 +6,8 @@
   align-items: center;
   justify-content: start;
   transition: .3s cubic-bezier(.5, 0, 0, 1);
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .container>* {
