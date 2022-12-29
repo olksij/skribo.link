@@ -1,4 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document'
+import { CSSProperties } from 'react'
 
 export default function Document() {
   return (
@@ -10,9 +11,22 @@ export default function Document() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <body>
+        <div style={style}/>
         <Main />
         <NextScript />
       </body>
     </Html>
   )
+}
+
+let style: CSSProperties = {
+  zIndex: `-999`,
+  background: `url('/pattern.svg')`,
+  content: '',
+  position: `absolute`,
+  backgroundSize: `384px`,
+  mixBlendMode: `overlay`,
+  opacity: `.2`,
+  width: `100%`,
+  height: `100%`,
 }

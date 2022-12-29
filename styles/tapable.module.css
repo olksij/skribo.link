@@ -1,0 +1,21 @@
+.container {
+  background: #FFFFFF;
+  pointer-events: all !important;
+  min-width: 48px;
+  min-height: 48px;
+  align-items: center;
+  justify-content: start;
+  transition: .3s cubic-bezier(.5, 0, 0, 1);
+}
+
+.container>* {
+  transition: opacity .3s cubic-bezier(.5, 0, 0, 1);
+}
+
+.container.active, .container.hover {
+  background: #F5F5F5;
+}
+
+.container.active>* {
+  opacity: .5;
+}
