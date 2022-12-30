@@ -6,7 +6,7 @@ export enum CardType {
   Select = 'row'
 }
 
-export default function Card({ children, className, type, header }: { children: ReactNode[] | ReactNode, className?: string; type?: CardType; header?: { icon: string, title: string } }) {
+export default function Card({ children, className, type, header, padding, gap }: { children: ReactNode[] | ReactNode, className?: string; type?: CardType; header?: { icon: string, title: string }, padding?: string, gap?: string },) {
   const separator = <div style={separatorStyle}/>;
   type ??= CardType.List;
 
@@ -15,7 +15,7 @@ export default function Card({ children, className, type, header }: { children: 
       <img src={ header.icon }/>
       <p style={{ fontSize: '14px', color: '#585466', margin: '0' }} className={displayFont.className}>{ header.title }</p>
     </div> }
-    <div style={{ ...container, flexDirection: type }} className={className}> { 
+    <div style={{ ...container, flexDirection: type, padding, gap }} className={className}> { 
       Array.isArray(children) && type == CardType.List 
         ? children.map((element, i) => [i == 0 ? <></> : separator, element]) 
         : children 
