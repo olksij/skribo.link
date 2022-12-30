@@ -6,16 +6,16 @@ export enum CardType {
   Select = 'row'
 }
 
-export default function Card({ children, className, type, header, padding, gap }: { children: ReactNode[] | ReactNode, className?: string; type?: CardType; header?: { icon: string, title: string }, padding?: string, gap?: string },) {
+export default function Card({ children, className, type, header, padding, gap, height }: { children: ReactNode[] | ReactNode, className?: string; type?: CardType; header?: { icon: string, title: string }, padding?: string, gap?: string, height?: string },) {
   const separator = <div style={separatorStyle}/>;
   type ??= CardType.List;
 
-  return <div style={{ width: 'inherit', flexDirection: 'column', gap: '12px' }}>
+  return <div style={{ width: 'inherit', flexDirection: 'column', gap: '12px', height }}>
     { header && <div style={{ justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
       <img src={ header.icon }/>
       <p style={{ fontSize: '14px', color: '#585466', margin: '0' }} className={displayFont.className}>{ header.title }</p>
     </div> }
-    <div style={{ ...container, flexDirection: type, padding, gap }} className={className}> { 
+    <div style={{ ...container, flexDirection: type, padding, gap, height }} className={className}> { 
       Array.isArray(children) && type == CardType.List 
         ? children.map((element, i) => [i == 0 ? <></> : separator, element]) 
         : children 
@@ -29,7 +29,7 @@ let container: CSSProperties = {
   boxShadow: '0 0 0 1px #0000000B',
   flexDirection: 'column',
   overflow: 'hidden',
-  width: '100%',
+  justifyContent: 'center'
 }
 
 let separatorStyle: CSSProperties = {
