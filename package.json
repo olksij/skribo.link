@@ -21,6 +21,7 @@
     "framer-motion": "^8.0.2",
     "local-ssl-proxy": "^1.2.3",
     "next": "13.0.7",
+    "qr-code-styling": "^1.6.0-rc.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-modal-sheet": "^1.9.0",

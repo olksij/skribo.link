@@ -48,5 +48,6 @@ let style: CSSProperties = {
 
 let buttonStyle: CSSProperties = {
   margin: 0,
-  color: '#FFF'
+  color: '#FFF',
+  fontSize: '18px'
 }

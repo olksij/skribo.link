@@ -7,7 +7,7 @@ div.container {
   height: 8px;
   width: 8px;
   content: '';
-  background: #E0E0EB;
+  background: #3F3C49;
   border-radius: 4px;
 }
 
@@ -25,22 +25,22 @@ div.container {
 
 @keyframes loading {
   0% {
-    background: #2C2A33;
+    background: #FFF;
   }
 
   25% {
-    background: #2C2A33;
+    background: #FFF;
   }
 
   50% {
-    background: #CECEE0
+    background: #504C5C
   }
 
   75% {
-    background: #CECEE0
+    background: #504C5C
   }
 
   100% {
-    background: #E0E0EB
+    background: #3F3C49
   }
 }

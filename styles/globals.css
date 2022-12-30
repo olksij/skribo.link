@@ -33,3 +33,14 @@ body {
     linear-gradient(0deg, #DDC9F2,#C2C2F200 75%),
     linear-gradient(#D4D4F2,#D4D4F2);
 }
+
+#__next::before {
+  background: url('/pattern.svg');
+  content: '';
+  position: absolute;
+  background-size: 384px;
+  mix-blend-mode: overlay;
+  opacity: .2;
+  width: 100%;
+  height: 100%;
+}
