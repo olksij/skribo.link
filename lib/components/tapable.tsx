@@ -1,18 +1,22 @@
 import { useRef } from "react";
 import styles from "../../styles/tapable.module.css";
 
-export default function Tapable({ icon, children, width, height, gap, justify, onTap }: any) {
+export default function Tapable(props: any) {
   const ref = useRef<HTMLDivElement>(null);
+
+  let { icon, children, onTap, onRemove } = props;
 
   const get = () => ref.current!.classList;
 
-  const press   = () => get().add   (styles.active);
-  const release = () => get().remove(styles.active);
+  const press   = () => get().add(styles.active);
+  const release = () => setTimeout(() => get().remove(styles.active), 200);
 
-  return <div ref={ref} className={styles.container} style={{ width, height, gap, justifyContent: justify }} 
+  return <div ref={ref} className={styles.container} style={ props } 
       onMouseDown={press} onMouseUp={release} onTouchStart={press} onTouchEnd={release}
       onClick={onTap}
       onMouseEnter={() => get().add(styles.hover)} onMouseLeave={() => get().remove(styles.hover)}>
+    { onRemove && <><img onClick={ (e) => { e.stopPropagation(); onRemove(); }} src='removeIcon.svg' width='20px' height='20px'/>
+                  <div style={{ width: 16 - (props.gap ?? 0) + 'px' }} /></> }
     { icon && <img src={icon} width='24px' height='24px'/> }
     { children }
   </div>

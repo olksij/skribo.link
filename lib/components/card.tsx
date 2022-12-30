@@ -1,12 +1,25 @@
 import { CSSProperties, ReactNode, useRef } from "react";
+import { displayFont } from "../../pages/_app";
 
-export default function Card({ children, className }: { children: ReactNode[] | ReactNode, className?: string; }) {
+export enum CardType { 
+  List = 'column',
+  Select = 'row'
+}
+
+export default function Card({ children, className, type, header }: { children: ReactNode[] | ReactNode, className?: string; type?: CardType; header?: { icon: string, title: string } }) {
   const separator = <div style={separatorStyle}/>;
+  type ??= CardType.List;
 
-  return <div style={container} className={className}>
-    { Array.isArray(children) ? children.map((element, i) => 
-      [i == 0 ? <></> : separator, element]
-    ) : children }
+  return <div style={{ width: 'inherit', flexDirection: 'column', gap: '12px' }}>
+    { header && <div style={{ justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+      <img src={ header.icon }/>
+      <p style={{ fontSize: '14px', color: '#585466', margin: '0' }} className={displayFont.className}>{ header.title }</p>
+    </div> }
+    <div style={{ ...container, flexDirection: type }} className={className}> { 
+      Array.isArray(children) && type == CardType.List 
+        ? children.map((element, i) => [i == 0 ? <></> : separator, element]) 
+        : children 
+    } </div>
   </div>
 }
 

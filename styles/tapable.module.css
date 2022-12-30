@@ -1,6 +1,5 @@
 .container {
   background: #FFFFFF;
-  pointer-events: all !important;
   min-width: 48px;
   min-height: 48px;
   align-items: center;
@@ -10,8 +9,12 @@
   box-sizing: border-box;
 }
 
+.container, .container * {
+  pointer-events: all !important;
+}
+
 .container>* {
-  transition: opacity .2s cubic-bezier(.5, 0, 0, 1);
+  transition: opacity .3s cubic-bezier(.5, 0, 0, 1);
 }
 
 .container.active, .container.hover {
