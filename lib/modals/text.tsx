@@ -2,8 +2,8 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 
 import Sheet from 'react-modal-sheet';
 import { displayFont, textFont } from "../../pages/_app";
-import Card from "../components/card";
-import Tapable from "../components/tapable";
+import Card from "../elements/card";
+import Tapable from "../elements/tapable";
 
 export default function TextModal({ isOpen, text, setText, onClose }: any) {
   const ref = useRef<HTMLTextAreaElement>(null);

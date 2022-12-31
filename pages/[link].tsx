@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { textFont } from './_app';
 import { displayFont } from './_app';
 
-import Scratch from '../lib/components/scratch';
+import Scratch from '../lib/widgets/scratch';
 import styles from '/styles/card.module.css'
 
 export default function CardPage({ id, secret }: any) {

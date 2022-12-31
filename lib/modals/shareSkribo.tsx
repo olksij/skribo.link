@@ -1,15 +1,34 @@
-'use client';
-
 import { CSSProperties, useEffect, useRef, useState } from "react";
 
-import defaultBackground from '../backgrounds/default.svg'
-import defaultPattern from '../patterns/default.svg'
+import backgrounds from '../backgrounds/import'
+import patterns from '../patterns/import'
 
 import Sheet from 'react-modal-sheet';
 import { displayFont, textFont } from "../../pages/_app";
-import Card from "../components/card";
-import Tapable from "../components/tapable";
+import Card from "../elements/card";
+import Tapable from "../elements/tapable";
 import loadImage from "../components/loadImage";
+
+const themeColors = [
+  { card: '#F4F4FF', gradient: [
+    { color: '#8257D9', offset: 0 },
+    { color: '#5782D9', offset: 1 },
+  ]},
+  { card: '#F4F4FF', gradient: [
+    { color: '#5CA611', offset: 0 },
+    { color: '#97A600', offset:.5 },
+    { color: '#CC9900', offset: 1 },
+  ]},
+  { card: '#F4F4FF', gradient: [
+    { color: '#CC5C78', offset: 0 },
+    { color: '#CC7447', offset: 1 },
+  ]},
+  { card: '#F4F4FF', gradient: [
+    { color: '#60BFBF', offset: 0 },
+    { color: '#4CA3BF', offset:.5 },
+    { color: '#5798D9', offset: 1 },
+  ]},
+]
 
 export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { link: string | undefined, theme: number | undefined, isOpen: boolean, onClose: () => void }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -19,23 +38,18 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
   useEffect(() => {
     let ratio = devicePixelRatio * 2;
 
-    if (link && isOpen) {
+    if (link && isOpen && theme != null) {
       import('qr-code-styling').then(async qrCodeStyling => {
         new qrCodeStyling.default({
-          width: 512,
-          height: 512,
+          width: innerWidth * ratio,
+          height: innerWidth * ratio,
           type: "svg",
           data: link,
           dotsOptions: {
             gradient: {
               type: 'linear',
               rotation: Math.PI/4,
-              colorStops: [
-                { color: '#BF73E5', offset: 0 },
-                { color: '#9973E5', offset: .33 },
-                { color: '#7386E5', offset: .66 },
-                { color: '#739DE5', offset: 1 },
-              ]
+              colorStops: themeColors[theme].gradient
             },
             type: "extra-rounded"
           },
@@ -50,33 +64,40 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
               context = canvas.getContext("2d")!;
 
           let { width, height } = canvas,
-            qrSize = Math.min(width, height) * 0.56,
-            bgSize = Math.min(width, height) * 0.8;
+            qrSize = Math.round(Math.min(width, height) * 0.5),
+            bgSize = Math.round(Math.min(width, height) * 0.7);
+                    
+          context.drawImage(await loadImage(backgrounds[theme]), 0, 0, width, height)
 
-          context.drawImage(await loadImage(defaultBackground.src), 0, 0, width, height)
-
-          context.globalAlpha = .15;
+          context.globalAlpha = .3;
           context.globalCompositeOperation = 'overlay';
-          context.drawImage(await loadImage(defaultPattern.src), 0, 0)
+          context.drawImage(await loadImage(patterns[theme]), 0, 0, width, width*2.15)
                     
           let halfWidth = width/2,
               halfHeight = height/2;
           
-          context.globalAlpha = 1;
-          context.globalCompositeOperation = 'overlay';
-          context.fillStyle = '#DADADA';
+          context.strokeStyle = '#000A';
+          context.lineWidth = ratio*3;
           context.beginPath();
           context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
-          context.fill()
+          context.roundRect(0, 0, width, height, 12 * ratio);
+          context.stroke()  
 
+          context.globalAlpha = 1;
           context.globalCompositeOperation = 'multiply';
           context.fillStyle = '#AAA';
           context.textAlign = 'center';
           context.textBaseline = 'top'
           context.font = ((12 * ratio) + 'px ') + textFont.className.replace('className', 'textFont');
           context.fillText(link, halfWidth, halfHeight + bgSize/2 + 24*ratio);
-
+          
           context.globalCompositeOperation = 'source-over';
+
+          context.fillStyle = themeColors[theme].card;
+          context.beginPath();
+          context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
+          context.fill()
+
           context?.drawImage(bitmap, halfWidth-qrSize/2, halfHeight-qrSize/2, qrSize, qrSize)
         })  
       })

@@ -3,9 +3,9 @@ import styles from '../styles/home.module.css'
 import { displayFont } from './_app';
 import { textFont } from './_app';
 
-import Copyright from '../lib/components/copyright';
-import Card from '../lib/components/card';
-import Tapable from '../lib/components/tapable';
+import Copyright from '../lib/widgets/copyright';
+import Card from '../lib/elements/card';
+import Tapable from '../lib/elements/tapable';
 import { CSSProperties, useState } from 'react';
 import NewSkriboModal from '../lib/modals/newSkribo';
 import TextModal from '../lib/modals/text';

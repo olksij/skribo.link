@@ -2,10 +2,10 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 
 import Sheet from 'react-modal-sheet';
 import { displayFont, textFont } from "../../pages/_app";
-import Card, { CardType } from "../components/card";
-import Loading from "../components/loading";
-import Selectable from "../components/selectable";
-import Tapable from "../components/tapable";
+import Card, { CardType } from "../elements/card";
+import Loading from "../elements/loading";
+import Selectable from "../elements/selectable";
+import Tapable from "../elements/tapable";
 import TextModal from "./text";
 
 // import firestore & utils
@@ -14,6 +14,7 @@ import { database, storage } from '../../lib/firebase';
 import { ref as databaseRef, set } from "firebase/database";
 import { ref as storageRef, uploadBytes } from "firebase/storage";
 import { encryptData, genKeys, obtainAccessToken } from "../crypto";
+import ThemeCard from "../elements/theme";
 
 export default function NewSkriboModal({ image, setImage, text, setText, setShareLink }: any) {
   const [timer, setTimer] = useState<number>(30);
@@ -76,10 +77,8 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
           </Tapable>
         </Card>
         <Card type={ CardType.Select } header={{ icon: '/themeIcon.svg', title: 'Color theme' }} padding="12px" gap="8px">
-          { themes.map((emoji, id) => <Selectable key={emoji} id={id} selected={theme} setSelected={setTheme} borderRadius={6}>
-            <div style={{ width: '64px', height: '88px', borderRadius: '6px', justifyContent: 'center', background: '#CDE6EE' }}>
-              <p style={{ placeSelf: 'center' }}>{emoji}</p>
-            </div>
+          { themes.map(id => <Selectable key={id} id={id} selected={theme} setSelected={setTheme} borderRadius={6}>
+            <ThemeCard id={id}/>
           </Selectable> )}
         </Card>
 
@@ -119,7 +118,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
 }
 
 let timers = [5, 15, 30, 45, 60]
-let themes = ['🏠', '🍋', '🍓', '🐠']
+let themes = [0, 1, 2, 3]
 
 let buttonCapton: CSSProperties = {
   color: `var(--text)`,
