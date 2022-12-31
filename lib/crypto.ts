@@ -32,9 +32,9 @@ export async function genKeys() {
   return { id, secret, ... await deriveKeys(secret, importAlgorithm, encryptAlgorithm), importAlgorithm, encryptAlgorithm }
 }
 
-export async function encryptData(key: CryptoKey, data: ArrayBuffer) {
+export async function encryptData(key: CryptoKey, data: ArrayBuffer, iv?: Uint8Array) {
   // generate initialization vector
-  let iv = crypto.getRandomValues(new Uint8Array(16));
+  iv ??= crypto.getRandomValues(new Uint8Array(16));
   
   // encrypt the file and return
   return { data: await crypto.subtle.encrypt({ name: encryptAlgorithm.name, iv }, key, data), iv };

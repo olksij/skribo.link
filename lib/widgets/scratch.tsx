@@ -1,10 +1,12 @@
+import { Content } from '@next/font/google';
 import React, { useEffect, useRef, forwardRef, ForwardedRef }  from 'react';
+import * as StackBlur from 'stackblur-canvas';
 
 import styles from '/styles/scratch.module.css'
 
 type PointerEvent = { mouse?: MouseEvent, touch?: TouchEvent }
 
-export default function ScratchCard({ setScratched, image }: { setScratched: any, image: Blob | null }) {
+export default function ScratchCard({ setScratched, image, setForeground }: { setScratched: any, image: Blob | null, setForeground: any }) {
   // HTMLElement references
   let canvasRef = useRef<HTMLCanvasElement>(null);
   let imgRef = useRef<HTMLImageElement>(null);
@@ -39,11 +41,12 @@ export default function ScratchCard({ setScratched, image }: { setScratched: any
     ).forEach(listener => canvas.addEventListener(...listener));
     
     // fill the canvas with a 🖼️ cover
-    context.fillStyle = '#888888'
-    context.fillRect(0, 0, innerWidth, innerHeight)
-    context.filter = `blur(${innerWidth/4}px)`;
     context.drawImage(bitmapImage, 0, 0, innerWidth, innerHeight)
-    context.filter = "blur(0px)";
+    context.putImageData(StackBlur.imageDataRGB(context.getImageData(0, 0, innerWidth, innerHeight), 0, 0, innerWidth, innerHeight, Math.round(innerWidth / 8)), 0, 0);
+    
+    // decide UI foreground based on pixel color
+    let topPixel = context.getImageData(innerWidth/2, 0, innerWidth/2+1, 1).data;
+    setForeground((topPixel[0] + topPixel[1] + topPixel[2]) / 3 < 128);
 
     imgRef.current!.setAttribute('style', 'display: flex; opacity: 0');
 
@@ -75,6 +78,7 @@ export default function ScratchCard({ setScratched, image }: { setScratched: any
       let refPosition = position.current[point.identifier];
   
       context.globalCompositeOperation = "destination-out";
+      context.strokeStyle = 'red';
       context.beginPath();
       context.moveTo(refPosition.x, refPosition.y);
       context.lineTo(point.clientX, point.clientY);

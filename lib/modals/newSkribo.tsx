@@ -85,27 +85,28 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
         <TextModal isOpen={textModalOpen} onClose={() => setTextModalOpen(false)} text={text} setText={setText} />
 
         <Card outerStyle={{ position: 'fixed', bottom: '24px', left: '24px', right: '24px' }}>
-          <Tapable height="56px" background='#2C2A33' justifyContent='center' onTap={ () => {
+          <Tapable height="56px" background='#2C2A33' justifyContent='center' onTap={ async () => {
             setLoading(true);
 
-            encrypt(image).then(data => {
-              const imageRef = storageRef (storage,  `cards/${data.id}`);
-              const docRef   = databaseRef(database, `cards/${data.id}`);
-        
-              uploadBytes(imageRef, data.blob).then((snapshot) => {
-                set(docRef, { 
-                  accessToken: data.accessToken,
-                  importAlgorithm: data.importAlgorithm,
-                  encryptAlgorithm: data.encryptAlgorithm,
-                  iv: data.iv,
-                  salt: data.salt,
-                  timeLeft: 24,
-                });
-                onClose();
-                setShareLink({ link: window.origin + '/' + data.id + data.secret, theme })
-              });  
-            })
-        
+            let data = await encrypt(image, text);
+
+            const imageRef = storageRef (storage,  `cards/${data.id}`);
+            const docRef   = databaseRef(database, `cards/${data.id}`);
+      
+            if (data.blob) await uploadBytes(imageRef, data.blob)
+
+            set(docRef, { 
+              accessToken: data.accessToken,
+              importAlgorithm: data.importAlgorithm,
+              encryptAlgorithm: data.encryptAlgorithm,
+              encryptedText: data.encryptedText ? new Uint8Array(data.encryptedText) : null,
+              iv: data.iv,
+              salt: data.salt,
+              timeLeft: timer,
+              theme,
+            });
+            onClose();
+            setShareLink({ link: window.origin + '/' + data.id + data.secret, theme })
            }}>
             { loading ? <Loading/> : <p className={displayFont.className} style={buttonStyle}>Finish</p> }
           </Tapable>
@@ -143,17 +144,26 @@ let buttonStyle: CSSProperties = {
 }
 
 
-async function encrypt(file: File) {
-  let reader = new FileReader();
-  reader.readAsArrayBuffer(file); 
-
-  // resolve the [ArrayBuffer] form [file]
-  var data = await new Promise<ProgressEvent<FileReader>>(resolve => 
-    reader.onload = resolve).then(e => e.target!.result) as ArrayBuffer;
+async function encrypt(file: File | null, text: string | null) {
+  let textData = text ? new TextEncoder().encode(text) : null;
   
   let keys = await genKeys();
   let accessToken = await obtainAccessToken(keys.secret);
-  let { data: encrypted, iv } = await encryptData(keys.encryptKey, data);
 
-  return { ...keys, blob: new Blob([encrypted]), iv, accessToken };
+  if (file) {
+    let reader = new FileReader();
+    reader.readAsArrayBuffer(file); 
+    
+    // resolve the [ArrayBuffer] form [file]
+    let imageData = await new Promise<ProgressEvent<FileReader>>(resolve => 
+      reader.onload = resolve).then(e => e.target!.result) as ArrayBuffer;
+    
+    let { data: encryptedFile, iv } = await encryptData(keys.encryptKey, imageData);
+    let { data: encryptedText } = textData ? await encryptData(keys.encryptKey, textData, iv) : { data: null };
+
+    return { ...keys, blob: new Blob([encryptedFile]), encryptedText, iv, accessToken };
+  }
+
+  let { data: encryptedText, iv } = await encryptData(keys.encryptKey, textData!);
+  return { ...keys, encryptedText, iv, accessToken, blob: null };
 }

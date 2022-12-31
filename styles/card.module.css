@@ -2,6 +2,7 @@
   display: flex;
   justify-content: center;
   height: 100%;
+  width: 100%;
 }
 
 .topBar {
@@ -36,13 +37,13 @@
   margin: 0;
 }
 
-.scratchNote::before, .loadingNote::before, .loadingNote::after {
+.scratchNote::before, .loadingNote::before {
   content: '';
   border-radius: 24px;
   width: 100%;
   height: 100%;
   position: absolute;
-  mix-blend-mode: luminosity;
+  mix-blend-mode: overlay;
 }
 
 
@@ -55,13 +56,10 @@
 }
 
 .loadingNote::before {
-  background: #EEE;
-}
-
-.loadingNote::after {
-  mix-blend-mode: overlay;
+  background: #BBB;
   box-shadow: var(--shadow);
 }
+
 
 .content {
   position: relative;
@@ -79,12 +77,10 @@
 
 .content::before {
   position: absolute;
-  backdrop-filter: blur(4px);
   width: 100%;
   height: 100%;
   content: '';
   transition: .3s ease-in-out;
-
 }
 
 .content.fullscreen::before {

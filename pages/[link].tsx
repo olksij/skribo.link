@@ -13,6 +13,7 @@ export default function CardPage({ id, secret }: any) {
 
   let [isScratched, setScratched] = useState<boolean>(false);
   let [image, setImage] = useState<Blob | null>(null);
+  let [foreground, setForeground] = useState<boolean>(false);
 
   useEffect(() => {
     if (counter === null || !isScratched) return;
@@ -56,14 +57,14 @@ export default function CardPage({ id, secret }: any) {
 
   return <div className={styles.container}>
     <div className={styles.content + ' ' + (image && styles.fullscreen)}>
-      <Scratch image={image} setScratched={setScratched} />
+      <Scratch image={image} setScratched={setScratched} setForeground={setForeground}/>
     </div>
     { note && <div className={ image ? styles.scratchNote : styles.loadingNote }>
       <p className={displayFont.className}>{note}</p>
     </div> }
     <div className={styles.topBar}>
-      <img src="/logo.svg"/>
-      <p className={textFont.className + ' ' + styles.counter}>{counter ? counter + 's' : ''}</p>
+      <img src={foreground ? '/logoLight.svg' : '/logo.svg'}/>
+      <p className={textFont.className + ' ' + styles.counter} style={{ color: foreground ? '#FFF' : '#000' }}>{counter ? counter + 's' : ''}</p>
     </div>
   </div>
 }
