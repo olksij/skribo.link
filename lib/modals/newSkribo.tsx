@@ -14,7 +14,8 @@ import { database, storage } from '../../lib/firebase';
 import { ref as databaseRef, set } from "firebase/database";
 import { ref as storageRef, uploadBytes } from "firebase/storage";
 import { encryptData, genKeys, obtainAccessToken } from "../crypto";
-import ThemeCard from "../elements/theme";
+import ThemeCard from "../widgets/theme";
+import ThemesWidget from "../widgets/theme";
 
 export default function NewSkriboModal({ image, setImage, text, setText, setShareLink }: any) {
   const [timer, setTimer] = useState<number>(30);
@@ -31,14 +32,13 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
 
   const fileDialog = () => {
     var input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-
     input.onchange = (e: any) => {
       var file = e!.target!.files[0]; 
       if (file) setImage(file);
     }
 
+    input.type = 'file';
+    input.accept = 'image/*';
     input.click();
   }
 
@@ -55,6 +55,11 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
     <p style={ text ? selectedImageButton : buttonCapton } className={ text ? textFont.className : displayFont.className }>{ text ?? "Write caption" }</p>
   </Tapable>
 
+  const selfDestructButton = <Tapable icon='/fireIcon.svg' gap='8px' height="56px" onTap={() => setTimer(timers[(timers.indexOf(timer) + 1) % timers.length])}>
+    <p style={{ ...buttonCapton, width: '100%' }} className={ displayFont.className }>Self-destruct timer</p>
+    <p style={ cardProperty } className={ textFont.className }>{timer + 's'}</p>
+  </Tapable>
+
   const onClose = () => (setImage(null), setText(null));
 
   return <Sheet rootId='__next' isOpen={isOpen} onClose={onClose}>
@@ -66,25 +71,15 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
           <p style={{ fontSize: '24px' }} className={ displayFont.className }>New skribo</p>
           <div style={{ width: "48px" }}/>
         </div>
-        <Card>
-          { imageButton }
-          { textButton  }
-        </Card>
-        <Card>
-          <Tapable icon='/fireIcon.svg' gap='8px' height="56px" onTap={() => setTimer(timers[(timers.indexOf(timer) + 1) % timers.length])}>
-            <p style={{ ...buttonCapton, width: '100%' }} className={ displayFont.className }>Self-destruct timer</p>
-            <p style={ cardProperty } className={ textFont.className }>{timer + 's'}</p>
-          </Tapable>
-        </Card>
+        <Card>{[ imageButton, textButton ]}</Card>
+        <Card>{ selfDestructButton }</Card>
         <Card type={ CardType.Select } header={{ icon: '/themeIcon.svg', title: 'Color theme' }} padding="12px" gap="8px">
-          { themes.map(id => <Selectable key={id} id={id} selected={theme} setSelected={setTheme} borderRadius={6}>
-            <ThemeCard id={id}/>
-          </Selectable> )}
+          { themes.map(id => <ThemesWidget key={id} id={id} theme={theme} setTheme={setTheme}/> )}
         </Card>
 
         <TextModal isOpen={textModalOpen} onClose={() => setTextModalOpen(false)} text={text} setText={setText} />
 
-        <Card outerStyle={{ position: 'fixed', bottom: '24px', left: '24px', right: '24px' }}>
+        <Card outerStyle={{ position: 'fixed', bottom: '0px', left: '24px', right: '24px', marginBottom: '24px' }}>
           <Tapable height="56px" background='#2C2A33' justifyContent='center' onTap={ async () => {
             setLoading(true);
 

@@ -20,16 +20,20 @@ export default function Home() {
   
   const fileDialog = () => {
     var input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
 
     input.onchange = (e: any) => {
       var file = e!.target!.files[0]; 
       if (file) setImage(file);
     }
-    
-    input.value = '';
+
+    input.type   = 'file';
+    input.accept = 'image/*';
+    input.value  = '';
     input.click();
+    
+    // due to an interesting bug in browsers, the [input.onchange] can 
+    // not fire if i won't pass it to [console.log] function as an argument
+    console.log(input.onchange)
   }
 
   return (

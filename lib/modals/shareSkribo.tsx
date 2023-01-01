@@ -32,84 +32,98 @@ const themeColors = [
 
 export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { link: string | undefined, theme: number | undefined, isOpen: boolean, onClose: () => void }) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const renderId = useRef<number>(0);
 
   const [copyStatus, setCopyStatus] = useState(false)
 
-  useEffect(() => {
-    let ratio = devicePixelRatio * 2;
-
-    if (link && isOpen && theme != null) {
-      import('qr-code-styling').then(async qrCodeStyling => {
-        new qrCodeStyling.default({
-          width: innerWidth * ratio,
-          height: innerWidth * ratio,
-          type: "svg",
-          data: link,
-          dotsOptions: {
-            gradient: {
-              type: 'linear',
-              rotation: Math.PI/4,
-              colorStops: themeColors[theme].gradient
-            },
-            type: "extra-rounded"
-          },
-          cornersDotOptions: {
-            type: "square",
-          },
-          backgroundOptions: { color: "#00000000" },
-          imageOptions: { crossOrigin: "anonymous" }
-        }).getRawData('png').then(async blob => {
-          let bitmap = await createImageBitmap(blob!),
-              canvas = ref.current!,
-              context = canvas.getContext("2d")!;
-
-          let { width, height } = canvas,
-            qrSize = Math.round(Math.min(width, height) * 0.5),
-            bgSize = Math.round(Math.min(width, height) * 0.7);
-                    
-          context.drawImage(await loadImage(backgrounds[theme]), 0, 0, width, height)
-
-          context.globalAlpha = .3;
-          context.globalCompositeOperation = 'overlay';
-          context.drawImage(await loadImage(patterns[theme]), 0, 0, width, width*2.15)
-                    
-          let halfWidth = width/2,
-              halfHeight = height/2;
-          
-          context.strokeStyle = '#000A';
-          context.lineWidth = ratio*3;
-          context.beginPath();
-          context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
-          context.roundRect(0, 0, width, height, 12 * ratio);
-          context.stroke()  
-
-          context.globalAlpha = 1;
-          context.globalCompositeOperation = 'multiply';
-          context.fillStyle = '#AAA';
-          context.textAlign = 'center';
-          context.textBaseline = 'top'
-          context.font = ((12 * ratio) + 'px ') + textFont.className.replace('className', 'textFont');
-          context.fillText(link, halfWidth, halfHeight + bgSize/2 + 24*ratio);
-          
-          context.globalCompositeOperation = 'source-over';
-
-          context.fillStyle = themeColors[theme].card;
-          context.beginPath();
-          context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
-          context.fill()
-
-          context?.drawImage(bitmap, halfWidth-qrSize/2, halfHeight-qrSize/2, qrSize, qrSize)
-        })  
-      })
-    }
-
-    if (!ref.current) return;
-    let canvas = ref.current!,
-        parent = canvas.parentElement;
+  const renderCanvas = async (theme: number | undefined, link: string | undefined, id: number) => {
+    console.log(theme, link)
+    if (theme == null || link == null) return;
     
-    canvas.width = parent!.clientWidth * ratio;
-    canvas.height = parent!.clientHeight * ratio;
-  }, [isOpen, link, ref, theme])
+    let ratio = devicePixelRatio * 2,
+        canvas = ref.current!,
+        parent = canvas.parentElement;
+
+    canvas.width = parent!.clientWidth * devicePixelRatio * 2;
+    canvas.height = parent!.clientHeight * devicePixelRatio * 2;
+
+    const qrCodeStyling = await import('qr-code-styling')
+
+    if (id != renderId.current) return;
+
+    new qrCodeStyling.default({
+      width: innerWidth * ratio,
+      height: innerWidth * ratio,
+      type: "svg",
+      data: link,
+      dotsOptions: {
+        gradient: {
+          type: 'linear',
+          rotation: Math.PI/4,
+          colorStops: themeColors[theme].gradient
+        },
+        type: "extra-rounded"
+      },
+      cornersDotOptions: {
+        type: "square",
+      },
+      backgroundOptions: { color: "#00000000" },
+      imageOptions: { crossOrigin: "anonymous" }
+    }).getRawData('png').then(async blob => {
+      let bgImage = await loadImage(backgrounds[theme]);
+      let patternImage = await loadImage(patterns[theme]);
+
+      let bitmap = await createImageBitmap(blob!),
+          canvas = ref.current!,
+          context = canvas.getContext("2d")!;
+      
+      if (id != renderId.current) return;
+      
+      let { width, height } = canvas,
+        qrSize = Math.round(Math.min(width, height) * 0.5),
+        bgSize = Math.round(Math.min(width, height) * 0.7);
+      
+      context.clearRect(0, 0, width, height)
+                
+      context.drawImage(bgImage, 0, 0, width, height)
+
+      context.globalAlpha = .3;
+      context.globalCompositeOperation = 'overlay';
+      context.drawImage(patternImage, 0, 0, width, width*2.15)
+                
+      let halfWidth = width/2,
+          halfHeight = height/2;
+      
+      context.strokeStyle = '#000A';
+      context.lineWidth = ratio*3;
+      context.beginPath();
+      context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
+      context.roundRect(0, 0, width, height, 12 * ratio);
+      context.stroke()  
+
+      context.globalAlpha = 1;
+      context.globalCompositeOperation = 'multiply';
+      context.fillStyle = '#AAA';
+      context.textAlign = 'center';
+      context.textBaseline = 'top'
+      context.font = ((12 * ratio) + 'px ') + textFont.className.replace('className', 'textFont');
+      context.fillText(link, halfWidth, halfHeight + bgSize/2 + 24*ratio);
+      
+      context.globalCompositeOperation = 'source-over';
+
+      context.fillStyle = themeColors[theme].card;
+      context.beginPath();
+      context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
+      context.fill()
+
+      context?.drawImage(bitmap, halfWidth-qrSize/2, halfHeight-qrSize/2, qrSize, qrSize)
+    })
+  }
+
+  useEffect(() => { 
+    renderId.current = Date.now(), renderCanvas(theme, link, renderId.current);
+    addEventListener('resize', () => { renderId.current = Date.now(), renderCanvas(theme, link, renderId.current) });
+  }, [theme, link])
 
   return <Sheet rootId='__next' isOpen={isOpen} onClose={onClose}>
   <Sheet.Container style={{ background: '#EBEBF0' }}>

@@ -16,7 +16,7 @@ export default function Card({ children, className, type, header, padding, gap, 
       <img src={ header.icon }/>
       <p style={{ fontSize: '14px', color: '#585466', margin: '0' }} className={displayFont.className}>{ header.title }</p>
     </div> }
-    <div style={{ ...container, flexDirection: type, padding, gap, height, ...innerStyle, boxShadow: inset ? 'inset ' + container.boxShadow : container.boxShadow }} className={className}> { 
+    <div style={{ ...container, flexDirection: type, padding, justifyContent: type == CardType.List ? 'center' : 'start', overflowX: type == CardType.Select ? 'scroll' : 'hidden', gap, height, ...innerStyle, boxShadow: inset ? 'inset ' + container.boxShadow : container.boxShadow }} className={className}> { 
       Array.isArray(children) && type == CardType.List 
         ? children.map((element, i) => [i == 0 ? <></> : separator, element]) 
         : children 
@@ -30,7 +30,6 @@ let container: CSSProperties = {
   boxShadow: '0 0 0 1px #0000000B',
   flexDirection: 'column',
   overflow: 'hidden',
-  justifyContent: 'center'
 }
 
 let separatorStyle: CSSProperties = {
