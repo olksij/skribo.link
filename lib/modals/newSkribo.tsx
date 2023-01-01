@@ -16,6 +16,7 @@ import { ref as storageRef, uploadBytes } from "firebase/storage";
 import { encryptData, genKeys, obtainAccessToken } from "../crypto";
 import ThemeCard from "../widgets/theme";
 import ThemesWidget from "../widgets/theme";
+import loadImage from "../components/loadImage";
 
 export default function NewSkriboModal({ image, setImage, text, setText, setShareLink }: any) {
   const [timer, setTimer] = useState<number>(30);
@@ -82,8 +83,24 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
         <Card outerStyle={{ position: 'fixed', bottom: '0px', left: '24px', right: '24px', marginBottom: '24px' }}>
           <Tapable height="56px" background='#2C2A33' justifyContent='center' onTap={ async () => {
             setLoading(true);
+            
+            const canvas = document.createElement('canvas');
+            const imageElem = await loadImage(URL.createObjectURL(image));
+            
+            let aspectRatio = imageElem.naturalWidth / imageElem.naturalHeight;
+            const size = Math.min(Math.max(imageElem.naturalWidth, imageElem.naturalHeight), 2048)
 
-            let data = await encrypt(image, text);
+            if (aspectRatio > 1)
+              canvas.width = size, canvas.height = size / aspectRatio;
+            else 
+              canvas.width = size * aspectRatio, canvas.height = size;
+            
+            console.log(canvas.width, canvas.height)
+            
+            canvas.getContext('2d')!.drawImage(imageElem, 0, 0, canvas.width, canvas.height);
+            const imageWebp = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.5));
+
+            let data = await encrypt(imageWebp, text);
 
             const imageRef = storageRef (storage,  `cards/${data.id}`);
             const docRef   = databaseRef(database, `cards/${data.id}`);
@@ -139,7 +156,7 @@ let buttonStyle: CSSProperties = {
 }
 
 
-async function encrypt(file: File | null, text: string | null) {
+async function encrypt(file: Blob | null, text: string | null) {
   let textData = text ? new TextEncoder().encode(text) : null;
   
   let keys = await genKeys();
