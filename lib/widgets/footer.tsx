@@ -26,8 +26,3 @@ export default function Footer() {
     <MarkdownModal data={data} onClose={() => setData(null)} />
   </div>;
 }
-
-const copyright = <div>
-  <img src='/copyrightIcon.svg'/>
-  <p className={textFont.className}>2022 Oleksii Besida</p>
-</div>;

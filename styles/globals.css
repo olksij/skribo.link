@@ -1,6 +1,9 @@
 :root {
   --text: #2C2A33;
   --textOpacity: #2C2A33CC;
+  --textTint: #2C2A3310;
+  --accent: #675CE5;
+  --accentTint: #675CE510;
   --shadow: 
       0 0 0 1px #0005,
       0 4px 8px 0 #0001,
@@ -44,4 +47,28 @@ body {
   opacity: .2;
   width: 100%;
   height: 100%;
+}
+
+a, code {
+  margin: -4px -2px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: .2s;
+}
+
+a {
+  text-decoration: none;
+  color: var(--accent);
+}
+
+code {
+  background: #0001;
+}
+
+a:hover {
+  background: var(--accentTint);
+}
+
+a:active {
+  opacity: .5;
 }

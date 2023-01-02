@@ -1,6 +1,6 @@
 # 📃 **Terms & Conditions**
 
-By using `https://skribo.link` (later on, "the app"), these terms, will automatically apply to you – you should make sure therefore that you read them carefully before using the app. I encourage you to give the Privacy Policy a careful look.
+By using [https://skribo.link](https://skribo.link) (later on, "the app"), these terms, will automatically apply to you – you should make sure therefore that you read them carefully before using the app. I encourage you to give the Privacy Policy a careful look.
 
 - Privacy Policy can be found [here](./PRIVACY.md).
 - License can be found [here](./LICENSE.md).
@@ -25,4 +25,4 @@ These terms and conditions are effective as of `2023-01-01`
 
 ## Contact me
 
-If you have any questions or concerns about our privacy policy or the personal data we collect and use, please don't hesitate to contact us at `human@oleksii.xyz`.
+If you have any questions or concerns about our privacy policy or the personal data we collect and use, please don't hesitate to contact us at [human@oleksii.xyz](mailto:human@oleksii.xyz).

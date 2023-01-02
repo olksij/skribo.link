@@ -15,17 +15,30 @@ export default function MarkdownModal({ data, onClose }: any) {
   <Sheet.Container style={{ background: '#EBEBF0' }}>
     <Sheet.Header />
     <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
-      <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
-        <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" background="#0000"/>
+      <div style={{ alignItems: 'center', justifyContent: 'center', height: '48px', width: '100%' }}>
         <p style={{ fontSize: '24px' }} className={ displayFont.className }>{data && data[0]}</p>
-        <div style={{ width: "48px" }}/>
       </div>
       <ReactMarkdown className={[textFont.className, styles.container].join(' ')}> 
         {data && data[1].slice(data[1].indexOf('\n')+1)}
       </ReactMarkdown>
+      <div style={copyrightContainer}>
+        <img style={{ height: '16px' }} src='/copyrightIcon.svg'/>
+        <p style={{ margin: 0 }} className={textFont.className}>2022 Oleksii Besida</p>
+      </div>
     </Sheet.Content>
   </Sheet.Container>
 
   <Sheet.Backdrop />
 </Sheet>
+}
+
+let copyrightContainer: CSSProperties = {
+  padding: '16px',
+  background: 'var(--textTint)',
+  borderRadius: '8px',
+  justifyContent: 'center',
+  fontSize: '14px',
+  gap: '4px',
+  color: 'var(--textOpacity)',
+  lineHeight: '16px'
 }
