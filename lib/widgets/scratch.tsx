@@ -42,7 +42,7 @@ export default function ScratchCard({ setScratched, image, setForeground }: { se
     
     // fill the canvas with a 🖼️ cover
     context.drawImage(bitmapImage, 0, 0, innerWidth, innerHeight)
-    context.putImageData(StackBlur.imageDataRGB(context.getImageData(0, 0, innerWidth, innerHeight), 0, 0, innerWidth, innerHeight, Math.round(innerWidth / 8)), 0, 0);
+    context.putImageData(StackBlur.imageDataRGB(context.getImageData(0, 0, innerWidth, innerHeight), 0, 0, innerWidth, innerHeight, Math.round(Math.min(imgRef.current!.naturalWidth, imgRef.current!.naturalHeight)/8)), 0, 0);
     
     // decide UI foreground based on pixel color
     let topPixel = context.getImageData(innerWidth/2, 0, innerWidth/2+1, 1).data;

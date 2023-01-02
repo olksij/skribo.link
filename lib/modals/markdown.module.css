@@ -1,0 +1,18 @@
+.container {
+  margin-top: -1em;
+  padding: 0 8px;
+}
+
+.container, .container * {
+  display: revert;
+}
+
+.container p, .container li {
+  color: var(--textOpacity);
+  line-height: 28px;
+}
+
+.container h1, .container h2 {
+  margin-top: 2em;
+  margin-bottom: 0;
+}

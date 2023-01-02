@@ -1,0 +1,32 @@
+.container {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px;
+  background: #0000000A;
+  backdrop-filter: blur(8px);
+  border-top: 1px #0001 solid; 
+}
+
+.button {
+  padding: 8px 16px;
+  border: none;
+  background: #0000;
+  border-radius: 4px;
+  transition: .2s;
+
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--textOpacity)
+}
+
+.button:hover {
+  background: #0001;
+}
+
+.button:active {
+  background: #0002;
+  opacity: .5;
+}

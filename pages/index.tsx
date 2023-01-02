@@ -3,7 +3,7 @@ import styles from '../styles/home.module.css'
 import { displayFont } from './_app';
 import { textFont } from './_app';
 
-import Copyright from '../lib/widgets/copyright';
+import Footer from '../lib/widgets/footer';
 import Card from '../lib/elements/card';
 import Tapable from '../lib/elements/tapable';
 import { CSSProperties, useState } from 'react';
@@ -54,7 +54,7 @@ export default function Home() {
 
         <ShareSkriboModal link={shareLink?.link} theme={shareLink?.theme} isOpen={shareLink != null} onClose={() => setShareLink(null)}/>
 
-        <Copyright/>
+        <Footer/>
       </main>
     </>
   )
