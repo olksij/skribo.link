@@ -2,15 +2,13 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import styles from './markdown.module.css';
 
-import Sheet from 'react-modal-sheet';
+import Sheet, { SheetRef } from 'react-modal-sheet';
 import { displayFont, textFont } from "../../pages/_app";
 
 import Card from "../elements/card";
 import Tapable from "../elements/tapable";
 
 export default function MarkdownModal({ data, onClose }: any) {
-  const ref = useRef<HTMLTextAreaElement>(null);
-
   return <Sheet rootId='__next' isOpen={data != null} onClose={onClose}>
   <Sheet.Container style={{ background: '#EBEBF0' }}>
     <Sheet.Header />
