@@ -94,14 +94,26 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
       let halfWidth = width/2,
           halfHeight = height/2;
       
+      context.globalAlpha = 1;
+
+      context.shadowColor = '#0008';
+      context.shadowBlur = 32 * ratio;
+      context.shadowOffsetY = 8 * ratio;
+      context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
+      context.fill()
+      context.shadowBlur = 64 * ratio;
+      context.shadowOffsetY = 16 * ratio;
+      context.fill()
+      
+      context.shadowColor = '#0000';
+
       context.strokeStyle = '#000A';
       context.lineWidth = ratio*3;
       context.beginPath();
       context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
       context.roundRect(0, 0, width, height, 12 * ratio);
-      context.stroke()  
+      context.stroke()
 
-      context.globalAlpha = 1;
       context.globalCompositeOperation = 'multiply';
       context.fillStyle = '#AAA';
       context.textAlign = 'center';
@@ -134,10 +146,10 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
         <p style={{ fontSize: '24px' }} className={ displayFont.className }>Share skribo</p>
         <div style={{ width: "48px" }}/>
       </div>
-      <Card inset={true} height='100%'>
+      <Card innerStyle={{ boxShadow: 'none' }} outerStyle={{ height: '100%' }}>
         <canvas ref={ref} style={{ position: 'sticky', borderRadius: '12px' }}/>
       </Card>
-      <Card height="56px">
+      <Card innerStyle={{ height: 56 }}>
         <Tapable icon='/QRIcon.svg' justifyContent='center' gap='8px' onTap={ () => {
           ref.current?.toBlob(function (blob) {
             const link = document.createElement("a");
@@ -149,7 +161,7 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
           <p className={displayFont.className} style={buttonStyle}>Save QR-code</p>
         </Tapable>
       </Card>
-      <Card height="56px">
+      <Card innerStyle={{ height: 56 }}>
         <Tapable icon='/linkIcon.svg' background='#2C2A33' justifyContent='center' gap='8px' onTap={ () => {
           navigator.clipboard.writeText(link!).then(function() {
             setCopyStatus(true);

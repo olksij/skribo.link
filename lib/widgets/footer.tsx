@@ -21,7 +21,7 @@ export default function Footer() {
 
   return <div className={styles.container}>
     { Object.keys(buttons).map(name =>
-      <button key={name} style={textFont.style} className={styles.button} onClick={buttons[name]}>{name}</button>
+      <button key={name} style={textFont.style} className={styles.button} onClick={() => setTimeout(buttons[name], 100)}>{name}</button>
     )}
     <MarkdownModal data={data} onClose={() => setData(null)} />
   </div>;

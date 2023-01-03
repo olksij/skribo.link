@@ -72,3 +72,7 @@ a:hover {
 a:active {
   opacity: .5;
 }
+
+.react-modal-sheet-drag-indicator {
+  background-color: #D9D9E2 !important;
+}

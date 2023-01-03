@@ -4,7 +4,7 @@ import { displayFont } from './_app';
 import { textFont } from './_app';
 
 import Footer from '../lib/widgets/footer';
-import Card, { CardType } from '../lib/elements/card';
+import Card from '../lib/elements/card';
 import Tapable from '../lib/elements/tapable';
 import { CSSProperties, useState } from 'react';
 import NewSkriboModal from '../lib/modals/newSkribo';
@@ -43,7 +43,7 @@ export default function Home() {
     <>
       <main className={styles.container}>
         <img src="/logo.svg"/>
-        <Card>
+        <Card effects={{ boxShadow: '0 0 0 1px #0008, 0 8px 24px #0006', mixBlendMode: 'overlay', borderRadius: 16 }} innerStyle={{ borderRadius: 16, boxShadow: 'none' }} separators>
           <Tapable onTap={fileDialog} icon='/imageIcon.svg' gap='8px' height="56px" justifyContent="center">
             <p style={ buttonCapton } className={ displayFont.className }>Upload image</p>
           </Tapable>
@@ -52,7 +52,7 @@ export default function Home() {
           </Tapable>
         </Card>
 
-        <Card innerStyle={{ background: '#0000000A' }} type={CardType.Select} effect={[{ background: '#222', mixBlendMode: 'overlay' }, { backdropFilter: 'blur(32px)', WebkitBackdropFilter: 'blur(32px)', boxShadow: 'inset 0 0 0 1px #0001' }]} inset>
+        <Card innerStyle={{ background: '#0001', boxShadow: 'none' }} effects={[{ background: '#333', mixBlendMode: 'overlay', borderRadius: 16 }, { backdropFilter: 'blur(32px)', WebkitBackdropFilter: 'blur(32px)', boxShadow: 'inset 0 0 0 1px #0001', borderRadius: 16 }]}>
           <div onClick={() => setYourSkribosModal(true)} style={{ flexDirection: 'column', width: '100%', gap: 4, padding: '20px 24px', color: 'white'}}>
             <p style={{ ...displayFont.style, fontSize: 22, margin: 0 }}>Your Skribos</p>
             <p style={{ ...textFont.style, fontSize: 12, margin: 0, opacity: .75 }}>0 new replies</p>

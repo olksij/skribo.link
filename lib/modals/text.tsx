@@ -23,7 +23,7 @@ export default function TextModal({ isOpen, text, setText, onClose }: any) {
         <p style={{ fontSize: '24px' }} className={ displayFont.className }>Write caption</p>
         <div style={{ width: "48px" }}/>
       </div>
-      <Card height='100%'>
+      <Card innerStyle={{ height: '100%' }}>
         <textarea ref={ref} style={style} className={textFont.className}/>
       </Card>
       <Card>

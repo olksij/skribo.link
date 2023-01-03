@@ -22,8 +22,10 @@
   color: var(--textOpacity)
 }
 
-.button:hover {
-  background: #0001;
+@media (hover: hover) {
+  .button:hover {
+    background: #0001;
+  }
 }
 
 .button:active {

@@ -2,7 +2,7 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 
 import Sheet from 'react-modal-sheet';
 import { displayFont, textFont } from "../../pages/_app";
-import Card, { CardType } from "../elements/card";
+import Card from "../elements/card";
 import Loading from "../elements/loading";
 import Selectable from "../elements/selectable";
 import Tapable from "../elements/tapable";
@@ -72,9 +72,9 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
           <p style={{ fontSize: '24px' }} className={ displayFont.className }>New skribo</p>
           <div style={{ width: "48px" }}/>
         </div>
-        <Card>{[ imageButton, textButton ]}</Card>
+        <Card separators>{[ imageButton, textButton ]}</Card>
         <Card>{ selfDestructButton }</Card>
-        <Card type={ CardType.Select } header={{ icon: '/themeIcon.svg', title: 'Color theme' }} padding="12px" gap="8px">
+        <Card header={{ icon: '/themeIcon.svg', title: 'Color theme' }} innerStyle={{ padding: 12, gap: 8, flexDirection: 'row' }}>
           { themes.map(id => <ThemesWidget key={id} id={id} theme={theme} setTheme={setTheme}/> )}
         </Card>
 
