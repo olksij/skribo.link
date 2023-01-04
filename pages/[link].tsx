@@ -56,15 +56,16 @@ export default function CardPage({ id, secret }: any) {
   }, []);
 
   return <div className={styles.container}>
-    <div className={styles.content + ' ' + (image && styles.fullscreen)}>
+    <Background id={dataRef.current?.theme ?? 0}/>
+    <div className={styles.content + ' ' + (isScratched && styles.fullscreen)}>
       <Scratch image={image} setScratched={setScratched} setForeground={setForeground}/>
     </div>
     { note && <div className={ image ? styles.scratchNote : styles.loadingNote }>
       <p className={displayFont.className}>{note}</p>
     </div> }
     <div className={styles.topBar}>
-      <img src={foreground ? '/logoLight.svg' : '/logo.svg'}/>
-      <p className={textFont.className + ' ' + styles.counter} style={{ color: foreground ? '#FFF' : '#000' }}>{counter ? counter + 's' : ''}</p>
+      <img onClick={() => location.href = '/'} src={foreground && isScratched ? '/logoLight.svg' : '/logo.svg'}/>
+      <p className={textFont.className + ' ' + styles.counter} style={{ color: foreground && isScratched ? '#FFF' : '#000' }}>{counter ? counter + 's' : ''}</p>
     </div>
   </div>
 }
@@ -76,6 +77,7 @@ import { ref as databaseRef, get, set } from "firebase/database";
 import { ref as storageRef, deleteObject, getBytes } from "firebase/storage";
 import { decryptData, deriveKeys, obtainAccessToken } from '../lib/crypto';
 import { signInWithCustomToken } from 'firebase/auth';
+import Background from '../lib/elements/background';
 
 // obtain cloud data on server during the request of the page
 export async function getServerSideProps(context: any) {

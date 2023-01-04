@@ -96,10 +96,15 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
       
       context.globalAlpha = 1;
 
-      context.shadowColor = '#0008';
+      context.strokeStyle = '#0006';
+      context.lineWidth = ratio*3;
+      context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
+      context.stroke()
+      context.strokeStyle = '#0000';
+
+      context.shadowColor = '#0004';
       context.shadowBlur = 32 * ratio;
       context.shadowOffsetY = 8 * ratio;
-      context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
       context.fill()
       context.shadowBlur = 64 * ratio;
       context.shadowOffsetY = 16 * ratio;
@@ -108,9 +113,7 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
       context.shadowColor = '#0000';
 
       context.strokeStyle = '#000A';
-      context.lineWidth = ratio*3;
       context.beginPath();
-      context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
       context.roundRect(0, 0, width, height, 12 * ratio);
       context.stroke()
 

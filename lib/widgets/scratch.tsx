@@ -1,4 +1,3 @@
-import { Content } from '@next/font/google';
 import React, { useEffect, useRef, forwardRef, ForwardedRef }  from 'react';
 import * as StackBlur from 'stackblur-canvas';
 

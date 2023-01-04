@@ -14,8 +14,8 @@ import { database, storage } from '../../lib/firebase';
 import { ref as databaseRef, set } from "firebase/database";
 import { ref as storageRef, uploadBytes } from "firebase/storage";
 import { encryptData, genKeys, obtainAccessToken } from "../crypto";
-import ThemeCard from "../widgets/theme";
-import ThemesWidget from "../widgets/theme";
+import ThemeCard from "../elements/theme";
+import ThemesWidget from "../elements/theme";
 import loadImage from "../components/loadImage";
 
 export default function NewSkriboModal({ image, setImage, text, setText, setShareLink }: any) {
@@ -107,7 +107,8 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
       
             if (data.blob) await uploadBytes(imageRef, data.blob)
 
-            set(docRef, { 
+            set(docRef, {
+              created: Date.now(),
               accessToken: data.accessToken,
               importAlgorithm: data.importAlgorithm,
               encryptAlgorithm: data.encryptAlgorithm,
