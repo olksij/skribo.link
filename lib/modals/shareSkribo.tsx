@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useRef, useState } from "react";
 
-import backgrounds from '../backgrounds/import'
+import backgrounds, { themeColors } from '../backgrounds/import'
 import patterns from '../patterns/import'
 
 import Sheet from 'react-modal-sheet';
@@ -8,27 +8,6 @@ import { displayFont, textFont } from "../../pages/_app";
 import Card from "../elements/card";
 import Tapable from "../elements/tapable";
 import loadImage from "../components/loadImage";
-
-const themeColors = [
-  { card: '#F4F4FF', gradient: [
-    { color: '#8257D9', offset: 0 },
-    { color: '#5782D9', offset: 1 },
-  ]},
-  { card: '#F4F4FF', gradient: [
-    { color: '#5CA611', offset: 0 },
-    { color: '#97A600', offset:.5 },
-    { color: '#CC9900', offset: 1 },
-  ]},
-  { card: '#F4F4FF', gradient: [
-    { color: '#CC5C78', offset: 0 },
-    { color: '#CC7447', offset: 1 },
-  ]},
-  { card: '#F4F4FF', gradient: [
-    { color: '#60BFBF', offset: 0 },
-    { color: '#4CA3BF', offset:.5 },
-    { color: '#5798D9', offset: 1 },
-  ]},
-]
 
 export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { link: string | undefined, theme: number | undefined, isOpen: boolean, onClose: () => void }) {
   const ref = useRef<HTMLCanvasElement>(null);

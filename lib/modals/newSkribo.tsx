@@ -116,6 +116,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
               iv: data.iv,
               salt: data.salt,
               timeLeft: timer,
+              timeAssigned: timer,
               theme,
             });
             onClose();

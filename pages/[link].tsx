@@ -56,9 +56,10 @@ export default function CardPage({ id, secret }: any) {
   }, []);
 
   return <div className={styles.container}>
-    <Background id={dataRef.current?.theme ?? 0}/>
+    <Background id={0}/>
+    <Background id={dataRef.current?.theme}/>
     <div className={styles.content + ' ' + (isScratched && styles.fullscreen)}>
-      <Scratch image={image} setScratched={setScratched} setForeground={setForeground}/>
+      <Scratch theme={dataRef.current?.theme} image={image} setScratched={setScratched} setForeground={setForeground}/>
     </div>
     { note && <div className={ image ? styles.scratchNote : styles.loadingNote }>
       <p className={displayFont.className}>{note}</p>

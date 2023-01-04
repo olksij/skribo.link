@@ -12,6 +12,7 @@ import TextModal from '../lib/modals/text';
 import ShareSkriboModal from '../lib/modals/shareSkribo';
 import CardPage from './[link]';
 import YourSkribosModal from '../lib/modals/yourSkribos';
+import Background from '../lib/elements/background';
 
 export default function Home() {
   const [image, setImage] = useState<File | null>(null);
@@ -41,6 +42,7 @@ export default function Home() {
 
   return (
     <>
+      <Background id={0}/>
       <main className={styles.container}>
         <img src="/logo.svg"/>
         <Card effects={{ boxShadow: '0 0 0 1px #0008, 0 8px 24px #0006', mixBlendMode: 'overlay', borderRadius: 16 }} innerStyle={{ borderRadius: 16, boxShadow: 'none' }} separators>

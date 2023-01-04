@@ -1,22 +1,26 @@
-import React, { useEffect, useRef, forwardRef, ForwardedRef }  from 'react';
+import React, { useEffect, useRef, forwardRef, ForwardedRef, useState }  from 'react';
 import * as StackBlur from 'stackblur-canvas';
 
 import styles from '/styles/scratch.module.css'
+import { themeColors } from '../backgrounds/import';
 
 type PointerEvent = { mouse?: MouseEvent, touch?: TouchEvent }
 
-export default function ScratchCard({ setScratched, image, setForeground }: { setScratched: any, image: Blob | null, setForeground: any }) {
+export default function ScratchCard({ setScratched, image, setForeground, theme }: { setScratched: any, image: Blob | null, setForeground: any, theme: number }) {
   // HTMLElement references
   let canvasRef = useRef<HTMLCanvasElement>(null);
   let imgRef = useRef<HTMLImageElement>(null);
   let defined = useRef<boolean>(false);
+
+  let [_isScratched, _setScratched] = useState<boolean>(false);
 
   // stores records for mouse and touch pointers
   let position  = useRef<Record<string, { x: number, y: number }>>({})
 
   const defineCanvas = async () => {
     defined.current = true;
-    let bitmapImage = await createImageBitmap(image!);
+    let bitmapImage = await createImageBitmap(image!),
+        imgElement  = imgRef.current!;
 
     // define
     const canvas  = canvasRef.current!;
@@ -39,9 +43,13 @@ export default function ScratchCard({ setScratched, image, setForeground }: { se
     // add listeners
     ).forEach(listener => canvas.addEventListener(...listener));
     
+    context.fillStyle = themeColors[theme].card;
+    context.fillRect(0, 0, innerWidth, innerHeight)
+
     // fill the canvas with a 🖼️ cover
-    context.drawImage(bitmapImage, 0, 0, innerWidth, innerHeight)
-    context.putImageData(StackBlur.imageDataRGB(context.getImageData(0, 0, innerWidth, innerHeight), 0, 0, innerWidth, innerHeight, Math.round(Math.min(imgRef.current!.naturalWidth, imgRef.current!.naturalHeight)/8)), 0, 0);
+    let imageHeight = imgElement.naturalHeight / imgElement.naturalWidth * innerWidth;
+    context.drawImage(bitmapImage, 0, innerHeight / 2 - imageHeight / 2, innerWidth, imageHeight)
+    StackBlur.canvasRGB(canvas, 0, 0, innerWidth, innerHeight, Math.round(Math.min(innerWidth, innerHeight)/5));
     
     // decide UI foreground based on pixel color
     let topPixel = context.getImageData(innerWidth/2, 0, innerWidth/2+1, 1).data;
@@ -72,7 +80,7 @@ export default function ScratchCard({ setScratched, image, setForeground }: { se
     array(event).forEach(point => {
       // if [position] doesn't incluse the identifier -> do not draw
       if (!position.current[point.identifier]) return;
-      setScratched(true);
+      setScratched(true), _setScratched(true);
 
       let refPosition = position.current[point.identifier];
   
@@ -106,7 +114,7 @@ export default function ScratchCard({ setScratched, image, setForeground }: { se
 
   return <div>
     <img style={{ display: 'none' }} src={image ? URL.createObjectURL(image) : ''} ref={imgRef} className={styles.img} />
-    <canvas className={styles.canvas} ref={canvasRef}/>
+    <canvas style={{ borderRadius: _isScratched ? 0 : 12 }} className={styles.canvas} ref={canvasRef}/>
   </div>;
 };
 
