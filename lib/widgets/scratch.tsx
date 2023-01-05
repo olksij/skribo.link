@@ -3,13 +3,15 @@ import * as StackBlur from 'stackblur-canvas';
 
 import styles from '/styles/scratch.module.css'
 import { themeColors } from '../backgrounds/import';
+import SpoilerNoise from './spoilerNoise';
 
 type PointerEvent = { mouse?: MouseEvent, touch?: TouchEvent }
 
 export default function ScratchCard({ setScratched, image, setForeground, theme }: { setScratched: any, image: Blob | null, setForeground: any, theme: number }) {
   // HTMLElement references
-  let canvasRef = useRef<HTMLCanvasElement>(null);
-  let imgRef = useRef<HTMLImageElement>(null);
+  let foregroundRef = useRef<HTMLCanvasElement>(null);
+  let backgroundRef = useRef<HTMLCanvasElement>(null);
+
   let defined = useRef<boolean>(false);
 
   let [_isScratched, _setScratched] = useState<boolean>(false);
@@ -19,16 +21,21 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
 
   const defineCanvas = async () => {
     defined.current = true;
-    let bitmapImage = await createImageBitmap(image!),
-        imgElement  = imgRef.current!;
+    let bitmap = await createImageBitmap(image!),
+        imgElement  = document.createElement('img');
+        imgElement.src = URL.createObjectURL(image!);
+    
+    await new Promise(resolve => imgElement.onload = resolve);
 
     // define
-    const canvas  = canvasRef.current!;
-    const context = canvas.getContext("2d")!;
+    const background  = backgroundRef.current!;
+    const foreground  = foregroundRef.current!;
+    const bgContext = background.getContext("2d")!;
+    const fgContext = foreground.getContext("2d")!;
 
     // update width of canvas so it fills the screen
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+    background.width  = innerWidth,  foreground.width  = innerWidth;
+    background.height = innerHeight, foreground.height = innerHeight;
 
     // register events for the canvas
     new Array<[string, (e: any) => any]>(
@@ -41,41 +48,41 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
       ["touchmove",  touch => scratchMove({ touch })],
       ["touchend",   touch => scratchEnd({ touch })],
     // add listeners
-    ).forEach(listener => canvas.addEventListener(...listener));
+    ).forEach(listener => foreground.addEventListener(...listener));
     
-    context.fillStyle = themeColors[theme].card;
-    context.fillRect(0, 0, innerWidth, innerHeight)
+    bgContext.drawImage(bitmap, 0, 0, innerWidth, innerHeight)
+    StackBlur.canvasRGB(background, 0, 0, innerWidth, innerHeight, Math.round(Math.min(innerWidth, innerHeight)/4));
+
+    bgContext.fillStyle = '#0002';
+    bgContext.fillRect(0, 0, innerWidth, innerHeight)
 
     // fill the canvas with a 🖼️ cover
     let imageHeight = imgElement.naturalHeight / imgElement.naturalWidth * innerWidth;
-    context.drawImage(bitmapImage, 0, innerHeight / 2 - imageHeight / 2, innerWidth, imageHeight)
-    StackBlur.canvasRGB(canvas, 0, 0, innerWidth, innerHeight, Math.round(Math.min(innerWidth, innerHeight)/5));
+    bgContext.drawImage(bitmap, 0, innerHeight / 2 - imageHeight / 2, innerWidth, imageHeight)
+    fgContext.strokeStyle = fgContext.createPattern(background, 'no-repeat')!  
+    StackBlur.canvasRGB(background, 0, 0, innerWidth, innerHeight, Math.round(Math.min(innerWidth, innerHeight)/5));
     
     // decide UI foreground based on pixel color
-    let topPixel = context.getImageData(innerWidth/2, 0, innerWidth/2+1, 1).data;
+    let topPixel = bgContext.getImageData(innerWidth/2, 0, innerWidth/2+1, 1).data;
     setForeground((topPixel[0] + topPixel[1] + topPixel[2]) / 3 < 128);
 
-    imgRef.current!.setAttribute('style', 'display: flex; opacity: 0');
-
-    [canvas, imgRef.current!].forEach((el, i) => el.animate(
+    background.animate(
       [{ opacity: 0 }, { opacity: 1 }],
-      { duration: (i+1) * 600, delay: i * 600, easing: 'cubic-bezier(0.5, 0, 0, 1)' }
-    ));
-
-    setTimeout(() => imgRef.current!.setAttribute('style', 'display: flex'), 1600)
+      { duration: 600, easing: 'cubic-bezier(0.5, 0, 0, 1)' }
+    )
 
     // setup scratch brush
-    context.lineWidth = innerWidth/15;
-    context.lineJoin = "round";    
+    fgContext.lineWidth = innerWidth/15;
+    fgContext.lineJoin = "round";  
   }
 
   // fired when a new pointer is touched the scratch surface
-  const scratchStart = (event: PointerEvent) => array(event).forEach(point =>
-    position.current[point.identifier] = { x: point.clientX, y: point.clientY });
+  const scratchStart = (event: PointerEvent) => (array(event).forEach(point =>
+    position.current[point.identifier] = { x: point.clientX, y: point.clientY }), scratchMove(event));
 
   // fired when pointer scratches the surfafce
   const scratchMove = (event: PointerEvent) => {
-    const context = canvasRef.current!.getContext("2d")!;
+    const context = foregroundRef.current!.getContext("2d")!;
 
     array(event).forEach(point => {
       // if [position] doesn't incluse the identifier -> do not draw
@@ -83,12 +90,10 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
       setScratched(true), _setScratched(true);
 
       let refPosition = position.current[point.identifier];
-  
-      context.globalCompositeOperation = "destination-out";
-      context.strokeStyle = 'red';
+      
       context.beginPath();
       context.moveTo(refPosition.x, refPosition.y);
-      context.lineTo(point.clientX, point.clientY);
+      context.lineTo(point.clientX + .1, point.clientY + .1);
       context.closePath();
       context.stroke();
   
@@ -102,19 +107,19 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
   useEffect(() => {
     if (image && !defined.current) defineCanvas()
     if (!image && defined.current) {
-      const canvas  = canvasRef.current!;
+      const canvas  = backgroundRef.current!;
       const context = canvas.getContext("2d")!;
       context.clearRect(0, 0, innerWidth, innerHeight); 
-      imgRef.current?.remove(); 
     }
   }, [image])
 
   const scratchEnd = (event: PointerEvent) => {
     array(event).forEach(({ identifier }) => delete position.current[identifier])}
 
-  return <div>
-    <img style={{ display: 'none' }} src={image ? URL.createObjectURL(image) : ''} ref={imgRef} className={styles.img} />
-    <canvas style={{ borderRadius: _isScratched ? 0 : 12 }} className={styles.canvas} ref={canvasRef}/>
+  return <div style={{ width: '100%' }}>
+    <canvas style={{ borderRadius: _isScratched ? 0 : 12 }} className={styles.canvas} ref={backgroundRef}/>
+    <SpoilerNoise/>
+    <canvas className={styles.canvas} ref={foregroundRef}/>
   </div>;
 };
 
