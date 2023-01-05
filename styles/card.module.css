@@ -29,6 +29,7 @@
   position: absolute;
   place-self: center;
   display: flex;
+  backdrop-filter: blur(4px);
 }
 
 .scratchNote > p, .loadingNote > p {
@@ -48,7 +49,8 @@
 
 
 .scratchNote::before {
-  background: #3338;
+  background: #0003;
+  mix-blend-mode: normal;
 }
 
 .scratchNote > p {
@@ -59,7 +61,6 @@
   background: #BBB;
   box-shadow: var(--shadow);
 }
-
 
 .content {
   position: relative;
