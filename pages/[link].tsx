@@ -66,7 +66,10 @@ export default function CardPage({ id, secret }: any) {
     </div> }
     <div className={styles.topBar}>
       <img onClick={() => location.href = '/'} src={foreground && isScratched ? '/logoLight.svg' : '/logo.svg'}/>
-      <p className={textFont.className + ' ' + styles.counter} style={{ color: foreground && isScratched ? '#FFF' : '#000' }}>{counter ? counter + 's' : ''}</p>
+      <div style={{  alignItems: 'center', gap: 4 }}>
+        <p className={textFont.className + ' ' + styles.counter} style={{ color: foreground && isScratched ? '#FFF' : '#000' }}>{counter ? counter + 's' : ''}</p>
+        <Indicator value={counter && dataRef.current ? counter / dataRef.current.timeAssigned : null} foreground={isScratched && foreground}/>
+      </div>
     </div>
   </div>
 }
@@ -79,6 +82,7 @@ import { ref as storageRef, deleteObject, getBytes } from "firebase/storage";
 import { decryptData, deriveKeys, obtainAccessToken } from '../lib/crypto';
 import { signInWithCustomToken } from 'firebase/auth';
 import Background from '../lib/elements/background';
+import Indicator from '../lib/elements/indicator';
 
 // obtain cloud data on server during the request of the page
 export async function getServerSideProps(context: any) {

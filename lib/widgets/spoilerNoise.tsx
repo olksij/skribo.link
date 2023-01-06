@@ -29,18 +29,12 @@ export default function SpoilerNoise() {
 
     context.clearRect(0, 0, width.current, height.current);
     const passed = time - (lastTime.current ?? time);
-    console.log(passed)
-
-    var now = performance.now();
     
     dotData.current = dotData.current.map(({ vx, vy, x, y, for: forN, since }: DotData, i) => {
       vx /= 1.25, vy /= 1.25, x += vx * passed, y += vy * passed, forN -= passed, since += passed;
       if (forN <= 0) { newDot(); return null }
       return { vx, vy, x, y, for: forN, since } as DotData;
     }).filter(value => value != null && (value.x > 0 && value.y > 0 && value.x < width.current! && value.y < height.current!)) as DotData[];
-
-    //console.log(performance.now()-now)
-    var now = performance.now();
 
     for (let multY = 0; (multY-1) * 800 < height.current; multY++ ) {
       for (let multX = 0; (multX-1) * 800 < width.current; multX++ ) {
@@ -52,15 +46,9 @@ export default function SpoilerNoise() {
       }
     }
 
-    //console.log(performance.now()-now)
-    var now = performance.now();
-
     lastTime.current = time;
 
     for (let i = 0; i < 200 * 200 / 100 - dotData.current.length; i++) newDot();
-
-    //console.log(performance.now()-now)
-    var now = performance.now();
 
     requestAnimationFrame(render);
   }
