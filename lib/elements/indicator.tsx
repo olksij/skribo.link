@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useRef } from 'react';
 
-export default function Indicator({ value, foreground }: { value: number | null, foreground: boolean }) {
+export default function Indicator({ value, foreground, children }: { value: number | null, foreground: boolean, children: any }) {
   const renderer = useRef<boolean>(false);
   const infinite = useRef<boolean>(value ? false : true);
   const lastTime = useRef<number>(performance.now());
@@ -24,16 +24,17 @@ export default function Indicator({ value, foreground }: { value: number | null,
     if (!renderer.current && !value) requestAnimationFrame(render);
     if (value) {
       infinite.current = false;
-      spinner.current!.style.transition = `all .5s cubic-bezier(.5, 0, 0, .5), stroke 0s`;
+      spinner.current!.style.transition = `all 1s cubic-bezier(.5, .5, 0, 1), stroke 0s`;
       spinner.current!.style.transform = `rotate(360deg)`;
       spinner.current!.style.strokeDasharray = value*88%89 + ', 88';
     }
   })
   
   return <div>
+    { children }
     <svg style={styles.loader} viewBox="0 0 32 32">
-    <circle style={{ ...styles.placeholder, stroke: foreground ? '#FFF' : '#000' }} cx="16" cy="16" r="12" fill="none"></circle>
-    <circle style={{ ...styles.spinner,     stroke: foreground ? '#FFF' : '#000' }} cx="16" cy="16" r="12" fill="none" ref={spinner}></circle>
+      <circle style={{ ...styles.placeholder, stroke: foreground ? '#FFF' : '#000' }} cx="16" cy="16" r={value ? 14 : 12} fill="none"></circle>
+      <circle style={{ ...styles.spinner,     stroke: foreground ? '#FFF' : '#000' }} cx="16" cy="16" r={value ? 14 : 12} fill="none" ref={spinner}></circle>
     </svg>
   </div>
 }
@@ -42,7 +43,8 @@ const styles: Record<string, CSSProperties> = {
   loader: {
     height: 32,
     width: 32,
-    transform: 'rotate(270deg)'
+    transform: 'rotate(270deg)',
+    overflow: 'visible'
   },
   spinner: {
     boxSizing: 'border-box',
@@ -55,5 +57,6 @@ const styles: Record<string, CSSProperties> = {
     strokeWidth: 3,
     opacity: .25,
     strokeLinecap: 'round',
+    transition: 'all 1s cubic-bezier(.5, .5, 0, 1), stroke 0s'
   }
 }

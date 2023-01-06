@@ -66,9 +66,11 @@ export default function CardPage({ id, secret }: any) {
     </div> }
     <div className={styles.topBar}>
       <img onClick={() => location.href = '/'} src={foreground && isScratched ? '/logoLight.svg' : '/logo.svg'}/>
-      <div style={{  alignItems: 'center', gap: 4 }}>
-        <p className={textFont.className + ' ' + styles.counter} style={{ color: foreground && isScratched ? '#FFF' : '#000' }}>{counter ? counter + 's' : ''}</p>
-        <Indicator value={counter && dataRef.current ? counter / dataRef.current.timeAssigned : null} foreground={isScratched && foreground}/>
+      <div style={{  alignItems: 'center', gap: 16 }}>
+        <Counter value={counter ?? 0} style={{ ...textFont.style, opacity: counter ? 1 : 0, color: foreground && isScratched ? '#FFF' : '#000', margin: 0 }} />
+        <Indicator value={counter && dataRef.current ? counter / dataRef.current.timeAssigned : null} foreground={isScratched && foreground}>
+          <img style={{ position: 'absolute', padding: 9, opacity: counter ? 1 : 0, height: 14, transition: '1s cubic-bezier(.5, 0, 0, 1)' }} src='/fireFilled.svg'/>
+        </Indicator>
       </div>
     </div>
   </div>
@@ -83,6 +85,7 @@ import { decryptData, deriveKeys, obtainAccessToken } from '../lib/crypto';
 import { signInWithCustomToken } from 'firebase/auth';
 import Background from '../lib/elements/background';
 import Indicator from '../lib/elements/indicator';
+import Counter from '../lib/elements/counter';
 
 // obtain cloud data on server during the request of the page
 export async function getServerSideProps(context: any) {
