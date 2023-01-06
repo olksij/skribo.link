@@ -13,7 +13,7 @@
   justify-content: space-between;
   width: 100%;
   box-sizing: border-box;
-  padding: 22px 24px;
+  padding: 24px;
 }
 
 .topBar > img {
@@ -63,8 +63,7 @@
 
 .content {
   position: relative;
-  margin: 24px;
-  margin-top: 76px;
+  margin: 80px 24px 104px;
   width: 100%;
   display: flex;
   border-radius: 16px;

@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, forwardRef, ForwardedRef, useState }  from 'react';
+import React, { useEffect, useRef, forwardRef, ForwardedRef, useState, CSSProperties }  from 'react';
 
 type DotData = { vx: number, vy: number, x: number, y: number, for: number, since: number }
 
-export default function SpoilerNoise() {
+export default function SpoilerNoise({ style }: { style: CSSProperties }) {
   let canvasRef = useRef<HTMLCanvasElement>(null);
   let dotData   = useRef<DotData[]>([]);
   let lastTime  = useRef<number>();
@@ -56,7 +56,7 @@ export default function SpoilerNoise() {
   const newDot = () => dotData.current.push({ vx: random(.25, true, true), vy: random(.25, true, true), 
     x: random(800), y: random(800), for: Math.abs(random(500)), since: 0 })
 
-  return <canvas style={{ position: 'absolute', width: '100%', height: '100%', mixBlendMode: 'overlay' }} ref={canvasRef}/>
+  return <canvas style={{ ...style, position: 'absolute', width: '100%', height: '100%', mixBlendMode: 'overlay' }} ref={canvasRef}/>
 };
 
 function random(max: number = 0, expo: boolean = false, signed: boolean = false) {

@@ -118,7 +118,7 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
 
   return <div style={{ width: '100%' }}>
     <canvas style={{ borderRadius: _isScratched ? 0 : 12 }} className={styles.canvas} ref={backgroundRef}/>
-    <SpoilerNoise/>
+    <SpoilerNoise style={{ opacity: image ? 1 : 0, background: _isScratched ? '#0000' : '#0003', borderRadius: _isScratched ? 0 : 12 }}/>
     <canvas className={styles.canvas} ref={foregroundRef}/>
   </div>;
 };
