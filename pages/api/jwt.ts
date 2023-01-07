@@ -14,7 +14,10 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  let { id, accessToken } = JSON.parse(req.body);
-  admin.auth().createCustomToken(id, { accessToken })
+  let { id, accessToken, requestToken } = JSON.parse(req.body);
+
+  if (requestToken != process.env.NEXT_PUBLIC_REQUEST_TOKEN) res.status(401);
+  
+  else admin.auth().createCustomToken(id, { accessToken })
     .then(token => res.status(200).json(token));
 }

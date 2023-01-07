@@ -27,7 +27,7 @@ export default function Card(props: CardProps) {
             <div key={i} style={{ ...styles.effectProps, ...effect }}/>) 
           : <div style={{ ...styles.effectProps, ...props.effects }}/> }
       { Array.isArray(props.children) && props.separators 
-          ? props.children.map((element, i) => [i == 0 ? <></> : separator, element]) 
+          ? props.children.map((element, i) => <div style={{ display: 'contents' }} key={i}>{[i == 0 ? <></> : separator, element]}</div>) 
           : props.children } 
       </div>
     </div>

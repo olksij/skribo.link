@@ -16,7 +16,6 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
   const [copyStatus, setCopyStatus] = useState(false)
 
   const renderCanvas = async (theme: number | undefined, link: string | undefined, id: number) => {
-    console.log(theme, link)
     if (theme == null || link == null) return;
     
     let ratio = devicePixelRatio * 2,

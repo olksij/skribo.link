@@ -36,7 +36,7 @@ export default function CardPage({ id, secret }: any) {
     // get the access token from secret so client can access database
     obtainAccessToken(secret).then(async accessToken => {
       // sign in to firebase so server can allow access to the data
-      await fetch('api/jwt', { method: 'POST', body: JSON.stringify({id, accessToken }) })
+      await fetch('api/jwt', { method: 'POST', body: JSON.stringify({id, accessToken, requestToken: process.env.NEXT_PUBLIC_REQUEST_TOKEN }) })
       .then(async response => signInWithCustomToken(auth, await response.json()));
 
       // connect with firestore

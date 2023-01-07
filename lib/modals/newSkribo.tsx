@@ -94,9 +94,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
               canvas.width = size, canvas.height = size / aspectRatio;
             else 
               canvas.width = size * aspectRatio, canvas.height = size;
-            
-            console.log(canvas.width, canvas.height)
-            
+                        
             canvas.getContext('2d')!.drawImage(imageElem, 0, 0, canvas.width, canvas.height);
             const imageWebp = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.5));
 
