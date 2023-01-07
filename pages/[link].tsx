@@ -36,13 +36,17 @@ export default function CardPage({ id, secret }: any) {
     // get the access token from secret so client can access database
     obtainAccessToken(secret).then(async accessToken => {
       // sign in to firebase so server can allow access to the data
-      await fetch('api/jwt', { method: 'POST', body: JSON.stringify({id, accessToken, requestToken: process.env.NEXT_PUBLIC_REQUEST_TOKEN }) })
-      .then(async response => signInWithCustomToken(auth, await response.json()));
+      const { user } = await signInAnonymously(auth);
 
-      // connect with firestore
-      const docRef = databaseRef(database, 'cards/' + id);
-      let data = await get(docRef).then(snap => snap.val());
+      // update access
+      const userRef = databaseRef(database, `users/${user.uid}/access/${id}`);
+      await set(userRef, accessToken);
 
+      // connect with database
+      const docRef = databaseRef(database, `cards/${id}`);
+      let data = await get(docRef).then(snap => snap.val());      
+
+      // obtain keys && data
       let keys = await deriveKeys(secret, data.importAlgorithm, data.encryptAlgorithm, new Uint8Array(data.salt))
       dataRef.current = data, setCounter(data.timeLeft)
       
@@ -83,7 +87,7 @@ import { auth, database, storage } from '../lib/firebase';
 import { ref as databaseRef, get, set } from "firebase/database";
 import { ref as storageRef, deleteObject, getBytes } from "firebase/storage";
 import { decryptData, deriveKeys, obtainAccessToken } from '../lib/crypto';
-import { signInWithCustomToken } from 'firebase/auth';
+import { signInAnonymously, signInWithCustomToken } from 'firebase/auth';
 import Background from '../lib/elements/background';
 import Indicator from '../lib/elements/indicator';
 import Counter from '../lib/elements/counter';

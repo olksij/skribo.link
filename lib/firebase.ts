@@ -16,8 +16,10 @@ export const storage = getStorage(app);
 export const auth = getAuth(app);
 
 export const initAppCheck = () => {
-  // @ts-ignore
-  self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  if (process.env.NODE_ENV == 'development') {
+    // @ts-ignore
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  }
 
   initializeAppCheck(app, {
     provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_SITEKEY!),

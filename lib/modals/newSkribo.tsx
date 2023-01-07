@@ -9,14 +9,15 @@ import Tapable from "../elements/tapable";
 import TextModal from "./text";
 
 // import firestore & utils
-import { database, storage } from '../../lib/firebase';
+import { auth, database, storage } from '../../lib/firebase';
 
-import { ref as databaseRef, set } from "firebase/database";
+import { get, ref as databaseRef, set } from "firebase/database";
 import { ref as storageRef, uploadBytes } from "firebase/storage";
 import { encryptData, genKeys, obtainAccessToken } from "../crypto";
 import ThemeCard from "../elements/theme";
 import ThemesWidget from "../elements/theme";
 import loadImage from "../components/loadImage";
+import { signInAnonymously } from "firebase/auth";
 
 export default function NewSkriboModal({ image, setImage, text, setText, setShareLink }: any) {
   const [timer, setTimer] = useState<number>(30);
@@ -90,18 +91,24 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
             let aspectRatio = imageElem.naturalWidth / imageElem.naturalHeight;
             const size = Math.min(Math.max(imageElem.naturalWidth, imageElem.naturalHeight), 2048)
 
-            if (aspectRatio > 1)
-              canvas.width = size, canvas.height = size / aspectRatio;
-            else 
-              canvas.width = size * aspectRatio, canvas.height = size;
+            if (aspectRatio > 1) canvas.width = size,  canvas.height = size / aspectRatio;
+            else                 canvas.height = size, canvas.width  = size * aspectRatio;
                         
             canvas.getContext('2d')!.drawImage(imageElem, 0, 0, canvas.width, canvas.height);
             const imageWebp = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.5));
 
             let data = await encrypt(imageWebp, text);
 
+            const { user } = await signInAnonymously(auth);
+
+            // get database referenses
             const imageRef = storageRef (storage,  `cards/${data.id}`);
             const docRef   = databaseRef(database, `cards/${data.id}`);
+            const userRef  = databaseRef(database, `users/${user.uid}/owned/${data.id}`);
+
+            // log new owned skribo && save secret locally
+            set(userRef, data.accessToken)
+            localStorage.setItem(data.id, data.secret);
       
             if (data.blob) await uploadBytes(imageRef, data.blob)
 

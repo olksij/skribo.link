@@ -6,13 +6,20 @@ import { textFont } from './_app';
 import Footer from '../lib/widgets/footer';
 import Card from '../lib/elements/card';
 import Tapable from '../lib/elements/tapable';
-import { CSSProperties, useState } from 'react';
+import { CSSProperties, useEffect, useState } from 'react';
 import NewSkriboModal from '../lib/modals/newSkribo';
 import TextModal from '../lib/modals/text';
 import ShareSkriboModal from '../lib/modals/shareSkribo';
 import CardPage from './[link]';
 import YourSkribosModal from '../lib/modals/yourSkribos';
 import Background from '../lib/elements/background';
+import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
+import { auth, database } from '../lib/firebase';
+import { ref as databaseRef, get, set } from "firebase/database";
+import { ref as storageRef, deleteObject, getBytes } from "firebase/storage";
+import { decryptData, deriveKeys, obtainAccessToken } from '../lib/crypto';
+import { signInWithCustomToken } from 'firebase/auth';
+
 
 export default function Home() {
   const [image, setImage] = useState<File | null>(null);
@@ -21,6 +28,16 @@ export default function Home() {
   const [shareLink, setShareLink] = useState<{ link: string, theme: number } | null>(null);
   const [textModalOpen, setTextModalOpen] = useState<boolean>(false);
   const [yourSkribosModal, setYourSkribosModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    signInAnonymously(auth).then(async ({ user }) => {
+      // connect with firestore
+      const docRef = databaseRef(database, 'users/' + user.uid);
+      let data = await get(docRef).then(snap => snap.val());
+
+      data?.owned?.forEach(console.log)
+    })
+  }, [])
   
   const fileDialog = () => {
     var input = document.createElement('input');
@@ -54,7 +71,7 @@ export default function Home() {
           </Tapable>
         </Card>
 
-        <Card innerStyle={{ background: '#0001', boxShadow: 'none' }} effects={[{ background: '#333', mixBlendMode: 'overlay', borderRadius: 16 }, { backdropFilter: 'blur(32px)', WebkitBackdropFilter: 'blur(32px)', boxShadow: 'inset 0 0 0 1px #0001', borderRadius: 16 }]}>
+        <Card innerStyle={{ background: '#0001', boxShadow: 'none', borderRadius: 16 }} effects={[{ background: '#333', mixBlendMode: 'overlay', borderRadius: 16 }, { backdropFilter: 'blur(32px)', WebkitBackdropFilter: 'blur(32px)', boxShadow: 'inset 0 0 0 1px #0001', borderRadius: 16 }]}>
           <div onClick={() => setYourSkribosModal(true)} style={{ flexDirection: 'column', width: '100%', gap: 4, padding: '20px 24px', color: 'white'}}>
             <p style={{ ...displayFont.style, fontSize: 22, margin: 0 }}>Your Skribos</p>
             <p style={{ ...textFont.style, fontSize: 12, margin: 0, opacity: .75 }}>0 new replies</p>
