@@ -10,6 +10,7 @@ export default function CardPage({ id, secret }: any) {
   let [counter, setCounter] = useState<number | null>(null);
 
   let dataRef = useRef<Record<string, any> | null>(null);
+  let keysRef = useRef<Record<string, any> | null>(null);
 
   let [isScratched, setScratched] = useState<boolean>(false);
   let [image, setImage] = useState<Blob | null>(null);
@@ -23,7 +24,7 @@ export default function CardPage({ id, secret }: any) {
       setImage(null);
     else setTimeout(() => setCounter(counter! - 1), 1000);
 
-    const docRef = databaseRef(database, 'cards/' + id);
+    const docRef = databaseRef(database, `cards/${id}`);
     set(docRef, { ...dataRef.current, timeLeft: counter });
   }, [counter, isScratched])
 
@@ -39,7 +40,7 @@ export default function CardPage({ id, secret }: any) {
       const { user } = await signInAnonymously(auth);
 
       // update access
-      const userRef = databaseRef(database, `users/${user.uid}/access/${id}`);
+      const userRef = databaseRef(database, `users/${user.uid}/${id}`);
       await set(userRef, accessToken);
 
       // connect with database
@@ -47,12 +48,12 @@ export default function CardPage({ id, secret }: any) {
       let data = await get(docRef).then(snap => snap.val());      
 
       // obtain keys && data
-      let keys = await deriveKeys(secret, data.importAlgorithm, data.encryptAlgorithm, new Uint8Array(data.salt))
+      keysRef.current = await deriveKeys(secret, data.importAlgorithm, data.encryptAlgorithm, new Uint8Array(data.salt))
       dataRef.current = data, setCounter(data.timeLeft)
       
       getBytes(storageRef(storage, `cards/${id}`)).then(async encrypted => {
         // decrypt the image
-        let image = await decryptData(keys.encryptKey, new Uint8Array(data.iv), encrypted);
+        let image = await decryptData(keysRef.current!.encryptKey, new Uint8Array(data.iv), encrypted);
         // set the image to rerender scratch
         setImage(new Blob([image]));
       });  
@@ -77,7 +78,13 @@ export default function CardPage({ id, secret }: any) {
         </Indicator>
       </div>
     </div>
-    <ReplyTextfield/>
+    <ReplyTextfield onReply={async (reply: string) => {
+      console.log(keysRef.current!.encryptKey, new TextEncoder().encode(reply).buffer, dataRef.current!.iv)
+      const encrypted = await encryptData(keysRef.current!.encryptKey, new TextEncoder().encode(reply).buffer, new Uint8Array(dataRef.current!.iv))
+
+      const docRef = databaseRef(database, `cards/${id}`);
+      set(docRef, { ...dataRef.current, replies: [...(dataRef.current!.replies ?? []), new Uint8Array(encrypted.data)] })
+    }}/>
   </div>
 }
 
@@ -86,7 +93,7 @@ import { auth, database, storage } from '../lib/firebase';
 
 import { ref as databaseRef, get, set } from "firebase/database";
 import { ref as storageRef, deleteObject, getBytes } from "firebase/storage";
-import { decryptData, deriveKeys, obtainAccessToken } from '../lib/crypto';
+import { decryptData, deriveKeys, encryptData, obtainAccessToken } from '../lib/crypto';
 import { signInAnonymously, signInWithCustomToken } from 'firebase/auth';
 import Background from '../lib/elements/background';
 import Indicator from '../lib/elements/indicator';

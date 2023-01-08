@@ -2,7 +2,6 @@ import React, { useEffect, useRef, forwardRef, ForwardedRef, useState }  from 'r
 import * as StackBlur from 'stackblur-canvas';
 
 import styles from '/styles/scratch.module.css'
-import { themeColors } from '../backgrounds/import';
 import SpoilerNoise from './spoilerNoise';
 
 type PointerEvent = { mouse?: MouseEvent, touch?: TouchEvent }

@@ -104,11 +104,12 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
             // get database referenses
             const imageRef = storageRef (storage,  `cards/${data.id}`);
             const docRef   = databaseRef(database, `cards/${data.id}`);
-            const userRef  = databaseRef(database, `users/${user.uid}/owned/${data.id}`);
+            const userRef  = databaseRef(database, `users/${user.uid}/${data.id}`);
 
             // log new owned skribo && save secret locally
             set(userRef, data.accessToken)
             localStorage.setItem(data.id, data.secret);
+            localStorage.setItem('owned', (localStorage.getItem('owned') ? localStorage.getItem('owned') + '/' : '') + data.id);
       
             if (data.blob) await uploadBytes(imageRef, data.blob)
 
@@ -123,6 +124,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
               timeLeft: timer,
               timeAssigned: timer,
               theme,
+              owner: user.uid,
             });
             onClose();
             setShareLink({ link: window.origin + '/' + data.id + data.secret, theme })

@@ -10,13 +10,13 @@ type Argorithm = {
 const importAlgorithm: Argorithm = { name: 'HKDF', hash: 'SHA-256' }
 const encryptAlgorithm: Argorithm = { name: 'AES-GCM', length: 256 }
 
-function deserialize(data: string) {
+export function deserialize(data: string) {
   let array = new Uint8Array(data.length);
   Array.from(data).forEach((char, i) => array[i] = characters.indexOf(char))
   return array;
 }
 
-function serialize(data: Uint8Array) {
+export function serialize(data: Uint8Array) {
   let string = '';
   data.forEach(num => string += characters[num % 64]);
   return string;
