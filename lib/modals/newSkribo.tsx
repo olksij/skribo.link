@@ -22,9 +22,11 @@ import { signInAnonymously } from "firebase/auth";
 export default function NewSkriboModal({ image, setImage, text, setText, setShareLink }: any) {
   const [timer, setTimer] = useState<number>(30);
   const [theme, setTheme] = useState<number>(0);
+  const [label, setLabel] = useState<string | null>(null);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [textModalOpen, setTextModalOpen] = useState<boolean>(false);
+  const [labelModalOpen, setLabelModalOpen] = useState<boolean>(false);
 
   let isOpen = image || text;
 
@@ -57,6 +59,10 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
     <p style={ text ? selectedImageButton : buttonCapton } className={ text ? textFont.className : displayFont.className }>{ text ?? "Write caption" }</p>
   </Tapable>
 
+  const labelButton = <Tapable onTap={ () => setLabelModalOpen(true) } onRemove={ label && (() => setLabel(null)) } icon='/labelIcon.svg' gap='8px' height="56px">
+    <p style={ label ? selectedImageButton : buttonCapton } className={ label ? textFont.className : displayFont.className }>{ label ?? "Label Skribo" }</p>
+  </Tapable>
+
   const selfDestructButton = <Tapable icon='/fireIcon.svg' gap='8px' height="56px" onTap={() => setTimer(timers[(timers.indexOf(timer) + 1) % timers.length])}>
     <p style={{ ...buttonCapton, width: '100%' }} className={ displayFont.className }>Self-destruct timer</p>
     <p style={ cardProperty } className={ textFont.className }>{timer + 's'}</p>
@@ -70,16 +76,18 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
       <Sheet.Content style={{ padding: '0 24px', flexDirection: 'column', gap: '20px' }}>
         <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
           <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" background="#0000"/>
-          <p style={{ fontSize: '24px' }} className={ displayFont.className }>New skribo</p>
+          <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>New skribo</p>
           <div style={{ width: "48px" }}/>
         </div>
         <Card separators>{[ imageButton, textButton ]}</Card>
+        <Card>{ labelButton }</Card>
         <Card>{ selfDestructButton }</Card>
         <Card header={{ icon: '/themeIcon.svg', title: 'Color theme' }} innerStyle={{ padding: 12, gap: 8, flexDirection: 'row' }}>
           { themes.map(id => <ThemesWidget key={id} id={id} theme={theme} setTheme={setTheme}/> )}
         </Card>
 
         <TextModal isOpen={textModalOpen} onClose={() => setTextModalOpen(false)} text={text} setText={setText} />
+        <TextModal isOpen={labelModalOpen} onClose={() => setLabelModalOpen(false)} text={label} setText={setLabel} />
 
         <Card outerStyle={{ position: 'fixed', bottom: '0px', left: '24px', right: '24px', marginBottom: '24px' }}>
           <Tapable height="56px" background='#2C2A33' justifyContent='center' onTap={ async () => {
@@ -125,6 +133,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
               timeAssigned: timer,
               theme,
               owner: user.uid,
+              label
             });
             onClose();
             setShareLink({ link: window.origin + '/' + data.id + data.secret, theme })

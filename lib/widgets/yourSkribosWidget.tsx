@@ -4,44 +4,49 @@ import MarkdownModal from '../modals/markdown';
 import { useEffect, useRef, useState } from 'react';
 import { signInAnonymously } from 'firebase/auth';
 import { get, ref as databaseRef } from 'firebase/database';
-import { auth, database } from '../firebase';
+import { auth, database, storage } from '../firebase';
 import Card from '../elements/card';
 import YourSkribosModal from '../modals/yourSkribos';
 import Tapable from '../elements/tapable';
 import { deriveKeys, decryptData } from '../crypto';
+import Indicator from '../elements/indicator';
+import { getBytes, ref as storageRef } from 'firebase/storage';
 
 export default function YourSkribosWidget() {
   const [modal, setModal] = useState(false);
-  const [replies, setReplies] = useState<Record<string, string[]> | null>(null);
+  const [skribos, setSkribos] = useState<Record<string, any> | null>(null);
   const [counter, setCounter] = useState<number | null>(null);
-
-  const currKeys = useRef<Record<string, any>>({});
   
   useEffect(() => {
     signInAnonymously(auth).then(async ({ user }) => {
       const owned = localStorage.getItem('owned')?.split('/') ?? []
-      let currReplies: Record<string, string[]> = {};
+      let currSkribos: Record<string, string[]> = {};
       let currCount:   number = 0;
 
       for (let id of owned) {
         if (!localStorage.getItem(id)) return;
         const docRef = databaseRef(database, `cards/${id}`);
-        let data = await get(docRef).then(snap => snap.val());      
+        let data = await get(docRef).then(snap => snap.val()); 
   
         let keys = await deriveKeys(localStorage.getItem(id)!, data.importAlgorithm, data.encryptAlgorithm, new Uint8Array(data.salt))
         
-        currReplies[id] = [];
-        for (let encrypted of data.replies)
-          await decryptData(keys.encryptKey, new Uint8Array(data.iv), new Uint8Array(encrypted).buffer)
-          .then(buffer => currReplies[id].push(new TextDecoder().decode(buffer)));
+        let decryptedReplies: string[] = [];
+        if (data.replies) for (let reply of data.replies) {
+          await decryptData(keys.encryptKey, new Uint8Array(data.iv), new Uint8Array(reply.text).buffer)
+          .then(buffer => decryptedReplies.push({ ...reply, text: new TextDecoder().decode(buffer) }));
+        }
+        data.replies = decryptedReplies;
+
+        await getBytes(storageRef(storage, `cards/${id}`)).then(async encrypted => {
+          data.image = await decryptData(keys.encryptKey, new Uint8Array(data.iv), encrypted);
+        }).catch();  
         
-        currCount += currReplies[id]?.length ?? 0;
-        currKeys.current[id] = keys;
+        currCount += data.replies.length;
+        currSkribos[id] = data;
       }
 
       setCounter(currCount);
-      setReplies(currReplies)
-      console.log(currReplies)
+      setSkribos(currSkribos)
     })
   }, [])
 
@@ -50,11 +55,13 @@ export default function YourSkribosWidget() {
       <div onClick={() => setModal(true)} style={{ flexDirection: 'row' }}>
         <div style={{ flexDirection: 'column', width: '100%', gap: 4, padding: '20px 24px', color: 'white'}}>
           <p style={{ ...displayFont.style, fontSize: 22, margin: 0 }}>Your Skribos</p>
-          <p style={{ ...textFont.style, fontSize: 12, margin: 0, opacity: .75 }}>{ replies != null ? `${counter} new replies` : 'Loading' }</p>
+          <p style={{ ...textFont.style, fontSize: 12, margin: 0, opacity: .75 }}>{ skribos != null ? `${counter} new replies` : 'Loading' }</p>
         </div>
-        <div>hh</div>
+        <div style={{ alignItems: 'center', justifyContent: 'center', width: 128, height: '100%' }}>
+          { skribos ? "hh" : <Indicator foreground={true} value={null}/> }
+        </div>
       </div>
     </Card>
-    <YourSkribosModal replies={replies} keys={currKeys.current} isOpen={modal} onClose={() => setModal(false)} />
+    <YourSkribosModal skribos={skribos} isOpen={modal} onClose={() => setModal(false)} />
   </>
 }

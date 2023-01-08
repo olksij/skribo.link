@@ -12,16 +12,16 @@ export default function MarkdownModal({ data, onClose }: any) {
   return <Sheet rootId='__next' isOpen={data != null} onClose={onClose}>
   <Sheet.Container style={{ background: '#EBEBF0' }}>
     <Sheet.Header />
-    <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
+    <Sheet.Content disableDrag={true} style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
       <div style={{ alignItems: 'center', justifyContent: 'center', height: '48px', width: '100%' }}>
-        <p style={{ fontSize: '24px' }} className={ displayFont.className }>{data && data[0]}</p>
+        <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>{data && data[0]}</p>
       </div>
       <ReactMarkdown className={[textFont.className, styles.container].join(' ')}> 
         {data && data[1].slice(data[1].indexOf('\n')+1)}
       </ReactMarkdown>
       <div style={copyrightContainer}>
         <img style={{ height: '16px' }} src='/copyrightIcon.svg'/>
-        <p style={{ margin: 0 }} className={textFont.className}>2022 Oleksii Besida</p>
+        <p className={textFont.className}>2022 Oleksii Besida</p>
       </div>
     </Sheet.Content>
   </Sheet.Container>

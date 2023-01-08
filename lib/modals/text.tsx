@@ -20,7 +20,7 @@ export default function TextModal({ isOpen, text, setText, onClose }: any) {
     <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
         <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" background="#0000"/>
-        <p style={{ fontSize: '24px' }} className={ displayFont.className }>Write caption</p>
+        <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>Write caption</p>
         <div style={{ width: "48px" }}/>
       </div>
       <Card innerStyle={{ height: '100%' }}>

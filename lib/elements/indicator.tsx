@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useRef } from 'react';
 
-export default function Indicator({ value, foreground, children }: { value: number | null, foreground: boolean, children: any }) {
+export default function Indicator({ value, foreground, children }: { value: number | null, foreground: boolean, children?: any }) {
   const renderer = useRef<boolean>(false);
   const infinite = useRef<boolean>(value ? false : true);
   const lastTime = useRef<number>(performance.now());
@@ -8,14 +8,14 @@ export default function Indicator({ value, foreground, children }: { value: numb
   const spinner = useRef<SVGCircleElement>(null);
 
   const render = (time: number) => {
-    if (!infinite.current) {
+    if (!infinite.current || !spinner.current) {
       renderer.current = false;
       return;
     }
     renderer.current = true;
     const passed = time - lastTime.current;
 
-    spinner.current!.style.transform = `rotate(${360 * passed / 1000 % 360}deg)`;
+    spinner.current.style.transform = `rotate(${360 * passed / 1000 % 360}deg)`;
 
     requestAnimationFrame(render)
   }
@@ -24,9 +24,12 @@ export default function Indicator({ value, foreground, children }: { value: numb
     if (!renderer.current && !value) requestAnimationFrame(render);
     if (value) {
       infinite.current = false;
-      spinner.current!.style.transition = `all 1s cubic-bezier(.5, .5, 0, 1), stroke 0s`;
-      spinner.current!.style.transform = `rotate(360deg)`;
-      spinner.current!.style.strokeDasharray = value*88%89 + ', 88';
+
+      if (spinner.current) {
+        spinner.current!.style.transition = `all 1s cubic-bezier(.5, .5, 0, 1), stroke 0s`;
+        spinner.current!.style.transform = `rotate(360deg)`;
+        spinner.current!.style.strokeDasharray = value*88%89 + ', 88';
+      }
     }
   })
   

@@ -2,6 +2,9 @@
   --text: #2C2A33;
   --textOpacity: #2C2A33CC;
   --textTint: #2C2A3310;
+
+  --secondary: #2C2A3388;
+
   --accent: #675CE5;
   --accentTint: #675CE510;
   --shadow: 
@@ -30,6 +33,10 @@ body {
 
 *:not(.react-modal-sheet-container):not(svg *) {
   transition: .3s cubic-bezier(.5, 0, 0, 1);
+}
+
+p {
+  margin: 0;
 }
 
 .grecaptcha-badge { 

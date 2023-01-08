@@ -79,11 +79,10 @@ export default function CardPage({ id, secret }: any) {
       </div>
     </div>
     <ReplyTextfield onReply={async (reply: string) => {
-      console.log(keysRef.current!.encryptKey, new TextEncoder().encode(reply).buffer, dataRef.current!.iv)
       const encrypted = await encryptData(keysRef.current!.encryptKey, new TextEncoder().encode(reply).buffer, new Uint8Array(dataRef.current!.iv))
 
       const docRef = databaseRef(database, `cards/${id}`);
-      set(docRef, { ...dataRef.current, replies: [...(dataRef.current!.replies ?? []), new Uint8Array(encrypted.data)] })
+      set(docRef, { ...dataRef.current, replies: [...(dataRef.current!.replies ?? []), { text: new Uint8Array(encrypted.data), time: Date.now() }]})
     }}/>
   </div>
 }

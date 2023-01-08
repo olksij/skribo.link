@@ -124,7 +124,7 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
     <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
         <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" background="#0000"/>
-        <p style={{ fontSize: '24px' }} className={ displayFont.className }>Share skribo</p>
+        <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>Share skribo</p>
         <div style={{ width: "48px" }}/>
       </div>
       <Card innerStyle={{ boxShadow: 'none' }} outerStyle={{ height: '100%' }}>

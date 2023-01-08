@@ -4,14 +4,14 @@ import styles from "../../styles/tapable.module.css";
 export default function Tapable(props: any) {
   const ref = useRef<HTMLDivElement>(null);
 
-  let { icon, children, onTap, onRemove } = props;
+  let { icon, children, onTap, onRemove, style } = props;
 
   const get = () => ref.current!.classList;
 
   const press   = () => get().add(styles.active);
   const release = () => setTimeout(() => get().remove(styles.active), 200);
 
-  return <div ref={ref} className={styles.container} style={ props } 
+  return <div ref={ref} className={styles.container} style={{ ...style, ...props }} 
       onMouseDown={press} onMouseUp={release} onTouchStart={press} onTouchEnd={release}
       onClick={onTap}
       onMouseEnter={() => get().add(styles.hover)} onMouseLeave={() => get().remove(styles.hover)}>
