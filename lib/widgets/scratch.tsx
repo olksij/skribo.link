@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, forwardRef, ForwardedRef, useState }  from 'react';
-import * as StackBlur from 'stackblur-canvas';
 
 import styles from '/styles/scratch.module.css'
 import SpoilerNoise from './spoilerNoise';
@@ -11,6 +10,8 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
   let foregroundRef = useRef<HTMLCanvasElement>(null);
   let backgroundRef = useRef<HTMLCanvasElement>(null);
 
+  let blurWorker = useRef<Worker | null>(null);
+
   let defined = useRef<boolean>(false);
 
   let [_isScratched, _setScratched] = useState<boolean>(false);
@@ -18,10 +19,13 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
   // stores records for mouse and touch pointers
   let position  = useRef<Record<string, { x: number, y: number }>>({})
 
+  useEffect(() => {
+    blurWorker.current = new Worker(new URL('../components/blurImage.ts', import.meta.url))
+  }, [])
+
   const defineCanvas = async () => {
     defined.current = true;
-    let bitmap = await createImageBitmap(image!),
-        imgElement  = document.createElement('img');
+    let imgElement  = document.createElement('img');
         imgElement.src = URL.createObjectURL(image!);
     
     await new Promise(resolve => imgElement.onload = resolve);
@@ -32,9 +36,12 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
     const bgContext = background.getContext("2d")!;
     const fgContext = foreground.getContext("2d")!;
 
+    const cWidth  = innerWidth  * devicePixelRatio,
+          cHeight = innerHeight * devicePixelRatio;
+
     // update width of canvas so it fills the screen
-    background.width  = innerWidth,  foreground.width  = innerWidth;
-    background.height = innerHeight, foreground.height = innerHeight;
+    background.width  = cWidth,  foreground.width  = cWidth;
+    background.height = cHeight, foreground.height = cHeight;
 
     // register events for the canvas
     new Array<[string, (e: any) => any]>(
@@ -49,29 +56,37 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
     // add listeners
     ).forEach(listener => foreground.addEventListener(...listener));
     
-    bgContext.drawImage(bitmap, 0, 0, innerWidth, innerHeight)
-    StackBlur.canvasRGB(background, 0, 0, innerWidth, innerHeight, Math.round(Math.min(innerWidth, innerHeight)/4));
+    bgContext.drawImage(imgElement, 0, 0, cWidth, cHeight)
+    blurWorker.current!.postMessage(bgContext.getImageData(0, 0, cWidth, cHeight))
+    await new Promise<MessageEvent>(r => blurWorker.current!.onmessage = r).then(e => {bgContext.putImageData(e.data, 0, 0), console.log('!!!')}) 
 
     bgContext.fillStyle = '#0002';
-    bgContext.fillRect(0, 0, innerWidth, innerHeight)
+    bgContext.fillRect(0, 0, cWidth, cHeight)
+
+    let aspectRatio = imgElement.naturalWidth / imgElement.naturalHeight,
+        screenRatio = innerWidth / cHeight, imageWidth, imageHeight;
+
+    aspectRatio > screenRatio // image is wider
+      ? (imageWidth  = cWidth,  imageHeight = imageWidth  / aspectRatio)
+      : (imageHeight = cHeight, imageWidth  = imageHeight * aspectRatio);
 
     // fill the canvas with a 🖼️ cover
-    let imageHeight = imgElement.naturalHeight / imgElement.naturalWidth * innerWidth;
-    bgContext.drawImage(bitmap, 0, innerHeight / 2 - imageHeight / 2, innerWidth, imageHeight)
+    bgContext.drawImage(imgElement, cWidth / 2 - imageWidth / 2, cHeight / 2 - imageHeight / 2, imageWidth, imageHeight)
     fgContext.strokeStyle = fgContext.createPattern(background, 'no-repeat')!  
-    StackBlur.canvasRGB(background, 0, 0, innerWidth, innerHeight, Math.round(Math.min(innerWidth, innerHeight)/5));
+    blurWorker.current!.postMessage(bgContext.getImageData(0, 0, cWidth, cHeight))
+    await new Promise<MessageEvent>(r => blurWorker.current!.onmessage = r).then(e => {bgContext.putImageData(e.data, 0, 0), console.log('!!!')}) 
     
     // decide UI foreground based on pixel color
-    let topPixel = bgContext.getImageData(innerWidth/2, 0, innerWidth/2+1, 1).data;
+    let topPixel = bgContext.getImageData(cWidth/2, 0, cWidth/2+1, 1).data;
     setForeground((topPixel[0] + topPixel[1] + topPixel[2]) / 3 < 128);
 
     background.animate(
       [{ opacity: 0 }, { opacity: 1 }],
       { duration: 600, easing: 'cubic-bezier(0.5, 0, 0, 1)' }
-    )
+    ), background.style.opacity = '1';
 
     // setup scratch brush
-    fgContext.lineWidth = innerWidth/15;
+    fgContext.lineWidth = Math.sqrt(cWidth * cHeight)/10;
     fgContext.lineJoin = "round";  
   }
 
@@ -88,11 +103,12 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
       if (!position.current[point.identifier]) return;
       setScratched(true), _setScratched(true);
 
-      let refPosition = position.current[point.identifier];
+      let refPosition = position.current[point.identifier],
+          rt = devicePixelRatio;
       
       context.beginPath();
-      context.moveTo(refPosition.x, refPosition.y);
-      context.lineTo(point.clientX + .1, point.clientY + .1);
+      context.moveTo(refPosition.x * rt, refPosition.y * rt);
+      context.lineTo(point.clientX * rt + .1, point.clientY * rt + .1);
       context.closePath();
       context.stroke();
   
@@ -115,8 +131,8 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
     array(event).forEach(({ identifier }) => delete position.current[identifier])}
 
   return <div style={{ width: '100%' }}>
-    <canvas style={{ borderRadius: _isScratched ? 0 : 12 }} className={styles.canvas} ref={backgroundRef}/>
-    <SpoilerNoise style={{ opacity: image ? 1 : 0, background: _isScratched ? '#0000' : '#0003', borderRadius: _isScratched ? 0 : 12 }}/>
+    <canvas style={{ borderRadius: _isScratched ? 0 : 16, opacity: 0 }} className={styles.canvas} ref={backgroundRef}/>
+    <SpoilerNoise style={{ opacity: image ? 1 : 0, background: _isScratched ? '#0000' : '#0003', borderRadius: _isScratched ? 0 : 16 }}/>
     <canvas className={styles.canvas} ref={foregroundRef}/>
   </div>;
 };

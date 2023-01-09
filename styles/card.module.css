@@ -30,6 +30,10 @@
   place-self: center;
   display: flex;
   backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .scratchNote > p, .loadingNote > p {
@@ -44,13 +48,11 @@
   width: 100%;
   height: 100%;
   position: absolute;
-  mix-blend-mode: overlay;
 }
 
 
 .scratchNote::before {
   background: #0003;
-  mix-blend-mode: normal;
 }
 
 .scratchNote > p {
@@ -58,46 +60,38 @@
 }
 
 .loadingNote::before {
-  background: #BBB;
-  box-shadow: var(--shadow);
+  background: #FFF6;
+  box-shadow: var(--shadowNormal);
 }
 
 .content {
-  position: relative;
-  margin: 80px 24px 104px;
   width: 100%;
+  height: 100%;
   display: flex;
   border-radius: 16px;
   transition: .6s cubic-bezier(0.5, 0, 0, 1);
 }
 
 .content.fullscreen {
-  margin: 0px;
-}
-
-.content::before {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  content: '';
-  transition: .3s ease-in-out;
-}
-
-.content.fullscreen::before {
-  opacity: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .content::after {
   position: absolute;
-  background: #8E8EAD;
-  mix-blend-mode: overlay;
+  background: #FFF1;
   width: 100%;
   height: 100%;
   content: '';
-  border-radius: 12px;
-  box-shadow: var(--shadow);
+  border-radius: 16px;
+  box-shadow: var(--shadowNormal);
   pointer-events: none;
   transition: .3s ease-in-out;
+  z-index: -1;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .content.fullscreen::after {

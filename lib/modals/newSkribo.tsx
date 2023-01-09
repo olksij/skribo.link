@@ -145,7 +145,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
               timeAssigned: timer,
               theme,
               owner: user.uid,
-              label: title
+              title: title
             });
             onClose();
             setShareLink({ link: window.origin + '/' + data.id + data.secret, theme })

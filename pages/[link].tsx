@@ -60,21 +60,35 @@ export default function CardPage({ id, secret }: any) {
     });
   }, []);
 
+  useEffect(() => {
+    if (isScratched && image) {
+      document.getElementById('metaModalColor')?.setAttribute('name', 'theme-color');
+      document.getElementById('metaThemeColor')?.setAttribute('name', '');
+    }
+    else {
+      document.getElementById('metaThemeColor')?.setAttribute('name', 'theme-color');
+      document.getElementById('metaModalColor')?.setAttribute('name', '');
+    }
+  }, [isScratched, image])
+
   return <div className={styles.container}>
     <Background id={0}/>
     <Background id={dataRef.current?.theme}/>
-    <div className={styles.content + ' ' + (isScratched && styles.fullscreen)}>
-      <Scratch theme={dataRef.current?.theme} image={image} setScratched={setScratched} setForeground={setForeground}/>
+    <div style={{ position: 'fixed', left: 24, right: 24, top: 80, bottom: 96, flexDirection: 'column', ...(isScratched ? { left: 0, right: 0, top: 0, bottom: 0 } : {}) }}>
+      <p style={{ lineHeight: dataRef.current?.title && !isScratched ? '24px' : '0px', margin: 'auto', ...textFont.style, opacity: .5, paddingBottom: dataRef.current?.title && !isScratched ? 16 : 0 }}>{dataRef.current?.title ?? ''}</p>
+      <div className={styles.content + ' ' + (isScratched && styles.fullscreen)}>
+        <Scratch theme={dataRef.current?.theme} image={image} setScratched={setScratched} setForeground={setForeground}/>
+        { note && <div className={ image ? styles.scratchNote : styles.loadingNote }>
+          <p className={displayFont.className}>{note}</p>
+        </div> }
+      </div>
     </div>
-    { note && <div className={ image ? styles.scratchNote : styles.loadingNote }>
-      <p className={displayFont.className}>{note}</p>
-    </div> }
     <div className={styles.topBar}>
       <img onClick={() => location.href = '/'} src={foreground && isScratched ? '/logoLight.svg' : '/logo.svg'}/>
       <div style={{  alignItems: 'center', gap: 16 }}>
         <Counter value={ counter ?? 0 } style={{ ...textFont.style, opacity: counter ? 1 : 0, transition: '.3s cubic-bezier(0, 0, 0, 1)', color: foreground && isScratched ? '#FFF' : '#000', margin: 0 }} />
         <Indicator value={counter && dataRef.current ? counter / dataRef.current.timeAssigned : null} foreground={isScratched && foreground}>
-          <img style={{ position: 'absolute', padding: 9, opacity: counter ? 1 : 0, height: 14, transition: '1s cubic-bezier(.5, 0, 0, 1)' }} src='/fireFilled.svg'/>
+          <img style={{ position: 'absolute', padding: 9, opacity: counter ? 1 : 0, height: 14, transition: '1s cubic-bezier(.5, 0, 0, 1)' }} src={foreground && isScratched ? '/fireFilledLight.svg' : '/fireFilled.svg'}/>
         </Indicator>
       </div>
     </div>
