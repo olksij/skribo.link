@@ -39,7 +39,7 @@ export default function YourSkribosWidget() {
 
         await getBytes(storageRef(storage, `cards/${id}`)).then(async encrypted => {
           data.image = await decryptData(keys.encryptKey, new Uint8Array(data.iv), encrypted);
-        }).catch();  
+        }).catch(() => {});  
         
         currCount += data.replies.length;
         currSkribos[id] = data;

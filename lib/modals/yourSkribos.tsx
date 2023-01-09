@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 
 import Sheet from 'react-modal-sheet';
@@ -6,6 +7,17 @@ import Card from "../elements/card";
 import Tapable from "../elements/tapable";
 
 export default function YourSkribosModal({ isOpen, onClose, skribos }: { isOpen: any, onClose: any, skribos: Record<string, Record<string, any>> | null}) {
+  useEffect(() => {
+    if (isOpen) {
+      document.getElementById('metaModalColor')?.setAttribute('name', 'theme-color');
+      document.getElementById('metaThemeColor')?.setAttribute('name', '');
+    }
+    else {
+      document.getElementById('metaThemeColor')?.setAttribute('name', 'theme-color');
+      document.getElementById('metaModalColor')?.setAttribute('name', '');
+    }
+  }, [isOpen])
+
   return <Sheet snapPoints={[.5]} initialSnap={0} rootId='__next' isOpen={isOpen} onClose={onClose}>
   <Sheet.Container style={{ background: '#EBEBF0' }}>
     <Sheet.Header />
@@ -16,9 +28,11 @@ export default function YourSkribosModal({ isOpen, onClose, skribos }: { isOpen:
         <div style={{ width: "48px" }}/>
       </div>
       { skribos ? (Object.keys(skribos).length ? Object.keys(skribos).map(id => {
+        let skribo = skribos[id];
+        let image = skribo.image ? URL.createObjectURL(new Blob([skribo.image])) : null;
         return <Card key={id}>
           <Tapable onClick={() => {}} style={{ flexDirection: 'row', padding: 12, gap: 16 }}>
-            <img style={{ width: 56, height: 72, objectFit: 'cover', borderRadius: 4 }} src={URL.createObjectURL(new Blob([skribos[id].image]))}/>
+            <img style={{ minWidth: 56, height: 72, borderRadius: 4, objectFit: image ? 'cover' : 'contain', padding: image ? 0 : 16, boxSizing: 'border-box', background: 'var(--textDisabled)', opacity: image ? 1 : .25 }} src={image ?? '/fireIcon.svg'}/> 
             <div style={{ flexDirection: 'column', justifyContent: 'center', gap: 4, width: '100%' }}>
               <p style={{ ...displayFont.style, fontSize: 20, color: 'var(--text)' }}>{skribos[id].label ?? 'No label'}</p>
               <p style={{ ...textFont.style, fontSize: 14, color: 'var(--secondary)' }}>{ skribos[id].replies.length } replies</p>
@@ -27,7 +41,7 @@ export default function YourSkribosModal({ isOpen, onClose, skribos }: { isOpen:
           </Tapable>
         </Card>
       }) : <p style={{ ...textFont.style, margin: 'auto', fontSize: 14, color: 'var(--secondary)' }}>No skribos yet</p>
-    ) : <p>Loading</p> }
+    ) : <p style={{ ...textFont.style, margin: 'auto', fontSize: 14, color: 'var(--secondary)' }}>Loading</p>}
     </Sheet.Content>
   </Sheet.Container>
 

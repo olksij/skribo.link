@@ -7,8 +7,20 @@ import { displayFont, textFont } from "../../pages/_app";
 
 import Card from "../elements/card";
 import Tapable from "../elements/tapable";
+import Head from "next/head";
 
 export default function MarkdownModal({ data, onClose }: any) {
+  useEffect(() => {
+    if (data != null) {
+      document.getElementById('metaModalColor')?.setAttribute('name', 'theme-color');
+      document.getElementById('metaThemeColor')?.setAttribute('name', '');
+    }
+    else {
+      document.getElementById('metaThemeColor')?.setAttribute('name', 'theme-color');
+      document.getElementById('metaModalColor')?.setAttribute('name', '');
+    }
+  }, [data])
+
   return <Sheet rootId='__next' isOpen={data != null} onClose={onClose}>
   <Sheet.Container style={{ background: '#EBEBF0' }}>
     <Sheet.Header />

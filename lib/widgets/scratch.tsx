@@ -106,9 +106,8 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
   useEffect(() => {
     if (image && !defined.current) defineCanvas()
     if (!image && defined.current) {
-      const canvas  = backgroundRef.current!;
-      const context = canvas.getContext("2d")!;
-      context.clearRect(0, 0, innerWidth, innerHeight); 
+      backgroundRef.current!.remove()
+      foregroundRef.current!.remove()
     }
   }, [image])
 

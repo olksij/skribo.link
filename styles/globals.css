@@ -1,6 +1,7 @@
 :root {
   --text: #2C2A33;
   --textOpacity: #2C2A33CC;
+  --textDisabled: #2C2A3344;
   --textTint: #2C2A3310;
 
   --secondary: #2C2A3388;
@@ -29,6 +30,7 @@ body {
   user-select: none;
   display: flex;
   position: relative;
+  -webkit-tap-highlight-color: transparent;
 }
 
 *:not(.react-modal-sheet-container):not(svg *) {

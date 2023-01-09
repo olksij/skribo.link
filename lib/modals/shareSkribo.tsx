@@ -8,6 +8,7 @@ import { displayFont, textFont } from "../../pages/_app";
 import Card from "../elements/card";
 import Tapable from "../elements/tapable";
 import loadImage from "../components/loadImage";
+import Head from "next/head";
 
 export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { link: string | undefined, theme: number | undefined, isOpen: boolean, onClose: () => void }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -117,6 +118,17 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
     renderId.current = Date.now(), renderCanvas(theme, link, renderId.current);
     addEventListener('resize', () => { renderId.current = Date.now(), renderCanvas(theme, link, renderId.current) });
   }, [theme, link])
+
+  useEffect(() => {
+    if (isOpen) {
+      document.getElementById('metaModalColor')?.setAttribute('name', 'theme-color');
+      document.getElementById('metaThemeColor')?.setAttribute('name', '');
+    }
+    else {
+      document.getElementById('metaThemeColor')?.setAttribute('name', 'theme-color');
+      document.getElementById('metaModalColor')?.setAttribute('name', '');
+    }
+  }, [isOpen])
 
   return <Sheet rootId='__next' isOpen={isOpen} onClose={onClose}>
   <Sheet.Container style={{ background: '#EBEBF0' }}>

@@ -18,20 +18,32 @@ import ThemeCard from "../elements/theme";
 import ThemesWidget from "../elements/theme";
 import loadImage from "../components/loadImage";
 import { signInAnonymously } from "firebase/auth";
+import Head from "next/head";
 
 export default function NewSkriboModal({ image, setImage, text, setText, setShareLink }: any) {
   const [timer, setTimer] = useState<number>(30);
   const [theme, setTheme] = useState<number>(0);
-  const [label, setLabel] = useState<string | null>(null);
+  const [title, setTitle] = useState<string | null>(null);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [textModalOpen, setTextModalOpen] = useState<boolean>(false);
-  const [labelModalOpen, setLabelModalOpen] = useState<boolean>(false);
+  const [titleModalOpen, setTitleModalOpen] = useState<boolean>(false);
 
   let isOpen = image || text;
 
   useEffect(() => {
     !isOpen && (setTextModalOpen(false), setLoading(false));
+  }, [isOpen])
+
+  useEffect(() => {
+    if (isOpen) {
+      document.getElementById('metaModalColor')?.setAttribute('name', 'theme-color');
+      document.getElementById('metaThemeColor')?.setAttribute('name', '');
+    }
+    else {
+      document.getElementById('metaThemeColor')?.setAttribute('name', 'theme-color');
+      document.getElementById('metaModalColor')?.setAttribute('name', '');
+    }
   }, [isOpen])
 
   const fileDialog = () => {
@@ -59,8 +71,8 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
     <p style={ text ? selectedImageButton : buttonCapton } className={ text ? textFont.className : displayFont.className }>{ text ?? "Write caption" }</p>
   </Tapable>
 
-  const labelButton = <Tapable onTap={ () => setLabelModalOpen(true) } onRemove={ label && (() => setLabel(null)) } icon='/labelIcon.svg' gap='8px' height="56px">
-    <p style={ label ? selectedImageButton : buttonCapton } className={ label ? textFont.className : displayFont.className }>{ label ?? "Label Skribo" }</p>
+  const titleButton = <Tapable onTap={ () => setTitleModalOpen(true) } onRemove={ title && (() => setTitle(null)) } icon='/titleIcon.svg' gap='8px' height="56px">
+    <p style={ title ? selectedImageButton : buttonCapton } className={ title ? textFont.className : displayFont.className }>{ title ?? "Title Skribo" }</p>
   </Tapable>
 
   const selfDestructButton = <Tapable icon='/fireIcon.svg' gap='8px' height="56px" onTap={() => setTimer(timers[(timers.indexOf(timer) + 1) % timers.length])}>
@@ -79,15 +91,15 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
           <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>New skribo</p>
           <div style={{ width: "48px" }}/>
         </div>
+        <Card>{ titleButton }</Card>
         <Card separators>{[ imageButton, textButton ]}</Card>
-        <Card>{ labelButton }</Card>
         <Card>{ selfDestructButton }</Card>
-        <Card header={{ icon: '/themeIcon.svg', title: 'Color theme' }} innerStyle={{ padding: 12, gap: 8, flexDirection: 'row' }}>
+        <Card header={{ icon: '/themeIcon.svg', title: 'Color theme' }} innerStyle={{ padding: 12, gap: 8, flexDirection: 'row', overflow: 'scroll' }}>
           { themes.map(id => <ThemesWidget key={id} id={id} theme={theme} setTheme={setTheme}/> )}
         </Card>
 
-        <TextModal isOpen={textModalOpen} onClose={() => setTextModalOpen(false)} text={text} setText={setText} />
-        <TextModal isOpen={labelModalOpen} onClose={() => setLabelModalOpen(false)} text={label} setText={setLabel} />
+        <TextModal title="Write caption" caption="The caption will be under your image and has to be scratched as well." isOpen={textModalOpen} onClose={() => setTextModalOpen(false)} text={text} setText={setText} />
+        <TextModal title="Write title" caption="Use title to introduce your Skribo before receiver will scratch it. For example, give them a hint what is in there or tell them to scratch it off in your own way :)" isOpen={titleModalOpen} onClose={() => setTitleModalOpen(false)} text={title} setText={setTitle} />
 
         <Card outerStyle={{ position: 'fixed', bottom: '0px', left: '24px', right: '24px', marginBottom: '24px' }}>
           <Tapable height="56px" background='#2C2A33' justifyContent='center' onTap={ async () => {
@@ -133,7 +145,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
               timeAssigned: timer,
               theme,
               owner: user.uid,
-              label
+              label: title
             });
             onClose();
             setShareLink({ link: window.origin + '/' + data.id + data.secret, theme })
@@ -149,7 +161,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
 }
 
 let timers = [5, 15, 30, 45, 60]
-let themes = [0, 1, 2, 3]
+let themes = [0, 1, 2, 3, 4, 5]
 
 let buttonCapton: CSSProperties = {
   color: `var(--text)`,
