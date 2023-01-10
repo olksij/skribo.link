@@ -135,7 +135,7 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
     <Sheet.Header />
     <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
-        <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" background="#0000"/>
+        <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" style={{ borderRadius: 12 }}/>
         <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>Share skribo</p>
         <div style={{ width: "48px" }}/>
       </div>
@@ -154,8 +154,8 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
           <p className={displayFont.className} style={buttonStyle}>Save QR-code</p>
         </Tapable>
       </Card>
-      <Card innerStyle={{ height: 56 }}>
-        <Tapable icon='/linkIcon.svg' background='#2C2A33' justifyContent='center' gap='8px' onTap={ () => {
+      <Card innerStyle={{ height: 56, background: 'var(--text)' }}>
+        <Tapable icon='/linkIcon.svg' justifyContent='center' gap='8px' onTap={ () => {
           navigator.clipboard.writeText(link!).then(function() {
             setCopyStatus(true);
           });       

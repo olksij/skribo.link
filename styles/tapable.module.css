@@ -1,26 +1,21 @@
 .container {
-  background: #FFFFFF;
   min-width: 48px;
   min-height: 48px;
   align-items: center;
   justify-content: start;
-  transition: .3s cubic-bezier(.5, 0, 0, 1);
   padding: 16px;
   box-sizing: border-box;
+  width: 100%;
 }
 
 .container, .container * {
   pointer-events: all !important;
 }
 
-.container>* {
-  transition: opacity .3s cubic-bezier(.5, 0, 0, 1);
+.box.active, .box.hover {
+  background: #00000009;
 }
 
-.container.active, .container.hover {
-  background: #F5F5F5;
-}
-
-.container.active>* {
+.box.active>* {
   opacity: .5;
 }

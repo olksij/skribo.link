@@ -31,7 +31,7 @@ export default function TextModal({ isOpen, text, setText, onClose, title, capti
     <Sheet.Header />
     <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
-        <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" background="#0000"/>
+        <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" style={{ borderRadius: 12 }}/>
         <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>{title}</p>
         <div style={{ width: "48px" }}/>
       </div>
@@ -39,8 +39,8 @@ export default function TextModal({ isOpen, text, setText, onClose, title, capti
       <Card outerStyle={{ height: '100%' }}>
         <textarea ref={ref} style={style} className={textFont.className}/>
       </Card>
-      <Card>
-        <Tapable background='#2C2A33' justifyContent='center' onTap={ () => { ref.current!.value && setText(ref.current!.value), onClose() }}>
+      <Card innerStyle={{ background: 'var(--text)' }}>
+        <Tapable justifyContent='center' onTap={ () => { ref.current!.value && setText(ref.current!.value), onClose() }}>
           <p className={displayFont.className} style={buttonStyle}>Save</p>
         </Tapable>
       </Card>
@@ -57,6 +57,7 @@ let style: CSSProperties = {
   fontSize: '16px',
   border: 'none',
   resize: 'none',
+  outline: 'none',
 }
 
 let buttonStyle: CSSProperties = {

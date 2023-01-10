@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useRef } from 'react';
 
-export default function Indicator({ value, foreground, children }: { value: number | null, foreground: boolean, children?: any }) {
+export default function Indicator({ value, foreground, children, style }: { value: number | null, foreground: boolean, children?: any, style?: CSSProperties }) {
   const renderer = useRef<boolean>(false);
   const infinite = useRef<boolean>(value ? false : true);
   const lastTime = useRef<number>(performance.now());
@@ -15,7 +15,7 @@ export default function Indicator({ value, foreground, children }: { value: numb
     renderer.current = true;
     const passed = time - lastTime.current;
 
-    spinner.current.style.transform = `rotate(${360 * passed / 1000 % 360}deg)`;
+    spinner.current.style.transform = `rotate(${450 * passed / 1000 % 360}deg)`;
 
     requestAnimationFrame(render)
   }
@@ -32,7 +32,7 @@ export default function Indicator({ value, foreground, children }: { value: numb
     }
   })
   
-  return <div>
+  return <div style={style}>
     { children }
     <svg style={styles.loader} viewBox="0 0 32 32">
       <circle style={{ ...styles.placeholder, stroke: foreground ? '#FFF' : '#000' }} cx="16" cy="16" r={value ? 14 : 12} fill="none"></circle>

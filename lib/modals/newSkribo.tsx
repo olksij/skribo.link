@@ -87,7 +87,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
       <Sheet.Header />
       <Sheet.Content style={{ padding: '0 24px', flexDirection: 'column', gap: '20px' }}>
         <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
-          <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" background="#0000"/>
+          <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" style={{ borderRadius: 12 }}/>
           <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>New skribo</p>
           <div style={{ width: "48px" }}/>
         </div>
@@ -101,8 +101,8 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
         <TextModal title="Write caption" caption="The caption will be under your image and has to be scratched as well." isOpen={textModalOpen} onClose={() => setTextModalOpen(false)} text={text} setText={setText} />
         <TextModal title="Write title" caption="Use title to introduce your Skribo before receiver will scratch it. For example, give them a hint what is in there or tell them to scratch it off in your own way :)" isOpen={titleModalOpen} onClose={() => setTitleModalOpen(false)} text={title} setText={setTitle} />
 
-        <Card outerStyle={{ position: 'fixed', bottom: '0px', left: '24px', right: '24px', marginBottom: '24px' }}>
-          <Tapable height="56px" background='#2C2A33' justifyContent='center' onTap={ async () => {
+        <Card outerStyle={{ position: 'fixed', bottom: '0px', left: '24px', right: '24px', marginBottom: '24px' }} innerStyle={{ background: '#2C2A33' }}>
+          <Tapable height="56px" justifyContent='center' onTap={ async () => {
             setLoading(true);
             
             const canvas = document.createElement('canvas');

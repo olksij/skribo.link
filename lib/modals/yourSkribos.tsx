@@ -23,7 +23,7 @@ export default function YourSkribosModal({ isOpen, onClose, skribos }: { isOpen:
     <Sheet.Header />
     <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '16px' }}>
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
-        <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" background="#0000"/>
+        <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" style={{ borderRadius: 12 }}/>
         <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>Your Skribos</p>
         <div style={{ width: "48px" }}/>
       </div>
@@ -32,7 +32,7 @@ export default function YourSkribosModal({ isOpen, onClose, skribos }: { isOpen:
         let image = skribo.image ? URL.createObjectURL(new Blob([skribo.image])) : null;
         return <Card key={id}>
           <Tapable onClick={() => {}} style={{ flexDirection: 'row', padding: 12, gap: 16 }}>
-            <img style={{ minWidth: 56, height: 72, borderRadius: 4, objectFit: image ? 'cover' : 'contain', padding: image ? 0 : 16, boxSizing: 'border-box', background: 'var(--textDisabled)', opacity: image ? 1 : .25 }} src={image ?? '/fireIcon.svg'}/> 
+            <img style={{ minWidth: 56, maxWidth: 56, height: 72, borderRadius: 4, objectFit: image ? 'cover' : 'contain', padding: image ? 0 : 16, boxSizing: 'border-box', background: 'var(--textDisabled)', opacity: image ? 1 : .25 }} src={image ?? '/fireIcon.svg'}/> 
             <div style={{ flexDirection: 'column', justifyContent: 'center', gap: 4, width: '100%' }}>
               <p style={{ ...displayFont.style, fontSize: 20, color: 'var(--text)' }}>{skribos[id].label ?? 'No label'}</p>
               <p style={{ ...textFont.style, fontSize: 14, color: 'var(--secondary)' }}>{ skribos[id].replies.length } replies</p>
