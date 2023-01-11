@@ -17,8 +17,9 @@
   pointer-events: none;
 }
 
-.topBar > img {
+.topBar a {
   height: 36px;
+  pointer-events: all;
 }
 
 .counter {
@@ -29,8 +30,8 @@
   position: absolute;
   place-self: center;
   display: flex;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -90,8 +91,8 @@
   pointer-events: none;
   transition: .3s ease-in-out;
   z-index: -1;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .content.fullscreen::after {

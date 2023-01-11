@@ -84,7 +84,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
 
   const onClose = () => (setImage(null), setText(null));
 
-  return <Sheet rootId='__next' isOpen={isOpen} onClose={onClose}>
+  return <Sheet detent="content-height" rootId='__next' isOpen={isOpen} onClose={onClose}>
     <Sheet.Container style={{ background: '#EBEBF0' }}>
       <Sheet.Header />
       <Sheet.Content style={{ padding: '0 24px', flexDirection: 'column', gap: '20px' }}>
@@ -99,6 +99,8 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
         <Card header={{ icon: '/themeIcon.svg', title: 'Color theme' }} innerStyle={{ padding: 12, gap: 8, flexDirection: 'row', overflow: 'scroll' }}>
           { themes.map(id => <ThemesWidget key={id} id={id} theme={theme} setTheme={setTheme}/> )}
         </Card>
+
+        <div style={{ height: 80 }}/>
 
         <TextModal title="Write caption" caption="The caption will be under your image and has to be scratched as well." isOpen={textModalOpen} onClose={() => setTextModalOpen(false)} text={text} setText={setText} />
         <TextModal title="Write title" caption="Use title to introduce your Skribo before receiver will scratch it. For example, give them a hint what is in there or tell them to scratch it off in your own way :)" isOpen={titleModalOpen} onClose={() => setTitleModalOpen(false)} text={title} setText={setTitle} />
@@ -136,7 +138,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
             if (data.blob) await uploadBytes(imageRef, data.blob)
 
             set(docRef, {
-              created: Date.now(),
+              timeCreated: Date.now(),
               accessToken: data.accessToken,
               importAlgorithm: data.importAlgorithm,
               encryptAlgorithm: data.encryptAlgorithm,
@@ -147,7 +149,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
               timeAssigned: timer,
               theme,
               owner: user.uid,
-              title: title
+              title: title,
             });
             onClose();
             setShareLink({ link: window.origin + '/' + data.id + data.secret, theme })

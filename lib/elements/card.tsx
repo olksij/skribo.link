@@ -16,7 +16,7 @@ export default function Card(props: CardProps) {
   return <div style={{ ...styles.group, ...props.outerStyle }}>
     { /* header section */ }
     { props.header && <div style={{ ...styles.header }}>
-      <img src={ props.header.icon }/>
+      <img height={18} src={ props.header.icon }/>
       <p style={{ margin: '0', ...displayFont.style }}>{ props.header.title }</p>
     </div> }
     { /* content section */ }

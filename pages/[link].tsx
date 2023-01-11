@@ -56,7 +56,8 @@ export default function CardPage({ id, secret }: any) {
         let image = await decryptData(keysRef.current!.encryptKey, new Uint8Array(data.iv), encrypted);
         // set the image to rerender scratch
         setImage(new Blob([image]));
-      });  
+      });
+      set(docRef, { ...dataRef.current, lastTimeOpened: Date.now(), firstTimeOpened: dataRef.current?.firstTimeOpened ?? Date.now() })
     });
   }, []);
 
@@ -84,7 +85,7 @@ export default function CardPage({ id, secret }: any) {
       </div>
     </div>
     <div className={styles.topBar}>
-      <img onClick={() => location.href = '/'} src={foreground && isScratched ? '/logoLight.svg' : '/logo.svg'}/>
+      <Link href='/'><img onClick={() => location.href = '/'} src={foreground && isScratched ? '/logoLight.svg' : '/logo.svg'}/></Link>
       <div style={{  alignItems: 'center', gap: 16 }}>
         <Counter value={ counter ?? 0 } style={{ ...textFont.style, opacity: counter ? 1 : 0, transition: '.3s cubic-bezier(0, 0, 0, 1)', color: foreground && isScratched ? '#FFF' : '#000', margin: 0 }} />
         <Indicator value={counter && dataRef.current ? counter / dataRef.current.timeAssigned : null} foreground={isScratched && foreground}>
@@ -112,6 +113,7 @@ import Background from '../lib/elements/background';
 import Indicator from '../lib/elements/indicator';
 import Counter from '../lib/elements/counter';
 import ReplyTextfield from '../lib/elements/replyTextfield';
+import Link from 'next/link';
 
 // obtain cloud data on server during the request of the page
 export async function getServerSideProps(context: any) {

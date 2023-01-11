@@ -58,9 +58,9 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
     
     bgContext.drawImage(imgElement, 0, 0, cWidth, cHeight)
     blurWorker.current!.postMessage(bgContext.getImageData(0, 0, cWidth, cHeight))
-    await new Promise<MessageEvent>(r => blurWorker.current!.onmessage = r).then(e => {bgContext.putImageData(e.data, 0, 0), console.log('!!!')}) 
+    await new Promise<MessageEvent>(r => blurWorker.current!.onmessage = r).then(e => bgContext.putImageData(e.data, 0, 0)) 
 
-    bgContext.fillStyle = '#0002';
+    bgContext.fillStyle = '#FFF1';
     bgContext.fillRect(0, 0, cWidth, cHeight)
 
     let aspectRatio = imgElement.naturalWidth / imgElement.naturalHeight,
@@ -74,7 +74,7 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
     bgContext.drawImage(imgElement, cWidth / 2 - imageWidth / 2, cHeight / 2 - imageHeight / 2, imageWidth, imageHeight)
     fgContext.strokeStyle = fgContext.createPattern(background, 'no-repeat')!  
     blurWorker.current!.postMessage(bgContext.getImageData(0, 0, cWidth, cHeight))
-    await new Promise<MessageEvent>(r => blurWorker.current!.onmessage = r).then(e => {bgContext.putImageData(e.data, 0, 0), console.log('!!!')}) 
+    await new Promise<MessageEvent>(r => blurWorker.current!.onmessage = r).then(e => bgContext.putImageData(e.data, 0, 0)) 
     
     // decide UI foreground based on pixel color
     let topPixel = bgContext.getImageData(cWidth/2, 0, cWidth/2+1, 1).data;

@@ -1,12 +1,16 @@
 import Head from "next/head";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 
-import Sheet from 'react-modal-sheet';
+import Sheet, { SheetRef } from 'react-modal-sheet';
 import { displayFont, textFont } from "../../pages/_app";
 import Card from "../elements/card";
 import Tapable from "../elements/tapable";
+import SkriboDetails from "./detail";
 
 export default function YourSkribosModal({ isOpen, onClose, skribos }: { isOpen: any, onClose: any, skribos: Record<string, Record<string, any>> | null}) {
+  const ref = useRef<SheetRef>();
+  const [modal, setModal] = useState<Record<string, any> | null>(null);
+
   useEffect(() => {
     if (isOpen) {
       document.getElementById('metaModalColor')?.setAttribute('name', 'theme-color');
@@ -18,10 +22,10 @@ export default function YourSkribosModal({ isOpen, onClose, skribos }: { isOpen:
     }
   }, [isOpen])
 
-  return <Sheet snapPoints={[.5]} initialSnap={0} rootId='__next' isOpen={isOpen} onClose={onClose}>
+  return <Sheet ref={ref} detent='content-height' rootId='__next' isOpen={isOpen} onClose={onClose}>
   <Sheet.Container style={{ background: '#EBEBF0' }}>
     <Sheet.Header />
-    <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '16px' }}>
+    <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '16px', minHeight: 256 }}>
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
         <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" style={{ borderRadius: 12 }}/>
         <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>Your Skribos</p>
@@ -31,7 +35,7 @@ export default function YourSkribosModal({ isOpen, onClose, skribos }: { isOpen:
         let skribo = skribos[id];
         let image = skribo.image ? URL.createObjectURL(new Blob([skribo.image])) : null;
         return <Card key={id}>
-          <Tapable onClick={() => {}} style={{ flexDirection: 'row', padding: 12, gap: 16 }}>
+          <Tapable onTap={() => setModal(skribo)} style={{ flexDirection: 'row', padding: 12, gap: 16 }}>
             <img style={{ minWidth: 56, maxWidth: 56, height: 72, borderRadius: 4, objectFit: image ? 'cover' : 'contain', padding: image ? 0 : 16, boxSizing: 'border-box', background: 'var(--textDisabled)', opacity: image ? 1 : .25 }} src={image ?? '/fireIcon.svg'}/> 
             <div style={{ flexDirection: 'column', justifyContent: 'center', gap: 4, width: '100%' }}>
               <p style={{ ...displayFont.style, fontSize: 20, color: 'var(--text)' }}>{skribos[id].label ?? 'No label'}</p>
@@ -42,6 +46,8 @@ export default function YourSkribosModal({ isOpen, onClose, skribos }: { isOpen:
         </Card>
       }) : <p style={{ ...textFont.style, margin: 'auto', fontSize: 14, color: 'var(--secondary)' }}>No skribos yet</p>
     ) : <p style={{ ...textFont.style, margin: 'auto', fontSize: 14, color: 'var(--secondary)' }}>Loading</p>}
+
+    <SkriboDetails skribo={modal} onClose={() => setModal(null)}/>
     </Sheet.Content>
   </Sheet.Container>
 
