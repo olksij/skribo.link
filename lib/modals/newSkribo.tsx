@@ -77,7 +77,9 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
 
   const selfDestructButton = <Tapable icon='/fireIcon.svg' gap='8px' height="56px" onTap={() => setTimer(timers[(timers.indexOf(timer) + 1) % timers.length])}>
     <p style={{ ...buttonCapton, width: '100%' }} className={ displayFont.className }>Self-destruct timer</p>
-    <p style={ cardProperty } className={ textFont.className }>{timer + 's'}</p>
+    { timers.map((value, i) => 
+      <p key={i} style={{ ...cardProperty, position: 'absolute', marginTop: i == timers.indexOf(timer) ? 0 : (i < timers.indexOf(timer) ? -24 : 24), right: 16, opacity: value == timer ? 1 : 0 }} className={ textFont.className }>{value}s</p>
+    ) }
   </Tapable>
 
   const onClose = () => (setImage(null), setText(null));
@@ -150,7 +152,8 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
             onClose();
             setShareLink({ link: window.origin + '/' + data.id + data.secret, theme })
            }}>
-            { loading ? <Loading/> : <p className={displayFont.className} style={buttonStyle}>Finish</p> }
+            <Loading style={{ opacity: loading ? 1 : 0, position: 'absolute', marginTop: loading ? 0 : 32 }}/>
+            <p className={displayFont.className} style={{ ...buttonStyle, opacity: loading ? 0 : 1, marginTop: loading ? -32 : 0 }}>Finish</p>
           </Tapable>
         </Card>
 
@@ -180,9 +183,9 @@ let selectedImageButton: CSSProperties = {
 }
 
 let buttonStyle: CSSProperties = {
-  margin: 0,
   color: '#FFF',
-  fontSize: '18px'
+  fontSize: '18px',
+  position: 'absolute'
 }
 
 

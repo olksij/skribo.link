@@ -14,7 +14,7 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
   const ref = useRef<HTMLCanvasElement>(null);
   const renderId = useRef<number>(0);
 
-  const [copyStatus, setCopyStatus] = useState(false)
+  const [copied, setCopyStatus] = useState(false)
 
   const renderCanvas = async (theme: number | undefined, link: string | undefined, id: number) => {
     if (theme == null || link == null) return;
@@ -154,13 +154,20 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
           <p className={displayFont.className} style={buttonStyle}>Save QR-code</p>
         </Tapable>
       </Card>
-      <Card innerStyle={{ height: 56, background: 'var(--text)' }}>
-        <Tapable icon='/linkIcon.svg' justifyContent='center' gap='8px' onTap={ () => {
+      <Card innerStyle={{ height: 56, background: copied ? '#71D89C' : 'var(--text)' }}>
+        <Tapable height={56} justifyContent='center' onTap={ () => {
           navigator.clipboard.writeText(link!).then(function() {
-            setCopyStatus(true);
+            setCopyStatus(true); setTimeout(() => setCopyStatus(false), 1500)
           });       
         }}>
-          <p className={displayFont.className} style={{ ...buttonStyle, color: '#FFF' }}>{copyStatus ? 'Copied!' : 'Copy link' }</p>
+          <div style={{ opacity: copied ? 0 : 1, marginTop: copied ? -32 : 0, position: 'absolute', gap: 8 }}>
+            <img width={24} src="/linkIcon.svg"/>
+            <p className={displayFont.className} style={{ ...buttonStyle, color: '#FFF' }}>Copy link</p>
+          </div>
+          <div style={{ opacity: copied ? 1 : 0, marginTop: copied ? 0 : 32, position: 'absolute', gap: 8 }}>
+            <img width={24} src="/doneIcon.svg"/>
+            <p className={displayFont.className} style={{ ...buttonStyle, color: '#141A17' }}>Copied!</p>
+          </div>
         </Tapable>
       </Card>
     </Sheet.Content>
