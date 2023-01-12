@@ -85,7 +85,7 @@ export default function CardPage({ id, secret }: any) {
       </div>
     </div>
     <div className={styles.topBar}>
-      <Link href='/'><img onClick={() => location.href = '/'} src={foreground && isScratched ? '/logoLight.svg' : '/logo.svg'}/></Link>
+      <Link href='/'><img src={foreground && isScratched ? '/logoLight.svg' : '/logo.svg'}/></Link>
       <div style={{  alignItems: 'center', gap: 16 }}>
         <Counter value={ counter ?? 0 } style={{ ...textFont.style, opacity: counter ? 1 : 0, transition: '.3s cubic-bezier(0, 0, 0, 1)', color: foreground && isScratched ? '#FFF' : '#000', margin: 0 }} />
         <Indicator value={counter && dataRef.current ? counter / dataRef.current.timeAssigned : null} foreground={isScratched && foreground}>
@@ -97,7 +97,8 @@ export default function CardPage({ id, secret }: any) {
       const encrypted = await encryptData(keysRef.current!.encryptKey, new TextEncoder().encode(reply).buffer, new Uint8Array(dataRef.current!.iv))
 
       const docRef = databaseRef(database, `cards/${id}`);
-      set(docRef, { ...dataRef.current, replies: [...(dataRef.current!.replies ?? []), { text: new Uint8Array(encrypted.data), time: Date.now() }]})
+      dataRef.current = { ...dataRef.current, replies: [...(dataRef.current!.replies ?? []), { text: new Uint8Array(encrypted.data), time: Date.now() }]}
+      set(docRef, dataRef.current)
     }}/>
   </div>
 }
@@ -108,7 +109,7 @@ import { auth, database, storage } from '../lib/firebase';
 import { ref as databaseRef, get, set } from "firebase/database";
 import { ref as storageRef, deleteObject, getBytes } from "firebase/storage";
 import { decryptData, deriveKeys, encryptData, obtainAccessToken } from '../lib/crypto';
-import { signInAnonymously, signInWithCustomToken } from 'firebase/auth';
+import { signInAnonymously } from 'firebase/auth';
 import Background from '../lib/elements/background';
 import Indicator from '../lib/elements/indicator';
 import Counter from '../lib/elements/counter';

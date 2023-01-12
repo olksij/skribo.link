@@ -115,9 +115,11 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
   }
 
   useEffect(() => { 
-    renderId.current = Date.now(), renderCanvas(theme, link, renderId.current);
-    addEventListener('resize', () => { renderId.current = Date.now(), renderCanvas(theme, link, renderId.current) });
-  }, [theme, link])
+    if (isOpen) {
+      renderId.current = Date.now(), renderCanvas(theme, link, renderId.current);
+      addEventListener('resize', () => { renderId.current = Date.now(), renderCanvas(theme, link, renderId.current) });
+    }
+  }, [theme, link, isOpen])
 
   useEffect(() => {
     if (isOpen) {
@@ -175,14 +177,6 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
 
   <Sheet.Backdrop />
 </Sheet>
-}
-
-let style: CSSProperties = {
-  padding: '16px',
-  height: '100%',
-  fontSize: '16px',
-  border: 'none',
-  resize: 'none',
 }
 
 let buttonStyle: CSSProperties = {

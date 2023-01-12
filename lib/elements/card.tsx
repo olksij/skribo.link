@@ -45,7 +45,7 @@ let styles: Record<string, CSSProperties> = {
     alignItems: 'center', 
     gap: 8,
     fontSize: 14, 
-    color: '#585466',
+    color: '#585466 !important',
   },
   container: {
     borderRadius: 12,

@@ -41,7 +41,7 @@ export default function YourSkribosModal({ isOpen, onClose, skribos }: { isOpen:
               <p style={{ ...displayFont.style, fontSize: 20, color: 'var(--text)' }}>{skribos[id].label ?? 'No label'}</p>
               <p style={{ ...textFont.style, fontSize: 14, color: 'var(--secondary)' }}>{ skribos[id].replies.length } replies</p>
             </div>
-            <p style={{ ...textFont.style, fontSize: 12, color: 'var(--secondary)', marginBottom: 'auto', marginTop: 8 }}>{new Date(skribos[id].created).toLocaleString()}</p>
+            <p style={{ ...textFont.style, fontSize: 12, color: 'var(--secondary)', marginBottom: 'auto', marginTop: 8 }}>{new Date(skribos[id].timeCreated).toLocaleString()}</p>
           </Tapable>
         </Card>
       }) : <p style={{ ...textFont.style, margin: 'auto', fontSize: 14, color: 'var(--secondary)' }}>No skribos yet</p>

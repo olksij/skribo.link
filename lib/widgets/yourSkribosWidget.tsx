@@ -40,6 +40,7 @@ export default function YourSkribosWidget() {
           .then(buffer => decryptedReplies.push({ ...reply, text: new TextDecoder().decode(buffer) }));
         }
         data.replies = decryptedReplies;
+        data.id = id;
 
         await getBytes(storageRef(storage, `cards/${id}`)).then(async encrypted => {
           data.image = await decryptData(keys.encryptKey, new Uint8Array(data.iv), encrypted);

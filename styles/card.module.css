@@ -70,6 +70,7 @@
   height: 100%;
   display: flex;
   border-radius: 16px;
+  z-index: 1;
   transition: .6s cubic-bezier(0.5, 0, 0, 1);
 }
 

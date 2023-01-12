@@ -1,12 +1,18 @@
+import { database } from "../firebase";
+import { ref as databaseRef, remove } from "firebase/database";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 
 import Sheet from 'react-modal-sheet';
 import { displayFont, textFont } from "../../pages/_app";
 import Card from "../elements/card";
 import Tapable from "../elements/tapable";
+import DeleteModal from "./delete";
+import ShareSkriboModal from "./shareSkribo";
 
 export default function SkriboDetails({ skribo, onClose }: any) {
-  console.log(skribo)
+  const [shareModal, setShareModal] = useState<boolean>(false);
+  const [deleteModal, setDeleteModal] = useState<boolean>(false);
+
   useEffect(() => {
     if (skribo != null) {
       document.getElementById('metaModalColor')?.setAttribute('name', 'theme-color');
@@ -18,12 +24,22 @@ export default function SkriboDetails({ skribo, onClose }: any) {
     }
   }, [skribo])
 
+  const onDelete = () => {
+    remove(databaseRef(database, `cards/${skribo.id}`));
+    localStorage.removeItem(skribo.id), onClose();
+
+    // delete the skribo from owned list as well
+    let currOwned = localStorage.getItem('owned')?.replace(skribo.id, '') ?? '';
+    localStorage.setItem('owned', currOwned?.replace('//', '/'))
+  }
+
   const toRender = {
     'timeLeft':        { image: '/fireIcon.svg',        text: 'Time left' },
-    'timeCreated':     { image: '/dateCreatedIcon.svg', text: 'Time created' },
-    'firstTimeOpened': { image: '/openedIcon.svg',      text: 'First time opened' },
-    'lastTimeOpened':  { image: '/eyeIcon.svg',         text: 'Last time opened' },
+    'timeCreated':     { image: '/dateCreatedIcon.svg', text: 'Created' },
+    'firstTimeOpened': { image: '/openedIcon.svg',      text: 'Opened' },
   }
+
+  console.log(skribo?.id, skribo?.theme)
 
   return <Sheet detent='content-height' rootId='__next' isOpen={skribo != null} onClose={onClose}>
   <Sheet.Container style={{ background: '#EBEBF0' }}>
@@ -63,34 +79,34 @@ export default function SkriboDetails({ skribo, onClose }: any) {
             <p style={{ ...textFont.style, minWidth: 'max-content', fontSize: 16 }}>{value.text}</p>
             <p style={{ ...textFont.style, minWidth: 'max-content', color: 'var(--secondary)', fontSize: 14 }}>{new Date(value.time).toLocaleString()}</p>
           </div> 
-        }) : <p>No replies</p> }
+        }) : <div style={{ alignItems: 'center', justifyContent: 'center', height: 56, padding: 16, boxSizing: 'border-box' }}>
+          <p style={{ ...textFont.style, color: 'var(--secondary)', fontSize: 16 }}>No replies</p>
+        </div>  }
       </Card>
-      <Card>
+      <Card separators>
         <Tapable style={{ gap: 8 }} justifyContent='center' onTap={ () => {}}>
+          <img src="/lightningIcon.svg"/>
+          <p className={displayFont.className} style={{ ...buttonStyle, color: 'var(--text)' }}>Preview</p>
+        </Tapable>
+        <Tapable style={{ gap: 8 }} justifyContent='center' onTap={ () => setDeleteModal(true) }>
           <img src="/deleteIcon.svg"/>
           <p className={displayFont.className} style={{ ...buttonStyle, color: '#BF5656' }}>Delete</p>
         </Tapable>
       </Card>
       <Card innerStyle={{ background: 'var(--text)' }}>
-        <Tapable style={{ gap: 8 }} justifyContent='center' onTap={ () => {}}>
-          <img src="/lightningIcon.svg"/>
-          <p className={displayFont.className} style={buttonStyle}>Preview</p>
+        <Tapable style={{ gap: 8 }} justifyContent='center' onTap={ () => setShareModal(true) }>
+          <img src="/shareIcon.svg"/>
+          <p className={displayFont.className} style={buttonStyle}>Share skribo</p>
         </Tapable>
       </Card>
+
+      <ShareSkriboModal link={window.origin + '/' + skribo?.id + localStorage.getItem(skribo?.id)} theme={skribo?.theme} isOpen={shareModal} onClose={() => setShareModal(false)}/>
+      <DeleteModal isOpen={deleteModal} onClose={(sure: boolean) => (setDeleteModal(false), sure && onDelete())}/>
     </Sheet.Content>
   </Sheet.Container>
 
   <Sheet.Backdrop />
 </Sheet>
-}
-
-let style: CSSProperties = {
-  padding: '16px',
-  height: '100%',
-  fontSize: '16px',
-  border: 'none',
-  resize: 'none',
-  outline: 'none',
 }
 
 let buttonStyle: CSSProperties = {
