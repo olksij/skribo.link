@@ -4,7 +4,6 @@ import Sheet from 'react-modal-sheet';
 import { displayFont, textFont } from "../../pages/_app";
 import Card from "../elements/card";
 import Loading from "../elements/loading";
-import Selectable from "../elements/selectable";
 import Tapable from "../elements/tapable";
 import TextModal from "./text";
 
@@ -14,17 +13,17 @@ import { auth, database, storage } from '../../lib/firebase';
 import { get, ref as databaseRef, set } from "firebase/database";
 import { ref as storageRef, uploadBytes } from "firebase/storage";
 import { encryptData, genKeys, obtainAccessToken } from "../crypto";
-import ThemeCard from "../elements/theme";
 import ThemesWidget from "../elements/theme";
 import loadImage from "../components/loadImage";
 import { signInAnonymously } from "firebase/auth";
-import Head from "next/head";
+import PreviewModal from "./preview";
 
 export default function NewSkriboModal({ image, setImage, text, setText, setShareLink }: any) {
   const [timer, setTimer] = useState<number>(30);
   const [theme, setTheme] = useState<number>(0);
   const [title, setTitle] = useState<string | null>(null);
-
+  
+  const [preview, setPreview] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [textModalOpen, setTextModalOpen] = useState<boolean>(false);
   const [titleModalOpen, setTitleModalOpen] = useState<boolean>(false);
@@ -84,7 +83,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
 
   const onClose = () => (setImage(null), setText(null));
 
-  return <Sheet detent="content-height" rootId='__next' isOpen={isOpen} onClose={onClose}>
+  return <Sheet disableDrag={true} detent="content-height" rootId='__next' isOpen={isOpen} onClose={onClose}>
     <Sheet.Container style={{ background: '#EBEBF0' }}>
       <Sheet.Header />
       <Sheet.Content style={{ padding: '0 24px', flexDirection: 'column', gap: '20px' }}>
@@ -100,12 +99,20 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
           { themes.map(id => <ThemesWidget key={id} id={id} theme={theme} setTheme={setTheme}/> )}
         </Card>
 
-        <div style={{ height: 80 }}/>
+        <Card>
+          <Tapable style={{ justifyContent: 'center', gap: 8, height: 56 }} onTap={ () => setPreview(true) } icon='/lightningIcon.svg' onRemove={ title && (() => setTitle(null)) }>
+            <p style={{ ...buttonStyle, color: 'var(--text)', position: 'relative' }} className={displayFont.className}>Preview</p>
+          </Tapable>
+        </Card>
+
+        <div style={{ minHeight: 80 }}/>
 
         <TextModal title="Write caption" caption="The caption will be under your image and has to be scratched as well." isOpen={textModalOpen} onClose={() => setTextModalOpen(false)} text={text} setText={setText} />
         <TextModal title="Write title" caption="Use title to introduce your Skribo before receiver will scratch it. For example, give them a hint what is in there or tell them to scratch it off in your own way :)" isOpen={titleModalOpen} onClose={() => setTitleModalOpen(false)} text={title} setText={setTitle} />
 
-        <Card outerStyle={{ position: 'fixed', bottom: '0px', left: '24px', right: '24px', marginBottom: '24px' }} innerStyle={{ background: '#2C2A33' }}>
+        <PreviewModal isOpen={preview} onClose={() => setPreview(false)} image={image} text={text} title={title} theme={theme} />
+
+        <Card outerStyle={{ position: 'fixed', bottom: '0px', left: '24px', right: '24px', marginBottom: '24px' }} innerStyle={{ background: '#2C2A33', boxShadow: '0 24px 48px 24px #EBEBF0AA' }}>
           <Tapable height="56px" justifyContent='center' onTap={ async () => {
             setLoading(true);
             
