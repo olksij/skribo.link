@@ -20,19 +20,25 @@ export default function CardPage({ id, secret }: any) {
   useEffect(() => {
     if (counter === null || !isScratched) return;
 
-    if (counter == 0)
-      deleteObject(storageRef(storage, `cards/${id}`)), 
-      setImage(null);
+    if (counter == 0) {
+      remove(databaseRef(database, `cards/${id}/encryptedText`));
+  
+      if (image) deleteObject(storageRef(storage, `cards/${id}`))
+      
+      setImage(null), setText(null);  
+    }
     else setTimeout(() => setCounter(counter! - 1), 1000);
 
     const docRef = databaseRef(database, `cards/${id}`);
     set(docRef, { ...dataRef.current, timeLeft: counter });
-  }, [counter, isScratched])
+  }, [counter, id, image, isScratched])
 
   let note;
   if (!isScratched) note = "Scratch to unveil";
-  if (!image)       note = "Loading";
-  if (!image && isScratched) note = "Time is out";
+  if (!(image || text))       note = "Loading";
+  if (counter == 0) note = "Time is out";
+
+  console.log(text)
   
   useEffect(() => {
     // get the access token from secret so client can access database
@@ -55,11 +61,15 @@ export default function CardPage({ id, secret }: any) {
       getBytes(storageRef(storage, `cards/${id}`)).then(async encrypted => {
         // decrypt the image
         let image = await decryptData(keysRef.current!.encryptKey, new Uint8Array(data.iv), encrypted);
-        let text  = await decryptData(keysRef.current!.encryptKey, new Uint8Array(data.iv), new Uint8Array(dataRef.current!.encryptedText).buffer);
         // set the image to rerender scratch
         setImage(new Blob([image]));
+      }).catch(() => {});
+
+      if (dataRef.current!.encryptedText) {
+        let text  = await decryptData(keysRef.current!.encryptKey, new Uint8Array(data.iv), new Uint8Array(dataRef.current!.encryptedText).buffer);
         setText(new TextDecoder().decode(text));
-      });
+      }
+
       set(docRef, { ...dataRef.current, lastTimeOpened: Date.now(), firstTimeOpened: dataRef.current?.firstTimeOpened ?? Date.now() })
     });
   }, []);
@@ -75,6 +85,8 @@ export default function CardPage({ id, secret }: any) {
     }
   }, [isScratched, image])
 
+  let fullScreen = (image || text) && isScratched ? true : false;
+
   return <div className={styles.container}>
     <Background id={0}/>
     <Background id={dataRef.current?.theme}/>
@@ -82,17 +94,17 @@ export default function CardPage({ id, secret }: any) {
       <p style={{ lineHeight: dataRef.current?.title && !isScratched ? '24px' : '0px', margin: 'auto', ...textFont.style, opacity: .5, paddingBottom: dataRef.current?.title && !isScratched ? 16 : 0 }}>{dataRef.current?.title ?? ''}</p>
       <div className={styles.content + ' ' + (isScratched && styles.fullscreen)}>
         <Scratch theme={dataRef.current?.theme} image={image} text={text ?? ''} setScratched={setScratched} setForeground={setForeground} reply={true}/>
-        { note && <div className={ image ? styles.scratchNote : styles.loadingNote }>
+        { note && <div className={ (image || text) && counter ? styles.scratchNote : styles.loadingNote }>
           <p className={displayFont.className}>{note}</p>
         </div> }
       </div>
     </div>
     <div className={styles.topBar}>
-      <Link href='/'><img src={foreground && isScratched ? '/logoLight.svg' : '/logo.svg'}/></Link>
+      <Link href='/'><img src={foreground && fullScreen  ? '/logoLight.svg' : '/logo.svg'}/></Link>
       <div style={{  alignItems: 'center', gap: 16 }}>
-        <Counter value={ counter ?? 0 } style={{ ...textFont.style, opacity: counter ? 1 : 0, transition: '.3s cubic-bezier(0, 0, 0, 1)', color: foreground && isScratched ? '#FFF' : '#000', margin: 0 }} />
-        <Indicator value={counter && dataRef.current ? counter / dataRef.current.timeAssigned : null} foreground={isScratched && foreground}>
-          <img style={{ position: 'absolute', padding: 9, opacity: counter ? 1 : 0, height: 14, transition: '1s cubic-bezier(.5, 0, 0, 1)' }} src={foreground && isScratched ? '/fireFilledLight.svg' : '/fireFilled.svg'}/>
+        <Counter value={ counter ?? 0 } style={{ ...textFont.style, opacity: counter ? 1 : 0, transition: '.3s cubic-bezier(0, 0, 0, 1)', color: foreground && fullScreen ? '#FFF' : '#000', margin: 0 }} />
+        <Indicator style={{ opacity: counter != 0 ? 1 : 0 }} value={counter && dataRef.current ? counter / dataRef.current.timeAssigned : null} foreground={fullScreen && foreground}>
+          <img style={{ position: 'absolute', padding: 9, opacity: counter ? 1 : 0, height: 14, transition: '1s cubic-bezier(.5, 0, 0, 1)' }} src={foreground && fullScreen ? '/fireFilledLight.svg' : '/fireFilled.svg'}/>
         </Indicator>
       </div>
     </div>
@@ -109,7 +121,7 @@ export default function CardPage({ id, secret }: any) {
 // import firestore & utils
 import { auth, database, storage } from '../lib/firebase';
 
-import { ref as databaseRef, get, set } from "firebase/database";
+import { ref as databaseRef, get, set, remove } from "firebase/database";
 import { ref as storageRef, deleteObject, getBytes } from "firebase/storage";
 import { decryptData, deriveKeys, encryptData, obtainAccessToken } from '../lib/crypto';
 import { signInAnonymously } from 'firebase/auth';

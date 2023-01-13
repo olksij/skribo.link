@@ -3,9 +3,12 @@ import React, { useEffect, useRef, forwardRef, ForwardedRef, useState }  from 'r
 import styles from '/styles/scratch.module.css'
 import SpoilerNoise from './spoilerNoise';
 
+import backgrounds from '../backgrounds/import';
+import patterns    from '../patterns/import';
+
 type PointerEvent = { mouse?: MouseEvent, touch?: TouchEvent }
 
-export default function ScratchCard({ setScratched, image, setForeground, theme, text, reply }: { setScratched: any, image: Blob | null, setForeground: any, theme: number, text: string, reply: boolean }) {
+export default function ScratchCard({ setScratched, image, setForeground, theme, text, reply }: { setScratched: any, image?: Blob | null, setForeground: any, theme: number, text?: string, reply: boolean }) {
   // HTMLElement references
   let foregroundRef = useRef<HTMLCanvasElement>(null);
   let backgroundRef = useRef<HTMLCanvasElement>(null);
@@ -24,11 +27,23 @@ export default function ScratchCard({ setScratched, image, setForeground, theme,
   }, [])
 
   const defineCanvas = async () => {
+    let imgElement:    HTMLImageElement | null = null,
+        imgBackground: HTMLImageElement | null = null,
+        imgPattern:    HTMLImageElement | null = null;
+
     defined.current = true;
-    let imgElement  = document.createElement('img');
-        imgElement.src = URL.createObjectURL(image!);
-    
-    await new Promise(resolve => imgElement.onload = resolve);
+
+    if (image) {
+      imgElement = document.createElement('img'),
+      imgElement.src = URL.createObjectURL(image);
+      await new Promise(resolve => imgElement!.onload = resolve);
+    }
+    else {
+      imgBackground = document.createElement('img'), imgPattern = document.createElement('img');
+      imgBackground.src = backgrounds[theme],        imgPattern.src = patterns[theme];
+      await new Promise(resolve => imgBackground!.onload = resolve);
+      await new Promise(resolve => imgPattern!.onload = resolve);
+    }
 
     // define
     const background  = backgroundRef.current!;
@@ -92,73 +107,105 @@ export default function ScratchCard({ setScratched, image, setForeground, theme,
         .then(e => bgContext.drawImage(resizeImage(toCanvas({ image: e.data }), 1/factor), 0, 0))
     }
 
+    const drawPattern = () => {
+      bgContext.drawImage(imgBackground!, 0, 0, cWidth, cHeight)
+      bgContext.globalCompositeOperation = 'overlay';
+      bgContext.globalAlpha = .3;
+      bgContext.drawImage(imgPattern!, 0, 0, cWidth, cHeight)
+      bgContext.globalCompositeOperation = 'source-over';
+      bgContext.globalAlpha = 1;
+    }
+
     // draw blurred background
     
-    bgContext.drawImage(imgElement, 0, 0, cWidth, cHeight)
-    blurWorker.current!.postMessage(bgContext.getImageData(0, 0, cWidth, cHeight))
+    if (imgElement) {
+      bgContext.drawImage(imgElement, 0, 0, cWidth, cHeight); 
+      bgContext.fillStyle = '#FFF1';
+      bgContext.fillRect(0, 0, cWidth, cHeight)
+    }
+    else drawPattern();
+    
     await blurCanvas();
-
-    bgContext.fillStyle = '#FFF1';
-    bgContext.fillRect(0, 0, cWidth, cHeight)
 
     const blurredCanvas = toCanvas({ canvas: background });
     const blurredCanvasContext = blurredCanvas.getContext('2d')!
-    blurredCanvasContext.fillStyle = '#AAAA';
+    blurredCanvasContext.globalCompositeOperation = 'luminosity';
+    blurredCanvasContext.fillStyle = '#EEE';
     blurredCanvasContext.fillRect(0, 0, cWidth, cHeight)
+    blurredCanvasContext.globalCompositeOperation = 'source-over';
 
     // draw a potential unscratched image
 
-    let aspectRatio = imgElement.naturalWidth / imgElement.naturalHeight,
-        screenRatio = innerWidth / cHeight, imageWidth, imageHeight;
+    if (imgElement) {
+      let aspectRatio = imgElement.naturalWidth / imgElement.naturalHeight,
+          screenRatio = innerWidth / cHeight, imageWidth, imageHeight;
 
-    aspectRatio > screenRatio // image is wider
-      ? (imageWidth  = cWidth,  imageHeight = imageWidth  / aspectRatio)
-      : (imageHeight = cHeight, imageWidth  = imageHeight * aspectRatio);
+      aspectRatio > screenRatio // image is wider
+        ? (imageWidth  = cWidth,  imageHeight = imageWidth  / aspectRatio)
+        : (imageHeight = cHeight, imageWidth  = imageHeight * aspectRatio);
 
-    bgContext.drawImage(imgElement, cWidth / 2 - imageWidth / 2, cHeight / 2 - imageHeight / 2, imageWidth, imageHeight)
+      bgContext.drawImage(imgElement, cWidth / 2 - imageWidth / 2, cHeight / 2 - imageHeight / 2, imageWidth, imageHeight)
+    }
+
+    else drawPattern();
 
     // fill text
 
-    let lines: { text: string[], width: number }[] = [{ text: [], width: 0 }],
-        words = text.split(' ');
+    if (text) {
+      let lines: { text: string[], width: number }[] = [{ text: [], width: 0 }],
+          words = text?.split(' ') ?? [];
 
-    const whitespace = bgContext.measureText(' ').width,
-          maxWidth   = (innerWidth - 96) * rt;
+      const whitespace = bgContext.measureText(' ').width,
+            maxWidth   = (innerWidth - 96) * rt;
 
-    bgContext.textAlign = 'center';
-    bgContext.font = (16 * rt) + 'px Arial'
+      bgContext.textAlign = 'center';
+      bgContext.font = (16 * rt) + 'px Arial'
 
-    words.forEach(word => {
-      let width = bgContext.measureText(word).width,
-          line = lines.length - 1, spaced = whitespace + width;
-            
-      if (lines[line].width + spaced <= maxWidth)
-        lines[line].text.push(word), lines[line].width += lines[line].text.length > 1 ? spaced : width;
+      words.forEach(word => {
+        let width = bgContext.measureText(word).width,
+            line = lines.length - 1, spaced = whitespace + width;
+              
+        if (lines[line].width + spaced <= maxWidth)
+          lines[line].text.push(word), lines[line].width += lines[line].text.length > 1 ? spaced : width;
 
-      else lines.push({ text: [word], width })
-    });
+        else lines.push({ text: [word], width })
+      });
 
-    bgContext.fillStyle = bgContext.createPattern(blurredCanvas, 'no-repeat')!;
-    bgContext.strokeStyle = '#0002';
+      bgContext.fillStyle = bgContext.createPattern(blurredCanvas, 'no-repeat')!;
 
-    bgContext.shadowBlur = 32 * rt;
-    bgContext.shadowColor = '#0004';
-    bgContext.shadowOffsetY = 12 * rt;
+      const padding = imgElement ? (reply ? 72 * rt : 0) : cHeight / 2 - (40 + lines.length * 24) * rt
 
-    const padding = reply ? 72 * rt : 0
-    
-    bgContext.beginPath()
-    bgContext.roundRect(24 * rt, cHeight - 24 * rt - padding, cWidth - 48 * rt, (40 + lines.length * 24) * rt * -1, 12 * rt)
-    bgContext.fill()
+      bgContext.strokeStyle = '#0008';
+      bgContext.lineWidth = rt;      
 
-    bgContext.fillStyle = 'black'
-    bgContext.textBaseline = 'bottom'
-    lines.forEach((line, i) => bgContext.fillText(line.text.join(' '), cWidth/2, (innerHeight - 24 - (lines.length - i) * 24) * rt - padding))
+      bgContext.shadowBlur = 32 * rt;
+      bgContext.shadowColor = '#0002';
+      bgContext.shadowOffsetY = 12 * rt;
+      
+      bgContext.beginPath()
+      bgContext.roundRect(24 * rt, cHeight - 24 * rt - padding, cWidth - 48 * rt, (40 + lines.length * 24) * rt * -1, 12 * rt)
+      bgContext.globalCompositeOperation = 'overlay';
+      bgContext.stroke()
+      bgContext.fill()
+      bgContext.globalCompositeOperation = 'source-over';
+      
+      bgContext.beginPath()
+      bgContext.roundRect(24 * rt, cHeight - 24 * rt - padding, cWidth - 48 * rt, (40 + lines.length * 24) * rt * -1, 12 * rt)
+      bgContext.fill()
 
+      bgContext.fillStyle = 'black'
+      bgContext.textBaseline = 'bottom'
+      lines.forEach((line, i) => bgContext.fillText(line.text.join(' '), cWidth/2, (innerHeight - 24 - (lines.length - i) * 24) * rt - padding))
+    }
 
     // save the canvas and blur it
     fgContext.strokeStyle = fgContext.createPattern(background, 'no-repeat')!
     await blurCanvas();
+
+    bgContext.globalCompositeOperation = 'overlay';
+    bgContext.fillStyle = '#0002';
+    bgContext.fillRect(0, 0, cWidth, cHeight)
+    bgContext.globalCompositeOperation = 'source-over';
     
     // decide UI foreground based on pixel color
     let topPixel = bgContext.getImageData(cWidth/2, 0, cWidth/2+1, 1).data;
@@ -204,12 +251,12 @@ export default function ScratchCard({ setScratched, image, setForeground, theme,
   };
 
   useEffect(() => {
-    if (image && !defined.current) defineCanvas()
-    if (!image && defined.current) {
+    if ((image || text) && !defined.current) defineCanvas()
+    if (!(image || text) && defined.current) {
       backgroundRef.current!.remove()
       foregroundRef.current!.remove()
     }
-  }, [image])
+  }, [image, text])
 
   const scratchEnd = (event: PointerEvent) => {
     array(event).forEach(({ identifier }) => delete position.current[identifier])}

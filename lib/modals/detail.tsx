@@ -1,4 +1,4 @@
-import { database } from "../firebase";
+import { database, storage } from "../firebase";
 import { ref as databaseRef, remove } from "firebase/database";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 
@@ -9,6 +9,7 @@ import Tapable from "../elements/tapable";
 import DeleteModal from "./delete";
 import ShareSkriboModal from "./shareSkribo";
 import PreviewModal from "./preview";
+import { deleteObject, ref as storageRef } from "firebase/storage";
 
 export default function SkriboDetails({ skribo, onClose }: any) {
   const [shareModal, setShareModal] = useState<boolean>(false);
@@ -28,6 +29,7 @@ export default function SkriboDetails({ skribo, onClose }: any) {
 
   const onDelete = () => {
     remove(databaseRef(database, `cards/${skribo.id}`));
+    deleteObject(storageRef(storage, `cards/${skribo.id}`)), 
     localStorage.removeItem(skribo.id), onClose();
 
     // delete the skribo from owned list as well
@@ -55,9 +57,10 @@ export default function SkriboDetails({ skribo, onClose }: any) {
       <Card separators>
         { Object.entries(toRender).map(([key, value]) => {
           let data = skribo?.[key];
+
           
-          if (data) {
-            if (key == 'timeLeft') data += 's';
+          if (data != null) {
+            if (key == 'timeLeft') data == 0 ? data = 'Expired' : data + 's';
             if (['timeCreated', 'firstTimeOpened', 'lastTimeOpened'].includes(key)) data = new Date(data).toLocaleString();
           }
           
@@ -69,14 +72,7 @@ export default function SkriboDetails({ skribo, onClose }: any) {
         }) }
       </Card>
       <Card separators header={{ icon: '/replyIcon.svg', title: 'Replies' }}>
-        { skribo?.replies?.length ? Object.entries(skribo?.replies as Record<string, { time: number, text: string }>).map(([key, value]) => {
-          let data = skribo?.[key];
-          
-          if (data) {
-            if (key == 'timeLeft') data += 's';
-            if (['timeCreated', 'firstTimeOpened', 'lastTimeOpened'].includes(key)) data = new Date(data).toLocaleString();
-          }
-          
+        { skribo?.replies?.length ? Object.entries(skribo?.replies as Record<string, { time: number, text: string }>).map(([key, value]) => {        
           return <div style={{ gap: 8, padding: 16, boxSizing: 'border-box', flexDirection: 'column' }} key={key}>
             <p style={{ ...textFont.style, minWidth: 'max-content', fontSize: 16 }}>{value.text}</p>
             <p style={{ ...textFont.style, minWidth: 'max-content', color: 'var(--secondary)', fontSize: 14 }}>{new Date(value.time).toLocaleString()}</p>

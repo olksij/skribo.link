@@ -26,8 +26,7 @@ export default function PreviewModal({ isOpen, onClose, image, theme, text, titl
 
   let note;
   if (!isScratched) note = "Scratch to unveil";
-  if (!image)       note = "Loading";
-  if (!image && isScratched) note = "Time is out";
+  if (!(image || text) && isScratched) note = "Time is out";
 
   useEffect(() => {
     setScratched(false)
@@ -43,7 +42,7 @@ export default function PreviewModal({ isOpen, onClose, image, theme, text, titl
         <p style={{ lineHeight: title && !isScratched ? '24px' : '0px', margin: 'auto', ...textFont.style, opacity: .5, paddingBottom: title && !isScratched ? 16 : 0 }}>{title ?? ''}</p>
         <div className={styles.content + ' ' + (isScratched && styles.fullscreen)}>
           { isOpen && <Scratch text={text} theme={theme} image={image} setScratched={setScratched} setForeground={setForeground} reply={false}/> }
-          { note && <div className={ image ? styles.scratchNote : styles.loadingNote }>
+          { note && <div className={ styles.scratchNote }>
             <p className={displayFont.className}>{note}</p>
           </div> }
         </div>

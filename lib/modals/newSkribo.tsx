@@ -67,11 +67,11 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
       <p style={ buttonCapton } className={ displayFont.className }>Upload image</p>
     </Tapable>
 
-  const textButton = <Tapable onTap={ () => setTextModalOpen(true) } onRemove={ text && (() => setText(null)) } icon='/textIcon.svg' gap='8px' height="56px">
+  const textButton = <Tapable onTap={ () => setTextModalOpen(true) } onRemove={ text && (() => setText(null)) } icon='/textIcon.svg' gap='8px'>
     <p style={ text ? selectedImageButton : buttonCapton } className={ text ? textFont.className : displayFont.className }>{ text ?? "Write caption" }</p>
   </Tapable>
 
-  const titleButton = <Tapable onTap={ () => setTitleModalOpen(true) } onRemove={ title && (() => setTitle(null)) } icon='/titleIcon.svg' gap='8px' height="56px">
+  const titleButton = <Tapable onTap={ () => setTitleModalOpen(true) } onRemove={ title && (() => setTitle(null)) } icon='/titleIcon.svg' gap='8px'>
     <p style={ title ? selectedImageButton : buttonCapton } className={ title ? textFont.className : displayFont.className }>{ title ?? "Title Skribo" }</p>
   </Tapable>
 
@@ -108,7 +108,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
 
         <div style={{ minHeight: 80 }}/>
 
-        <TextModal title="Write caption" caption="The caption will be under your image and has to be scratched as well." isOpen={textModalOpen} onClose={() => setTextModalOpen(false)} text={text} setText={setText} />
+        <TextModal title="Write caption" caption="The caption will be under your image and has to be scratched as well." isOpen={textModalOpen} onClose={() => setTextModalOpen(false)} text={text} setText={setText}/>
         <TextModal title="Write title" caption="Use title to introduce your Skribo before receiver will scratch it. For example, give them a hint what is in there or tell them to scratch it off in your own way :)" isOpen={titleModalOpen} onClose={() => setTitleModalOpen(false)} text={title} setText={setTitle} />
 
         <PreviewModal isOpen={preview} onClose={() => setPreview(false)} image={image} text={text} title={title} theme={theme} />
@@ -116,20 +116,24 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
         <Card outerStyle={{ position: 'fixed', bottom: '0px', left: '24px', right: '24px', marginBottom: '24px' }} innerStyle={{ background: '#2C2A33', boxShadow: '0 24px 48px 24px #EBEBF0AA' }}>
           <Tapable height="56px" justifyContent='center' onTap={ async () => {
             setLoading(true);
-            
-            const canvas = document.createElement('canvas');
-            const imageElem = await loadImage(URL.createObjectURL(image));
-            
-            let aspectRatio = imageElem.naturalWidth / imageElem.naturalHeight;
-            const size = Math.min(Math.max(imageElem.naturalWidth, imageElem.naturalHeight), 2048)
 
-            if (aspectRatio > 1) canvas.width = size,  canvas.height = size / aspectRatio;
-            else                 canvas.height = size, canvas.width  = size * aspectRatio;
-                        
-            canvas.getContext('2d')!.drawImage(imageElem, 0, 0, canvas.width, canvas.height);
-            const imageWebp = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.5));
+            let imageWebp: Blob | null = null
+            
+            if (image) {
+              const canvas = document.createElement('canvas');
+              const imageElem = await loadImage(URL.createObjectURL(image));
+              
+              let aspectRatio = imageElem.naturalWidth / imageElem.naturalHeight;
+              const size = Math.min(Math.max(imageElem.naturalWidth, imageElem.naturalHeight), 2048)
+  
+              if (aspectRatio > 1) canvas.width = size,  canvas.height = size / aspectRatio;
+              else                 canvas.height = size, canvas.width  = size * aspectRatio;
+                          
+              canvas.getContext('2d')!.drawImage(imageElem, 0, 0, canvas.width, canvas.height);
+              imageWebp = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.5));
+            }
 
-            let data = await encrypt(imageWebp, text);
+            let data = await encrypt(imageWebp, text);  
 
             const { user } = await signInAnonymously(auth);
 
@@ -163,7 +167,10 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
             setShareLink({ link: window.origin + '/' + data.id + data.secret, theme })
            }}>
             <Loading style={{ opacity: loading ? 1 : 0, position: 'absolute', marginTop: loading ? 0 : 32 }}/>
-            <p className={displayFont.className} style={{ ...buttonStyle, opacity: loading ? 0 : 1, marginTop: loading ? -32 : 0 }}>Finish</p>
+            <div style={{ opacity: loading ? 0 : 1, marginTop: loading ? -32 : 0, position: 'absolute', gap: 8 }}>
+              <img width={24} src='/doneIconWhite.svg'/>
+              <p className={displayFont.className} style={{ ...buttonStyle }}>Finish</p>
+            </div>
           </Tapable>
         </Card>
 
@@ -195,7 +202,6 @@ let selectedImageButton: CSSProperties = {
 let buttonStyle: CSSProperties = {
   color: '#FFF',
   fontSize: '18px',
-  position: 'absolute'
 }
 
 
