@@ -42,7 +42,7 @@ export default function PreviewModal({ isOpen, onClose, image, theme, text, titl
       <div style={{ position: 'absolute', left: 24, right: 24, top: 64, bottom: 24, flexDirection: 'column', ...(isScratched ? { left: 0, right: 0, top: -58, bottom: 0 } : {}) }}>
         <p style={{ lineHeight: title && !isScratched ? '24px' : '0px', margin: 'auto', ...textFont.style, opacity: .5, paddingBottom: title && !isScratched ? 16 : 0 }}>{title ?? ''}</p>
         <div className={styles.content + ' ' + (isScratched && styles.fullscreen)}>
-          { isOpen && <Scratch theme={theme} image={image} setScratched={setScratched} setForeground={setForeground}/> }
+          { isOpen && <Scratch text={text} theme={theme} image={image} setScratched={setScratched} setForeground={setForeground} reply={false}/> }
           { note && <div className={ image ? styles.scratchNote : styles.loadingNote }>
             <p className={displayFont.className}>{note}</p>
           </div> }
@@ -50,7 +50,7 @@ export default function PreviewModal({ isOpen, onClose, image, theme, text, titl
       </div>
 
       <div style={{ alignItems: 'center', zIndex: 1, justifyContent: 'space-between', height: '48px', width: '100%' }}>
-        <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" style={{ borderRadius: 12 }}/>
+        <Tapable onTap={onClose} icon={foreground && isScratched ? '/backIconLight.svg' : '/backIconDark.svg'} justify="center" height="48px" style={{ borderRadius: 12 }}/>
         <p style={{ fontSize: '24px', margin: 'revert', color: foreground && isScratched ? '#FFF' : 'var(--text)' }} className={ displayFont.className }>Preview</p>
         <div style={{ width: "48px" }}/>
       </div>

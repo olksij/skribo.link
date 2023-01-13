@@ -28,6 +28,8 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
   const [textModalOpen, setTextModalOpen] = useState<boolean>(false);
   const [titleModalOpen, setTitleModalOpen] = useState<boolean>(false);
 
+  const filePicker = useRef<HTMLInputElement | null>(null);
+
   let isOpen = image || text;
 
   useEffect(() => {
@@ -45,24 +47,23 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
     }
   }, [isOpen])
 
-  const fileDialog = () => {
-    var input = document.createElement('input');
-    input.onchange = (e: any) => {
+  useEffect(() => {
+    filePicker.current = document.createElement('input');
+    filePicker.current.onchange = (e: any) => {
       var file = e!.target!.files[0]; 
       if (file) setImage(file);
     }
-
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.click();
-  }
+    filePicker.current.type   = 'file';
+    filePicker.current.accept = 'image/*';
+    filePicker.current.value  = '';
+  }, [setImage])
 
   const imageButton = image
-    ? <Tapable onTap={fileDialog} onRemove={() => { setImage(null) }} gap='8px' height="56px">
+    ? <Tapable onTap={() => filePicker.current?.click()} onRemove={() => { setImage(null) }} gap='8px' height="56px">
       <img src={URL.createObjectURL(new Blob([image]))} height="32px" width="32px" style={{ borderRadius: '4px', objectFit: "cover" }}/>
       <p style={ selectedImageButton } className={ textFont.className }>Tap to reselect</p>
     </Tapable>
-    : <Tapable onTap={fileDialog} icon='/imageIcon.svg' gap='8px' height="56px">
+    : <Tapable onTap={() => filePicker.current?.click()} icon='/imageIcon.svg' gap='8px' height="56px">
       <p style={ buttonCapton } className={ displayFont.className }>Upload image</p>
     </Tapable>
 
@@ -100,7 +101,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
         </Card>
 
         <Card>
-          <Tapable style={{ justifyContent: 'center', gap: 8, height: 56 }} onTap={ () => setPreview(true) } icon='/lightningIcon.svg' onRemove={ title && (() => setTitle(null)) }>
+          <Tapable style={{ justifyContent: 'center', gap: 8, height: 56 }} onTap={ () => setPreview(true) } icon='/lightningIcon.svg'>
             <p style={{ ...buttonStyle, color: 'var(--text)', position: 'relative' }} className={displayFont.className}>Preview</p>
           </Tapable>
         </Card>

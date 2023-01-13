@@ -14,6 +14,7 @@ export default function CardPage({ id, secret }: any) {
 
   let [isScratched, setScratched] = useState<boolean>(false);
   let [image, setImage] = useState<Blob | null>(null);
+  let [text, setText] = useState<string | null>(null);
   let [foreground, setForeground] = useState<boolean>(false);
 
   useEffect(() => {
@@ -54,8 +55,10 @@ export default function CardPage({ id, secret }: any) {
       getBytes(storageRef(storage, `cards/${id}`)).then(async encrypted => {
         // decrypt the image
         let image = await decryptData(keysRef.current!.encryptKey, new Uint8Array(data.iv), encrypted);
+        let text  = await decryptData(keysRef.current!.encryptKey, new Uint8Array(data.iv), new Uint8Array(dataRef.current!.encryptedText).buffer);
         // set the image to rerender scratch
         setImage(new Blob([image]));
+        setText(new TextDecoder().decode(text));
       });
       set(docRef, { ...dataRef.current, lastTimeOpened: Date.now(), firstTimeOpened: dataRef.current?.firstTimeOpened ?? Date.now() })
     });
@@ -78,7 +81,7 @@ export default function CardPage({ id, secret }: any) {
     <div style={{ position: 'fixed', left: 24, right: 24, top: 80, bottom: 96, flexDirection: 'column', ...(isScratched ? { left: 0, right: 0, top: 0, bottom: 0 } : {}) }}>
       <p style={{ lineHeight: dataRef.current?.title && !isScratched ? '24px' : '0px', margin: 'auto', ...textFont.style, opacity: .5, paddingBottom: dataRef.current?.title && !isScratched ? 16 : 0 }}>{dataRef.current?.title ?? ''}</p>
       <div className={styles.content + ' ' + (isScratched && styles.fullscreen)}>
-        <Scratch theme={dataRef.current?.theme} image={image} setScratched={setScratched} setForeground={setForeground}/>
+        <Scratch theme={dataRef.current?.theme} image={image} text={text ?? ''} setScratched={setScratched} setForeground={setForeground} reply={true}/>
         { note && <div className={ image ? styles.scratchNote : styles.loadingNote }>
           <p className={displayFont.className}>{note}</p>
         </div> }
