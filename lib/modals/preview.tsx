@@ -42,7 +42,7 @@ export default function PreviewModal({ isOpen, onClose, image, theme, text, titl
       <div style={{ position: 'absolute', left: 24, right: 24, top: 64, bottom: 24, flexDirection: 'column', ...(isScratched ? { left: 0, right: 0, top: -58, bottom: 0 } : {}) }}>
         <p style={{ lineHeight: title && !isScratched ? '24px' : '0px', margin: 'auto', ...textFont.style, opacity: .5, paddingBottom: title && !isScratched ? 16 : 0 }}>{title ?? ''}</p>
         <div className={styles.content + ' ' + (isScratched && styles.fullscreen)}>
-          <Scratch theme={theme} image={image} setScratched={setScratched} setForeground={setForeground}/>
+          { isOpen && <Scratch theme={theme} image={image} setScratched={setScratched} setForeground={setForeground}/> }
           { note && <div className={ image ? styles.scratchNote : styles.loadingNote }>
             <p className={displayFont.className}>{note}</p>
           </div> }

@@ -55,10 +55,40 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
       ["touchend",   touch => scratchEnd({ touch })],
     // add listeners
     ).forEach(listener => foreground.addEventListener(...listener));
+
+    bgContext.fillStyle = '#000';
+    bgContext.fillRect(0, 0, cWidth, cHeight)
+
+    const toCanvas = (image: ImageData) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = image.width, canvas.height = image.height;
+      canvas.getContext('2d')!.putImageData(image, 0, 0);
+      return canvas;
+    }
+
+    const resizeImage = (image: HTMLCanvasElement, factor: number) => {
+      const width = image.width * factor, height = image.height * factor;
+      const canvas = document.createElement('canvas');
+
+      canvas.width = width, canvas.height = height;
+      canvas.getContext('2d')!.drawImage(image, 0, 0, width, height);
+      return canvas;
+    }
+
+    const blurCanvas = async () => {
+      const factor = 360 / Math.min(cWidth, cHeight);
+
+      const resized = resizeImage(background, factor);
+      let image = resized.getContext('2d')!.getImageData(0, 0, resized.width, resized.height)
+
+      blurWorker.current!.postMessage(image)
+      return await new Promise<MessageEvent>(r => blurWorker.current!.onmessage = r)
+        .then(e => bgContext.drawImage(resizeImage(toCanvas(e.data), 1/factor), 0, 0))
+    }
     
     bgContext.drawImage(imgElement, 0, 0, cWidth, cHeight)
     blurWorker.current!.postMessage(bgContext.getImageData(0, 0, cWidth, cHeight))
-    await new Promise<MessageEvent>(r => blurWorker.current!.onmessage = r).then(e => bgContext.putImageData(e.data, 0, 0)) 
+    await blurCanvas();
 
     bgContext.fillStyle = '#FFF1';
     bgContext.fillRect(0, 0, cWidth, cHeight)
@@ -73,8 +103,7 @@ export default function ScratchCard({ setScratched, image, setForeground, theme 
     // fill the canvas with a 🖼️ cover
     bgContext.drawImage(imgElement, cWidth / 2 - imageWidth / 2, cHeight / 2 - imageHeight / 2, imageWidth, imageHeight)
     fgContext.strokeStyle = fgContext.createPattern(background, 'no-repeat')!  
-    blurWorker.current!.postMessage(bgContext.getImageData(0, 0, cWidth, cHeight))
-    await new Promise<MessageEvent>(r => blurWorker.current!.onmessage = r).then(e => bgContext.putImageData(e.data, 0, 0)) 
+    await blurCanvas();
     
     // decide UI foreground based on pixel color
     let topPixel = bgContext.getImageData(cWidth/2, 0, cWidth/2+1, 1).data;
