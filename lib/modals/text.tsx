@@ -12,7 +12,6 @@ export default function TextModal({ isOpen, text, setText, onClose, title, capti
   isOpen && ref.current?.focus();
 
   useEffect(() => {
-    console.log(text, ref.current)
     if (ref.current && text) ref.current.value = text
   }, [text, isOpen])
 

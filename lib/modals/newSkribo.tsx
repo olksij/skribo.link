@@ -33,7 +33,15 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
   let isOpen = image || text;
 
   useEffect(() => {
-    !isOpen && (setTextModalOpen(false), setLoading(false));
+    if (!isOpen) {
+      setTimer(30)
+      setTheme(0)
+      setTitle(null)
+      setPreview(false)
+      setTitleModalOpen(false)
+      setTextModalOpen(false);
+      setLoading(false)
+    }
   }, [isOpen])
 
   useEffect(() => {
@@ -84,10 +92,10 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
 
   const onClose = () => (setImage(null), setText(null));
 
-  return <Sheet disableDrag={true} detent="content-height" rootId='__next' isOpen={isOpen} onClose={onClose}>
+  return <Sheet detent="content-height" rootId='__next' isOpen={isOpen} onClose={onClose}>
     <Sheet.Container style={{ background: '#EBEBF0' }}>
       <Sheet.Header />
-      <Sheet.Content style={{ padding: '0 24px', flexDirection: 'column', gap: '20px' }}>
+      <Sheet.Content disableDrag={true} style={{ padding: '0 24px', flexDirection: 'column', gap: '20px' }}>
         <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
           <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" style={{ borderRadius: 12 }}/>
           <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>New skribo</p>
@@ -113,7 +121,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
 
         <PreviewModal isOpen={preview} onClose={() => setPreview(false)} image={image} text={text} title={title} theme={theme} />
 
-        <Card outerStyle={{ position: 'fixed', bottom: '0px', left: '24px', right: '24px', marginBottom: '24px' }} innerStyle={{ background: '#2C2A33', boxShadow: '0 24px 48px 24px #EBEBF0AA' }}>
+        <Card outerStyle={{ position: 'fixed', top: 'calc(100% - 56px - 24px)', left: '24px', right: '24px' }} innerStyle={{ background: '#2C2A33', boxShadow: '0 24px 48px 24px #EBEBF0AA' }}>
           <Tapable height="56px" justifyContent='center' onTap={ async () => {
             setLoading(true);
 

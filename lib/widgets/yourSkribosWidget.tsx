@@ -18,7 +18,7 @@ export default function YourSkribosWidget() {
   const [counter, setCounter] = useState<number | null>(null);
   
   useEffect(() => {
-    const owned = localStorage.getItem('owned')?.split('/');
+    const owned = localStorage.getItem('owned')?.split('/').filter(v => v != '');
 
     if (!owned) setSkribos({})
 

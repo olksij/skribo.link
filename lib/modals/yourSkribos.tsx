@@ -25,7 +25,7 @@ export default function YourSkribosModal({ isOpen, onClose, skribos }: { isOpen:
   return <Sheet ref={ref} detent='content-height' rootId='__next' isOpen={isOpen} onClose={onClose}>
   <Sheet.Container style={{ background: '#EBEBF0' }}>
     <Sheet.Header />
-    <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '16px', minHeight: 256 }}>
+    <Sheet.Content disableDrag={true} style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '16px', minHeight: 256 }}>
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
         <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" style={{ borderRadius: 12 }}/>
         <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>Your Skribos</p>

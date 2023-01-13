@@ -34,11 +34,9 @@ export default function CardPage({ id, secret }: any) {
   }, [counter, id, image, isScratched])
 
   let note;
-  if (!isScratched) note = "Scratch to unveil";
-  if (!(image || text))       note = "Loading";
-  if (counter == 0) note = "Time is out";
-
-  console.log(text)
+  if (!isScratched)     note = "Scratch to unveil";
+  if (!(image || text)) note = "Loading";
+  if (counter == 0)     note = "Time is out";
   
   useEffect(() => {
     // get the access token from secret so client can access database
@@ -57,18 +55,22 @@ export default function CardPage({ id, secret }: any) {
       // obtain keys && data
       keysRef.current = await deriveKeys(secret, data.importAlgorithm, data.encryptAlgorithm, new Uint8Array(data.salt))
       dataRef.current = data, setCounter(data.timeLeft)
+
+      let newImage = null, newText = null;
       
-      getBytes(storageRef(storage, `cards/${id}`)).then(async encrypted => {
+      await getBytes(storageRef(storage, `cards/${id}`)).then(async encrypted => {
         // decrypt the image
         let image = await decryptData(keysRef.current!.encryptKey, new Uint8Array(data.iv), encrypted);
         // set the image to rerender scratch
-        setImage(new Blob([image]));
+        newImage = new Blob([image]);
       }).catch(() => {});
 
       if (dataRef.current!.encryptedText) {
         let text  = await decryptData(keysRef.current!.encryptKey, new Uint8Array(data.iv), new Uint8Array(dataRef.current!.encryptedText).buffer);
-        setText(new TextDecoder().decode(text));
+        newText = new TextDecoder().decode(text);
       }
+
+      setImage(newImage), setText(newText);
 
       set(docRef, { ...dataRef.current, lastTimeOpened: Date.now(), firstTimeOpened: dataRef.current?.firstTimeOpened ?? Date.now() })
     });
@@ -91,9 +93,9 @@ export default function CardPage({ id, secret }: any) {
     <Background id={0}/>
     <Background id={dataRef.current?.theme}/>
     <div style={{ position: 'fixed', left: 24, right: 24, top: 80, bottom: 96, flexDirection: 'column', ...(isScratched ? { left: 0, right: 0, top: 0, bottom: 0 } : {}) }}>
-      <p style={{ lineHeight: dataRef.current?.title && !isScratched ? '24px' : '0px', margin: 'auto', ...textFont.style, opacity: .5, paddingBottom: dataRef.current?.title && !isScratched ? 16 : 0 }}>{dataRef.current?.title ?? ''}</p>
+      <p style={{ lineHeight: dataRef.current?.title && !isScratched ? '24px' : '0px', margin: 'auto', ...textFont.style, opacity: !isScratched ? .5 : 0, paddingBottom: dataRef.current?.title && !isScratched ? 16 : 0 }}>{dataRef.current?.title ?? ''}</p>
       <div className={styles.content + ' ' + (isScratched && styles.fullscreen)}>
-        <Scratch theme={dataRef.current?.theme} image={image} text={text ?? ''} setScratched={setScratched} setForeground={setForeground} reply={true}/>
+        <Scratch theme={dataRef.current?.theme} image={image} text={text} setScratched={setScratched} setForeground={setForeground} reply={true}/>
         { note && <div className={ (image || text) && counter ? styles.scratchNote : styles.loadingNote }>
           <p className={displayFont.className}>{note}</p>
         </div> }

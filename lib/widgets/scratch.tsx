@@ -8,7 +8,7 @@ import patterns    from '../patterns/import';
 
 type PointerEvent = { mouse?: MouseEvent, touch?: TouchEvent }
 
-export default function ScratchCard({ setScratched, image, setForeground, theme, text, reply }: { setScratched: any, image?: Blob | null, setForeground: any, theme: number, text?: string, reply: boolean }) {
+export default function ScratchCard({ setScratched, image, setForeground, theme, text, reply }: { setScratched: any, image?: Blob | null, setForeground: any, theme: number, text?: string | null, reply: boolean }) {
   // HTMLElement references
   let foregroundRef = useRef<HTMLCanvasElement>(null);
   let backgroundRef = useRef<HTMLCanvasElement>(null);
@@ -151,6 +151,7 @@ export default function ScratchCard({ setScratched, image, setForeground, theme,
 
     // fill text
 
+    
     if (text) {
       let lines: { text: string[], width: number }[] = [{ text: [], width: 0 }],
           words = text?.split(' ') ?? [];

@@ -33,8 +33,8 @@ export default function SkriboDetails({ skribo, onClose }: any) {
     localStorage.removeItem(skribo.id), onClose();
 
     // delete the skribo from owned list as well
-    let currOwned = localStorage.getItem('owned')?.replace(skribo.id, '') ?? '';
-    localStorage.setItem('owned', currOwned?.replace('//', '/'))
+    let currOwned = localStorage.getItem('owned')?.split('/') ?? [];
+    localStorage.setItem('owned', currOwned?.filter(v => v != skribo.id).join('/'))
   }
 
   const toRender = {
@@ -43,12 +43,10 @@ export default function SkriboDetails({ skribo, onClose }: any) {
     'firstTimeOpened': { image: '/openedIcon.svg',      text: 'Opened' },
   }
 
-  console.log(skribo?.id, skribo?.theme)
-
   return <Sheet detent='content-height' rootId='__next' isOpen={skribo != null} onClose={onClose}>
   <Sheet.Container style={{ background: '#EBEBF0' }}>
     <Sheet.Header />
-    <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
+    <Sheet.Content disableDrag={true} style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
         <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" style={{ borderRadius: 12 }}/>
         <p style={{ fontSize: '24px', margin: 'revert', textOverflow: 'ellipsis' }} className={ displayFont.className }>{skribo?.title ?? 'No title'}</p>
@@ -60,7 +58,7 @@ export default function SkriboDetails({ skribo, onClose }: any) {
 
           
           if (data != null) {
-            if (key == 'timeLeft') data == 0 ? data = 'Expired' : data + 's';
+            if (key == 'timeLeft') data = data == 0 ? 'Expired' : data + 's';
             if (['timeCreated', 'firstTimeOpened', 'lastTimeOpened'].includes(key)) data = new Date(data).toLocaleString();
           }
           
