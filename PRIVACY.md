@@ -6,9 +6,10 @@ If you choose to use the Service, then you agree to the collection and use of in
 
 ## Collection of Personal Data
 
-The app does not collect any personal data from users. In order to provide it's secure data sharing functionality, it asks users to write a caption or to upload an image, which are going through an encryption process and is stored in Firebase Realtime Database and Firebase Storage. The app does not provide access to this data to third parties. 
+The app does not collect any personal data from users. In order to provide it's secure data sharing functionality, it asks users to write a caption or to upload an image, which are going through an encryption process and is stored in Firebase Realtime Database and Firebase Storage. The app does not provide access to this data to third parties. The app does use reCAPTCHA v3 tools to fight spam and abuse in order to provide the best experience for the app's users. I do not share with third parties any information provided by the service.
 
 Privacy Policy of Firebase can be found here: [https://firebase.google.com/support/privacy](https://firebase.google.com/support/privacy)
+Privacy Policy of reCAPTCHA can be found here: [https://policies.google.com/privacy](https://policies.google.com/privacy)
 
 ## Use of Personal Data
 

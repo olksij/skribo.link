@@ -9,15 +9,15 @@ export default function Selectable({ id, selected, setSelected, borderRadius, ch
 
   let isSelected = selected == id;
 
-  const press   = () => setScale(.9);
-  const release = () => setTimeout(() => setScale(1), 200);
+  const press   = () => { setScale(.9);  }
+  const release = () => { setTimeout(() => setScale(1), 200);  }
 
   useEffect(() => {
     if (scaleCallback) scaleCallback(scale);
   }, [scale, scaleCallback])
 
   return <div ref={ ref } className={ [styles.container, isSelected && styles.selected].join(' ') }
-      onMouseDown={ press } onMouseUp={ release } onTouchStart={ press } onTouchEnd={ release }
+      onPointerDown={ press } onPointerUp={ release } onPointerCancel={ release }
       onClick={ () => setSelected(id) } style={{ borderRadius: ((borderRadius ?? 0) + 2) + 'px', transform: `scale(${scale})` }} 
       onMouseEnter={ () => setHovered(true) } onMouseLeave={ () => setHovered(false) }>
     { children }

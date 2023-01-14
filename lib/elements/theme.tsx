@@ -46,7 +46,7 @@ let styles: Record<string, CSSProperties> = {
     justifyContent: 'center', 
     backgroundSize: '88px', 
     overflow: 'hidden', 
-    boxShadow: 'inset 0 0 0 1px #0001' 
+    boxShadow: 'inset 0 0 0 1px #0001'
   },
   pattern: { 
     width: '64px', 

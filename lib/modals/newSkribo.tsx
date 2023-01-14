@@ -25,6 +25,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
   
   const [preview, setPreview] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [failed,  setFailed] = useState<boolean>(false);
   const [textModalOpen, setTextModalOpen] = useState<boolean>(false);
   const [titleModalOpen, setTitleModalOpen] = useState<boolean>(false);
 
@@ -124,58 +125,70 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
         <Card outerStyle={{ position: 'fixed', top: 'calc(100% - 56px - 24px)', left: '24px', right: '24px' }} innerStyle={{ background: '#2C2A33', boxShadow: '0 24px 48px 24px #EBEBF0AA' }}>
           <Tapable height="56px" justifyContent='center' onTap={ async () => {
             setLoading(true);
-
-            let imageWebp: Blob | null = null
-            
-            if (image) {
-              const canvas = document.createElement('canvas');
-              const imageElem = await loadImage(URL.createObjectURL(image));
-              
-              let aspectRatio = imageElem.naturalWidth / imageElem.naturalHeight;
-              const size = Math.min(Math.max(imageElem.naturalWidth, imageElem.naturalHeight), 2048)
-  
-              if (aspectRatio > 1) canvas.width = size,  canvas.height = size / aspectRatio;
-              else                 canvas.height = size, canvas.width  = size * aspectRatio;
-                          
-              canvas.getContext('2d')!.drawImage(imageElem, 0, 0, canvas.width, canvas.height);
-              imageWebp = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.5));
-            }
-
-            let data = await encrypt(imageWebp, text);  
-
-            const { user } = await signInAnonymously(auth);
-
-            // get database referenses
-            const imageRef = storageRef (storage,  `cards/${data.id}`);
-            const docRef   = databaseRef(database, `cards/${data.id}`);
-            const userRef  = databaseRef(database, `users/${user.uid}/${data.id}`);
-
-            // log new owned skribo && save secret locally
-            set(userRef, data.accessToken)
-            localStorage.setItem(data.id, data.secret);
-            localStorage.setItem('owned', (localStorage.getItem('owned') ? localStorage.getItem('owned') + '/' : '') + data.id);
       
-            if (data.blob) await uploadBytes(imageRef, data.blob)
+            try {
+              let imageWebp: Blob | null = null
+            
+              if (image) {
+                const canvas = document.createElement('canvas');
+                const imageElem = await loadImage(URL.createObjectURL(image));
+                
+                let aspectRatio = imageElem.naturalWidth / imageElem.naturalHeight;
+                const size = Math.min(Math.max(imageElem.naturalWidth, imageElem.naturalHeight), 2048)
+    
+                if (aspectRatio > 1) canvas.width = size,  canvas.height = size / aspectRatio;
+                else                 canvas.height = size, canvas.width  = size * aspectRatio;
+                            
+                canvas.getContext('2d')!.drawImage(imageElem, 0, 0, canvas.width, canvas.height);
+                imageWebp = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.5));
+              }
+  
+              let data = await encrypt(imageWebp, text);  
+  
+              const { user } = await signInAnonymously(auth);
+  
+              // get database referenses
+              const imageRef = storageRef (storage,  `cards/${data.id}`);
+              const docRef   = databaseRef(database, `cards/${data.id}`);
+              const userRef  = databaseRef(database, `users/${user.uid}/${data.id}`);
+  
+              await set(docRef, {
+                timeCreated: Date.now(),
+                accessToken: data.accessToken,
+                importAlgorithm: data.importAlgorithm,
+                encryptAlgorithm: data.encryptAlgorithm,
+                encryptedText: data.encryptedText ? new Uint8Array(data.encryptedText) : null,
+                iv: data.iv,
+                salt: data.salt,
+                timeLeft: timer,
+                timeAssigned: timer,
+                theme,
+                owner: user.uid,
+                title: title,
+              })
+    
+              if (data.blob) await uploadBytes(imageRef, data.blob) 
 
-            set(docRef, {
-              timeCreated: Date.now(),
-              accessToken: data.accessToken,
-              importAlgorithm: data.importAlgorithm,
-              encryptAlgorithm: data.encryptAlgorithm,
-              encryptedText: data.encryptedText ? new Uint8Array(data.encryptedText) : null,
-              iv: data.iv,
-              salt: data.salt,
-              timeLeft: timer,
-              timeAssigned: timer,
-              theme,
-              owner: user.uid,
-              title: title,
-            });
-            onClose();
-            setShareLink({ link: window.origin + '/' + data.id + data.secret, theme })
+              // log new owned skribo && save secret locally
+              set(userRef, data.accessToken)
+              localStorage.setItem(data.id, data.secret);
+              localStorage.setItem('owned', (localStorage.getItem('owned') ? localStorage.getItem('owned') + '/' : '') + data.id);            
+
+              onClose();
+              setShareLink({ link: window.origin + '/' + data.id + data.secret, theme })
+            }
+            catch(e) { 
+              console.log(e), 
+              setFailed(true), 
+              setLoading(false), 
+              setTimeout(() => setFailed(false), 1000) 
+            }
            }}>
-            <Loading style={{ opacity: loading ? 1 : 0, position: 'absolute', marginTop: loading ? 0 : 32 }}/>
-            <div style={{ opacity: loading ? 0 : 1, marginTop: loading ? -32 : 0, position: 'absolute', gap: 8 }}>
+            <div style={{ position: 'absolute', marginTop: loading || failed ? 0 : 32, justifyContent: 'center' }}>
+              <Loading style={{ position: 'absolute', opacity: loading ? 1 : 0, justifySelf: 'center', alignSelf: 'center' }}/>
+              <p className={displayFont.className} style={{ opacity: failed ? 1 : 0, position: 'absolute', ...buttonStyle, width: 'max-content', justifySelf: 'center', alignSelf: 'center' }}>Oops, try again!</p>
+            </div>
+            <div style={{ opacity: loading || failed ? 0 : 1, marginTop: loading || failed ? -32 : 0, position: 'absolute', gap: 8 }}>
               <img width={24} src='/doneIconWhite.svg'/>
               <p className={displayFont.className} style={{ ...buttonStyle }}>Finish</p>
             </div>
