@@ -160,7 +160,7 @@ export default function ScratchCard({ setScratched, image, setForeground, theme,
             maxWidth   = (innerWidth - 96) * rt;
 
       bgContext.textAlign = 'center';
-      bgContext.font = (16 * rt) + 'px Arial'
+      bgContext.font = (16 * rt) + 'px text'
 
       words.forEach(word => {
         let width = bgContext.measureText(word).width,

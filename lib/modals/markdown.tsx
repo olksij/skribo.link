@@ -33,7 +33,7 @@ export default function MarkdownModal({ data, onClose }: any) {
       </ReactMarkdown>
       <div style={copyrightContainer}>
         <img style={{ height: '16px' }} src='/copyrightIcon.svg'/>
-        <p className={textFont.className}>2022 Oleksii Besida</p>
+        <p style={{color: 'var(--textOpacity)'}} className={textFont.className}>2022 Oleksii Besida</p>
       </div>
     </Sheet.Content>
   </Sheet.Container>
@@ -49,6 +49,5 @@ let copyrightContainer: CSSProperties = {
   justifyContent: 'center',
   fontSize: '14px',
   gap: '4px',
-  color: 'var(--textOpacity)',
   lineHeight: '16px'
 }

@@ -17,7 +17,7 @@ export default function Card(props: CardProps) {
     { /* header section */ }
     { props.header && <div style={{ ...styles.header }}>
       <img height={18} src={ props.header.icon }/>
-      <p style={{ margin: '0', ...displayFont.style }}>{ props.header.title }</p>
+      <p style={{ margin: '0', color: '#585466', ...displayFont.style }}>{ props.header.title }</p>
     </div> }
     { /* content section */ }
     <div style={{ width: 'inherit', height: 'inherit' }}>
@@ -45,7 +45,6 @@ let styles: Record<string, CSSProperties> = {
     alignItems: 'center', 
     gap: 8,
     fontSize: 14, 
-    color: '#585466 !important',
   },
   container: {
     borderRadius: 12,

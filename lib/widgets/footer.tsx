@@ -8,13 +8,13 @@ import privacy from '../../PRIVACY.md';
 //@ts-ignore
 import terms from '../../TERMS.md'; 
 //@ts-ignore
-import about from '../../LICENSE.md';
+import about from '../../README.md';
 
 export default function Footer() {
   const [data, setData] = useState<[string, string] | null>(null);
 
   const buttons: Record<string, any> = {
-    About: () => setData(['License', about]),
+    About: () => setData(['About Skribo', about]),
     Terms: () => setData(['Terms & Conditions', terms]),
     Privacy: () => setData(['Privacy Policy', privacy]),
   }
