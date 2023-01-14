@@ -80,10 +80,10 @@ export default function SkriboDetails({ skribo, onClose }: any) {
         </div>  }
       </Card>
       <Card separators>
-        <Tapable style={{ gap: 8 }} justifyContent='center' onTap={ () => setPreviewModal(true)}>
+        { skribo?.timeLeft != 0 && (skribo?.image || skribo?.text) && <Tapable style={{ gap: 8 }} justifyContent='center' onTap={ () => setPreviewModal(true)}>
           <img src="/lightningIcon.svg"/>
           <p className={displayFont.className} style={{ ...buttonStyle, color: 'var(--text)' }}>Preview</p>
-        </Tapable>
+        </Tapable> }
         <Tapable style={{ gap: 8 }} justifyContent='center' onTap={ () => setDeleteModal(true) }>
           <img src="/deleteIcon.svg"/>
           <p className={displayFont.className} style={{ ...buttonStyle, color: '#BF5656' }}>Delete</p>
@@ -97,7 +97,7 @@ export default function SkriboDetails({ skribo, onClose }: any) {
       </Card>
 
       <ShareSkriboModal link={window.origin + '/' + skribo?.id + localStorage.getItem(skribo?.id)} theme={skribo?.theme} isOpen={shareModal} onClose={() => setShareModal(false)}/>
-      <PreviewModal isOpen={previewModal} onClose={() => setPreviewModal(false)} image={new Blob([skribo?.image])} text={skribo?.text} title={skribo?.title} theme={skribo?.theme}/>
+      <PreviewModal isOpen={previewModal} onClose={() => setPreviewModal(false)} image={skribo?.image ? new Blob([skribo?.image]) : null} text={skribo?.text} title={skribo?.title} theme={skribo?.theme}/>
       <DeleteModal isOpen={deleteModal} onClose={(sure: boolean) => (setDeleteModal(false), sure && onDelete())}/>
     </Sheet.Content>
   </Sheet.Container>

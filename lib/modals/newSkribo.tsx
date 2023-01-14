@@ -202,7 +202,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
 }
 
 let timers = [5, 15, 30, 45, 60]
-let themes = [0, 1, 2, 3, 4, 5]
+let themes = [0, 2, 4, 5, 1, 3]
 
 let buttonCapton: CSSProperties = {
   color: `var(--text)`,

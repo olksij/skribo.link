@@ -42,6 +42,9 @@ export default function YourSkribosWidget() {
         data.replies = decryptedReplies;
         data.id = id;
 
+        if (data.encryptedText) data.text = await decryptData(keys.encryptKey, new Uint8Array(data.iv), new Uint8Array(data.encryptedText).buffer)
+          .then(buffer => new TextDecoder().decode(buffer));
+
         await getBytes(storageRef(storage, `cards/${id}`)).then(async encrypted => {
           data.image = await decryptData(keys.encryptKey, new Uint8Array(data.iv), encrypted);
         }).catch(() => {});  
@@ -77,7 +80,7 @@ export default function YourSkribosWidget() {
         </div>
         <div style={{ alignItems: 'center', justifyContent: 'center', width: 144, height: '100%' }}>
           { [0, 1, 2].map(i => <img style={{ width: 38, height: 64, objectFit: 'cover', borderRadius: 4, boxShadow: 'var(--shadowNormal)', position: 'absolute', transform: `rotate(${previews[i] ? (previews.length == 1 && i == 0 ? 0 : -5+i*20) : -30}deg) scale(${previews[i] ? 1 : .7})`, zIndex: 3-i, opacity: previews[i] ? 1.3 - i * .30 : 0, transition: `.5s cubic-bezier(.75, 0, 0, 1) ${i*0.025}s` }} key={i} src={previews[i]}/>) }
-          <img style={{ height: 36, opacity: !loading && empty ? .25 : 0, transform: `scale(${!loading && empty ? 1 : .8})`, transitionDelay: '.15s', position: 'absolute' }} src='/cactusIcon.svg'/>
+          <img style={{ height: 36, opacity: !loading && (empty || !previews.length) ? .25 : 0, transform: `scale(${!loading && (empty || !previews.length) ? 1 : .8})`, transitionDelay: '.15s', position: 'absolute' }} src={empty ? '/cactusIcon.svg' : 'fireThin.svg'}/>
           <Indicator foreground={true} value={null} style={{ opacity: loading ? 1 : 0, transform: `scale(${loading ? 1 : .8})`, position: 'absolute' }}/>
         </div>
       </Tapable>

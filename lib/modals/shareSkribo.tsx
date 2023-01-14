@@ -100,7 +100,7 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
       context.fillStyle = '#AAA';
       context.textAlign = 'center';
       context.textBaseline = 'top'
-      context.font = ((12 * ratio) + 'px ') + textFont.className.replace('className', 'textFont');
+      context.font = ((12 * ratio) + 'px ') + ` text`;
       context.fillText(link, halfWidth, halfHeight + bgSize/2 + 24*ratio);
       
       context.globalCompositeOperation = 'source-over';
