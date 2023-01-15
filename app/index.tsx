@@ -1,7 +1,9 @@
+'use client';
+
 import styles from '../styles/home.module.css'
 
-import { displayFont } from './_app';
-import { textFont } from './_app';
+import { displayFont } from './layout';
+import { textFont } from './layout';
 
 import Footer from '../lib/widgets/footer';
 import Card from '../lib/elements/card';
@@ -27,7 +29,7 @@ export default function Home() {
     filePicker.current = document.createElement('input');
     filePicker.current.onchange = (e: any) => {
       var file = e!.target!.files[0]; 
-      if (file) setImage(file);
+      if (file) setImage(new File([], 'h'));
     }
     filePicker.current.type   = 'file';
     filePicker.current.accept = 'image/*';
