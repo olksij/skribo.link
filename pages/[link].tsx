@@ -127,7 +127,7 @@ import { ref as databaseRef, get, set, remove } from "firebase/database";
 import { ref as storageRef, deleteObject, getBytes } from "firebase/storage";
 import { decryptData, deriveKeys, encryptData, obtainAccessToken } from '../lib/crypto';
 import { signInAnonymously } from 'firebase/auth';
-import Background from '../lib/elements/background';
+import Background from '../app/widgets/background';
 import Indicator from '../lib/elements/indicator';
 import Counter from '../lib/elements/counter';
 import ReplyTextfield from '../lib/elements/replyTextfield';

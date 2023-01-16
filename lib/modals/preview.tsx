@@ -2,7 +2,7 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 
 import Sheet from 'react-modal-sheet';
 import { displayFont, textFont } from "../../pages/_app";
-import Background from "../elements/background";
+import Background from "../../app/widgets/background";
 import Tapable from "../elements/tapable";
 import Scratch from "../widgets/scratch";
 

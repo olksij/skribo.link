@@ -1,9 +1,15 @@
-import Head from 'next/head';
-import { CSSProperties, useEffect } from 'react';
-import backgrounds, { themeColors } from '../backgrounds/import'
-import patterns    from '../patterns/import'
+'use client';
 
-export default function Background({ id, style }: { id: number | null, style?: CSSProperties }) {
+import { CSSProperties, useEffect } from 'react';
+import backgrounds, { themeColors } from '../../lib/backgrounds/import'
+import patterns    from '../../lib/patterns/import'
+
+type Props = { 
+  id: number | null, 
+  style?: CSSProperties 
+}
+
+export default function Background({ id, style }: Props) {
   useEffect(() => {
     document.getElementById('metaThemeColor')?.setAttribute('content', themeColors[id ?? 0].topBar)
   })

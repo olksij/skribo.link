@@ -15,7 +15,7 @@ export default function ThemesWidget({ id, theme, setTheme }: { id: number, them
   const [scale, setScale] = useState<number>(1);
   const [isPlaying, setPlaying] = useState<boolean>(false);
 
-  /*const options: LottieOptions = { animationData: animations[id], loop: false, autoplay: false, onComplete: () => setPlaying(false) };
+  const options: LottieOptions = { animationData: animations[id], loop: false, autoplay: false, onComplete: () => setPlaying(false) };
   const animation = useLottie(options), { View, animationItem: item } = animation;
 
   useEffect(() => {
@@ -28,11 +28,12 @@ export default function ThemesWidget({ id, theme, setTheme }: { id: number, them
 
   useEffect(() => {
     if (theme == id) setPlaying(true)
-  }, [theme, id, scale]);*/
+  }, [theme, id, scale]);
 
   return <Selectable id={id} selected={theme} setSelected={setTheme} borderRadius={6} scaleCallback={setScale}>
     <div style={{ background: `url(${backgrounds[id]})`, ...styles.card }}>
       <div style={{ background: `url(${patterns[id]})`, ...styles.pattern }}/>
+      <p style={{ ...styles.emoji, transform: `scale(${scale*scale*scaleK[id]})`, height: isPlaying && id == theme ? '42px' : '32px' }}>{View}</p>
     </div>
   </Selectable>
 }

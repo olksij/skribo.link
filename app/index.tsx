@@ -1,9 +1,6 @@
 'use client';
 
-import styles from '../styles/home.module.css'
-
-import { displayFont } from './layout';
-import { textFont } from './layout';
+import { displayFont } from './components/fonts';
 
 import Footer from '../lib/widgets/footer';
 import Card from '../lib/elements/card';
@@ -12,8 +9,8 @@ import { CSSProperties, Suspense, useEffect, useRef, useState } from 'react';
 import NewSkriboModal from '../lib/modals/newSkribo';
 import TextModal from '../lib/modals/text';
 import ShareSkriboModal from '../lib/modals/shareSkribo';
-import Background from '../lib/elements/background';
 import YourSkribosWidget from '../lib/widgets/yourSkribosWidget';
+import Logo from './widgets/logo';
 
 
 export default function Home() {
@@ -29,7 +26,7 @@ export default function Home() {
     filePicker.current = document.createElement('input');
     filePicker.current.onchange = (e: any) => {
       var file = e!.target!.files[0]; 
-      if (file) setImage(new File([], 'h'));
+      if (file) setImage(file);
     }
     filePicker.current.type   = 'file';
     filePicker.current.accept = 'image/*';
@@ -38,15 +35,14 @@ export default function Home() {
 
   return (
     <>
-      <Background id={0}/>
-      <main className={styles.container}>
-        <img src="/logo.svg"/>
-        <Card effects={{ boxShadow: '0 0 0 1px #0008, 0 8px 24px #0006', mixBlendMode: 'overlay', borderRadius: 16 }} innerStyle={{ borderRadius: 16, boxShadow: 'none' }} separators>
-          <Tapable onTap={() => filePicker.current?.click()} icon='/imageIcon.svg' gap='8px' height="56px" justifyContent="center">
-            <p style={ buttonCapton } className={ displayFont.className }>Upload image</p>
+      <main style={styles.container}>
+        <Logo/>
+        <Card effects={ styles.buttonEffects } innerStyle={ styles.buttonInnerStyle } separators>
+          <Tapable style={styles.tapableStyle} onTap={() => filePicker.current?.click()} icon='/imageIcon.svg'>
+            <p style={ styles.buttonCapton }>Upload image</p>
           </Tapable>
-          <Tapable onTap={() => setTextModalOpen(true)} icon='/textIcon.svg' gap='8px' height="56px" justifyContent="center">
-            <p style={ buttonCapton } className={ displayFont.className }>Write caption</p>
+          <Tapable style={styles.tapableStyle} onTap={() => setTextModalOpen(true)} icon='/textIcon.svg'>
+            <p style={ styles.buttonCapton }>Write caption</p>
           </Tapable>
         </Card>
 
@@ -63,7 +59,35 @@ export default function Home() {
   )
 }
 
-let buttonCapton: CSSProperties = {
-  color: `var(--text)`,
-  fontSize: `16px`,
+let styles: Record<string, CSSProperties> = {
+  container: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    width: '100%',
+    gap: '24px',
+    margin: 'auto',
+    maxWidth: 360,
+    padding: '0 32px',
+  },
+  buttonEffects: { 
+    boxShadow: '0 0 0 1px #0008, 0 8px 24px #0006', 
+    mixBlendMode: 'overlay', 
+    borderRadius: 16 
+  },
+  buttonInnerStyle: { 
+    borderRadius: 16, 
+    boxShadow: 'none' 
+  },
+  tapableStyle: {
+    gap: 8,
+    height: 56,
+    justifyContent: 'center',
+  },
+  buttonCapton: {
+    color: `var(--text)`,
+    fontSize: `16px`,
+    fontFamily: displayFont,
+  }
 }
