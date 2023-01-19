@@ -1,7 +1,8 @@
-import { Analytics } from '@vercel/analytics/react';
 import Background from './widgets/background';
-import '../styles/globals.css'
-import { InitAppCheck } from './components/firebase';
+import './globals.css'
+
+// componets
+import { InitAppCheck }    from './components/firebase';
 import { AnalyticsWrapper } from './components/analytics';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="theme-color" content="#191919" id='metaModalColor' />
         <link rel="icon" href="/favicon.ico" />
       </head>
+      
       <body>
         <Background id={0}/>
         <InitAppCheck/>

@@ -6,9 +6,14 @@ import React, { CSSProperties, useEffect, useRef, useState } from 'react';
 import { textFont, displayFont } from '../components/fonts';
 
 import Scratch from '../widgets/scratch';
-import styles from '/styles/card.module.css'
+import styles from './card.module.css'
 
-export default function CardPage({ id, secret }: any) {
+type CardPageParams = {
+  id: string,
+  secret: string,
+}
+
+export default function CardPage({ id, secret }: CardPageParams) {
   // [timeLeft] counter
   let [counter, setCounter] = useState<number | null>(null);
 
@@ -60,8 +65,8 @@ export default function CardPage({ id, secret }: any) {
 
       // connect with database
       const docRef = databaseRef(database, `cards/${id}`);
-      let data = await get(docRef).then(snap => snap.val());      
-
+      let data = await get(docRef).then(snap => snap.val()); 
+      
       // obtain keys && data
       keysRef.current = await deriveKeys(secret, data.importAlgorithm, data.encryptAlgorithm, new Uint8Array(data.salt))
       dataRef.current = data, setCounter(data.timeLeft)
@@ -116,7 +121,7 @@ export default function CardPage({ id, secret }: any) {
       <div style={{ alignItems: 'center', gap: 16 }}>
         <Counter value={ counter ?? 0 } style={{ fontFamily: textFont, opacity: counter ? 1 : 0, transition: '.3s cubic-bezier(0, 0, 0, 1)', color: foreground && fullScreen ? '#FFF' : '#000', margin: 0 }} />
         <Indicator style={{ opacity: counter != 0 ? 1 : 0 }} value={counter && dataRef.current ? counter / dataRef.current.timeAssigned : null} foreground={fullScreen && foreground}>
-          <img style={{ position: 'absolute', padding: 9, opacity: counter ? 1 : 0, height: 14, transition: '1s cubic-bezier(.5, 0, 0, 1)' }} src={foreground && fullScreen ? '/fireFilledLight.svg' : '/fireFilled.svg'}/>
+          <img style={{ position: 'absolute', padding: 9, opacity: counter ? 1 : 0, height: 14, transition: '1s cubic-bezier(.5, 0, 0, 1)' }} src={foreground && fullScreen ? '/fireFilledLight.svg' : '/fireFilled.svg'} alt="Fire icon"/>
         </Indicator>
       </div>
     </div>
@@ -144,13 +149,3 @@ import ReplyTextfield from '../elements/replyTextfield';
 import Link from 'next/link';
 import darkenTheme from '../components/darkenTheme';
 import Logo from '../widgets/logo';
-
-// obtain cloud data on server during the request of the page
-export async function getServerSideProps(context: any) {
-  // obtain context parameters
-  let { link } = context.params;
-
-  let [id, secret] = [link.substring(0, 8), link.substring(8, 16)]
-
-  return { props: { id, secret } } 
-}

@@ -2,15 +2,25 @@
 
 import React, { useEffect, useRef, forwardRef, ForwardedRef, useState }  from 'react';
 
-import styles from '/styles/scratch.module.css'
+import styles from './scratch.module.css'
 import SpoilerNoise from './spoilerNoise';
 
+// assets
 import backgrounds from '../../assets/backgrounds/import';
 import patterns    from '../../assets/patterns/import';
 
 type PointerEvent = { mouse?: MouseEvent, touch?: TouchEvent }
 
-export default function ScratchCard({ setScratched, image, setForeground, theme, text, reply }: { setScratched: any, image?: Blob | null, setForeground: any, theme: number, text?: string | null, reply: boolean }) {
+type ScratchCardProps = { 
+  setScratched: (arg: boolean) => any, 
+  image?: Blob | null, 
+  setForeground: (arg: boolean) => any, 
+  theme: number, 
+  text?: string | null, 
+  reply: boolean 
+}
+
+export default function ScratchCard({ setScratched, image, setForeground, theme, text, reply }: ScratchCardProps) {
   // HTMLElement references
   let foregroundRef = useRef<HTMLCanvasElement>(null);
   let backgroundRef = useRef<HTMLCanvasElement>(null);

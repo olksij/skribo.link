@@ -31,7 +31,7 @@ export default function Selectable({ id, selected, setSelected, borderRadius, ch
     if (scaleCallback) scaleCallback(scale);
   }, [scale, scaleCallback])
 
-  return <div ref={ ref } style={{ ...(isSelected ? styles.container : styles.selected), borderRadius: ((borderRadius ?? 0) + 2) + 'px', transform: `scale(${scale})` }}
+  return <div ref={ ref } style={{ ...styles.container, ...(isSelected ? styles.selected : {}), borderRadius: ((borderRadius ?? 0) + 2) + 'px', transform: `scale(${scale})` }}
       onPointerDown={ press } onPointerUp={ release } onPointerCancel={ release } onClick={ () => setSelected(id) } 
       onMouseEnter={ () => setHovered(true) } onMouseLeave={ () => setHovered(false) }>
     { children }
@@ -47,7 +47,6 @@ let styles: Record<string, CSSProperties> = {
   },
   
   selected: {
-    transition: '.3s cubic-bezier(.5, 0, 0, 1)',
     boxShadow: '0 0 0 2px #000F',
   }
 }

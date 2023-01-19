@@ -3,7 +3,7 @@
 import { CSSProperties, useEffect, useState } from "react";
 
 import Sheet from 'react-modal-sheet';
-import styles from '/styles/card.module.css'
+import styles from '../[link]/card.module.css'
 
 // elements
 import Tapable from "../elements/tapable";
@@ -61,7 +61,7 @@ export default function PreviewModal({ isOpen, onClose, image, theme, text, titl
       </div>
 
       <div style={{ alignItems: 'center', zIndex: 1, justifyContent: 'space-between', height: '48px', width: '100%' }}>
-        <Tapable onTap={onClose} icon={foreground && isScratched ? '/backIconLight.svg' : '/backIconDark.svg'} style={{ borderRadius: 12, justifyItems: 'center', height: 48 }}/>
+        <Tapable onTap={onClose} icon={foreground && isScratched ? '/backIconLight.svg' : '/backIconDark.svg'} style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
         <p style={{ fontSize: '24px', margin: 'revert', color: foreground && isScratched ? '#FFF' : 'var(--text)', fontFamily: displayFont }}>Preview</p>
         <div style={{ width: "48px" }}/>
       </div>

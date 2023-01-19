@@ -1,8 +1,15 @@
 'use client';
 
-import { CSSProperties, useEffect, useRef } from 'react';
+import { CSSProperties, ReactNode, useEffect, useRef } from 'react';
 
-export default function Indicator({ value, foreground, children, style }: { value: number | null, foreground: boolean, children?: any, style?: CSSProperties }) {
+type IndicatorProps = { 
+  value: number | null, 
+  foreground: boolean, 
+  children?: ReactNode | ReactNode[], 
+  style?: CSSProperties 
+}
+
+export default function Indicator({ value, foreground, children, style }: IndicatorProps) {
   // values to preserve between renders
   const renderer = useRef<boolean>(false);
   const infinite = useRef<boolean>(value ? false : true);

@@ -71,7 +71,7 @@ export default function SkriboDetails({ skribo, onClose }: DetailModalProps) {
     <Sheet.Content disableDrag={true} style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
 
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 48, width: '100%' }}>
-        <Tapable onTap={onClose} icon='/backIcon.svg' style={{ borderRadius: 12, justifyItems: 'center', height: 48 }}/>
+        <Tapable onTap={onClose} icon='/backIcon.svg' style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
         <p style={{ fontSize: '24px', margin: 'revert', textOverflow: 'ellipsis', fontFamily: displayFont }}>{skribo?.title ?? 'No title'}</p>
         <div style={{ width: "48px" }}/>
       </div>

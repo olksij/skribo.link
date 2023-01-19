@@ -13,9 +13,11 @@ import terms from '../../TERMS.md';
 import about from '../../README.md';
 
 export default function Footer() {
+  // declare state
   const [data, setData] = useState<[string, string] | null>(null);
 
-  const buttons: Record<string, any> = {
+  // define button functions
+  const buttons: Record<string, () => any> = {
     About: () => setData(['About Skribo', about]),
     Terms: () => setData(['Terms & Conditions', terms]),
     Privacy: () => setData(['Privacy Policy', privacy]),
@@ -23,8 +25,8 @@ export default function Footer() {
 
   return <div className={styles.container}>
     { Object.keys(buttons).map(name =>
-      <button key={name} style={{ fontFamily: textFont }} className={styles.button} onClick={() => setTimeout(buttons[name], 100)}>{name}</button>
-    )}
+      <button key={name} style={{ fontFamily: textFont }} className={styles.button} onClick={() => setTimeout(buttons[name], 100)}>{name}</button>)}
+
     <MarkdownModal data={data} onClose={() => setData(null)} />
   </div>;
 }

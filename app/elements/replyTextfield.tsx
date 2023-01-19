@@ -3,17 +3,15 @@
 import { CSSProperties, useEffect, useRef, useState } from 'react';
 
 import { textFont } from '../components/fonts';
-import styles from './replyTextfield.module.css';
 
-export default function ReplyTextfield({ onReply }: { onReply: any }) {
+type ReplyTextfieldProps = {
+  onReply: (arg0: string) => any
+}
+
+export default function ReplyTextfield({ onReply }: ReplyTextfieldProps) {
   // retreive refs && states
   const [content, setContent] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // fix placeholder
-  useEffect(() => {
-    document.querySelector(':placeholder')?.setAttribute('color', '#FFF8')
-  }, [])
 
   // on icon tapped
   const sendReply = () => {
@@ -23,7 +21,7 @@ export default function ReplyTextfield({ onReply }: { onReply: any }) {
     setContent(null);
   }
 
-  return <div className={styles.container} style={{ position: 'fixed', bottom: 24, left: 24, right: 24 }}>
+  return <div style={{ position: 'fixed', bottom: 24, left: 24, right: 24 }}>
     <input ref={inputRef} onInput={(e) => setContent(e.currentTarget.value)} type='text' placeholder='Reply to sender' style={ replyArea }/>
     <img onClick={sendReply} style={{ position: 'absolute', padding: 12, right: 0, opacity: content ? 1 : .3 }} src='/sendIcon.svg' alt="Reply Icon"/>
   </div>

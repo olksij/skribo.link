@@ -37,12 +37,12 @@ body {
 
 @font-face {
   font-family: display;
-  src: url('../lib/fonts/displayBold.woff2');
+  src: url('../assets/fonts/displayBold.woff2');
 }
 
 @font-face {
   font-family: text;
-  src: url('../lib/fonts/textMedium.woff2');
+  src: url('../assets/fonts/textMedium.woff2');
 }
 
 .displayFont {
@@ -102,6 +102,10 @@ a:active {
 
 .react-modal-sheet-drag-indicator {
   background-color: #D9D9E2 !important;
+}
+
+input::placeholder {
+  color: #FFF8
 }
 
 @keyframes loading {

@@ -115,7 +115,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
   const selfDestructButton = <Tapable icon='/fireIcon.svg' style={{ gap: 8, height: 56 }} onTap={() => setTimer(timers[(timers.indexOf(timer) + 1) % timers.length])}>
     <p style={{ ...buttonCapton, width: '100%' }}>Self-destruct timer</p>
     { timers.map((value, i) => <p key={i} style={{ ...cardProperty, position: 'absolute', marginTop: i == timers.indexOf(timer) 
-      ? 0 : (i < timers.indexOf(timer) ? -24 : 24), right: 16, opacity: value == timer ? 1 : 0 }}>{value}s</p>) }
+      ? 0 : (i < timers.indexOf(timer) ? -24 : 24), right: 4, opacity: value == timer ? 1 : 0 }}>{value}s</p>) }
   </Tapable>
 
   // when modal is closed remove images and texts
@@ -126,7 +126,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
       <Sheet.Header />
       <Sheet.Content disableDrag={true} style={{ padding: '0 24px', flexDirection: 'column', gap: '20px' }}>
         <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
-          <Tapable onTap={onClose} icon='/backIcon.svg' style={{ borderRadius: 12, justifyItems: 'center', height: 48 }}/>
+          <Tapable onTap={onClose} icon='/backIcon.svg' style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
           <p style={{ fontSize: '24px', margin: 'revert', fontFamily: displayFont }}>New skribo</p>
           <div style={{ width: "48px" }}/>
         </div>

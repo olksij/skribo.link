@@ -19,11 +19,11 @@ export default function Tapable({ icon, children, onTap, onRemove, style }: Tapa
   // calculate current scale
   const scale = ref.current && pressed ? 1 - 512 / (ref.current.clientWidth * ref.current.clientHeight) : 1;
 
-  return <div ref={ref} style={{ borderRadius: style?.borderRadius, background: hover || pressed ? '#00000009' : '#0000', ...styles.container }}
+  return <div ref={ref} style={{ ...styles.container, ...style, background: hover || pressed ? '#00000009' : '#0000' }}
       onPointerDown={ () => setPressed(true) } onPointerUp ={ () => setPressed(false) } onClick={onTap}
       onMouseEnter ={ () => setHover  (true) } onMouseLeave={ () => setHover  (false) }>
 
-    <div style={{ transform: `scale(${scale})`, ...style, opacity: pressed ? .5 : 1 }}>
+    <div style={{ transform: `scale(${scale})`, width: '100%', ...style, height: 'revert', padding: 'revert', opacity: pressed ? .5 : 1, alignItems: 'center', }}>
       { onRemove && <>
         <img onClick={ (e) => { e.stopPropagation(); onRemove(); }} src='removeIcon.svg' width={20} height={20} alt='Remove'/>
         <div style={{ width: 16 - (style?.gap as number ?? 0) + 'px' }} />
@@ -39,7 +39,6 @@ let styles: Record<string, CSSProperties> = {
   container: {
     minWidth: 48,
     minHeight: 48,
-    alignItems: 'center',
     justifyContent: 'start',
     padding: 16,
     boxSizing: 'border-box',
