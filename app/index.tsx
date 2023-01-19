@@ -2,14 +2,14 @@
 
 import { displayFont } from './components/fonts';
 
-import Footer from '../lib/widgets/footer';
-import Card from '../lib/elements/card';
-import Tapable from '../lib/elements/tapable';
-import { CSSProperties, Suspense, useEffect, useRef, useState } from 'react';
-import NewSkriboModal from '../lib/modals/newSkribo';
-import TextModal from '../lib/modals/text';
-import ShareSkriboModal from '../lib/modals/shareSkribo';
-import YourSkribosWidget from '../lib/widgets/yourSkribosWidget';
+import Footer from './widgets/footer';
+import Card from './elements/card';
+import Tapable from './elements/tapable';
+import { CSSProperties, useEffect, useRef, useState } from 'react';
+import NewSkriboModal from './modals/newSkribo';
+import TextModal from './modals/text';
+import ShareSkriboModal from './modals/shareSkribo';
+import YourSkribosWidget from './widgets/yourSkribosWidget';
 import Logo from './widgets/logo';
 
 
