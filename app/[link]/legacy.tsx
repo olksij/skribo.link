@@ -3,8 +3,7 @@
 import React, { CSSProperties, useEffect, useRef, useState } from 'react';
 
 // import fonts
-import { textFont } from '../components/fonts';
-import { displayFont } from '../components/fonts';
+import { textFont, displayFont } from '../components/fonts';
 
 import Scratch from '../widgets/scratch';
 import styles from '/styles/card.module.css'

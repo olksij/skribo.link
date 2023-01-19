@@ -1,14 +1,28 @@
 'use client';
 
-import Head from "next/head";
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { CSSProperties, useEffect, useRef } from "react";
 
 import Sheet from 'react-modal-sheet';
-import { displayFont, textFont } from "../../pages/_app";
-import Card from "../elements/card";
+
+// elements
+import Card    from "../elements/card";
 import Tapable from "../elements/tapable";
 
-export default function TextModal({ isOpen, text, setText, onClose, title, caption }: any) {
+// components
+import darkenTheme     from "../components/darkenTheme";
+import { displayFont } from "../components/fonts";
+import { textFont }    from "../components/fonts";
+
+type TextModalProps = {
+  isOpen: boolean, 
+  text: string | null, 
+  setText: (arg0: string | null) => any, 
+  onClose: () => any, 
+  title: string | null, 
+  caption: string | null,
+}
+
+export default function TextModal({ isOpen, text, setText, onClose, title, caption }: TextModalProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
 
   isOpen && ref.current?.focus();
@@ -18,32 +32,25 @@ export default function TextModal({ isOpen, text, setText, onClose, title, capti
   }, [text, isOpen])
 
   useEffect(() => {
-    if (isOpen) {
-      document.getElementById('metaModalColor')?.setAttribute('name', 'theme-color');
-      document.getElementById('metaThemeColor')?.setAttribute('name', '');
-    }
-    else {
-      document.getElementById('metaThemeColor')?.setAttribute('name', 'theme-color');
-      document.getElementById('metaModalColor')?.setAttribute('name', '');
-    }
+    darkenTheme(isOpen)
   }, [isOpen])
 
   return <Sheet snapPoints={[448, 0]} initialSnap={0} rootId='__next' isOpen={isOpen} onClose={onClose}>
   <Sheet.Container style={{ background: '#EBEBF0' }}>
     <Sheet.Header />
-    <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
-      <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
-        <Tapable onTap={onClose} icon='/backIcon.svg' justify="center" height="48px" style={{ borderRadius: 12 }}/>
-        <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>{title}</p>
-        <div style={{ width: "48px" }}/>
+    <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: 20 }}>
+      <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 48, width: '100%' }}>
+        <Tapable onTap={onClose} icon='/backIcon.svg' style={{ borderRadius: 12, justifyItems: 'center', height: 48 }}/>
+        <p style={{ fontSize: 24, margin: 'revert', fontFamily: displayFont }}>{title}</p>
+        <div style={{ width: 48 }}/>
       </div>
-      <p style={{ ...textFont.style, margin: 'auto', padding: '0 24px', fontSize: 14, color: 'var(--secondary)', textAlign: 'center' }}>{caption}</p>
+      <p style={{ fontFamily: textFont, margin: 'auto', padding: '0 24px', fontSize: 14, color: 'var(--secondary)', textAlign: 'center' }}>{caption}</p>
       <Card outerStyle={{ height: '100%' }}>
-        <textarea ref={ref} style={style} className={textFont.className}/>
+        <textarea ref={ref} style={style}/>
       </Card>
       <Card innerStyle={{ background: 'var(--text)' }}>
-        <Tapable justifyContent='center' onTap={ () => { ref.current!.value && setText(ref.current!.value), onClose() }}>
-          <p className={displayFont.className} style={buttonStyle}>Save</p>
+        <Tapable style={{ justifyContent: 'center' }} onTap={ () => { ref.current!.value && setText(ref.current!.value), onClose() }}>
+          <p style={buttonStyle}>Save</p>
         </Tapable>
       </Card>
     </Sheet.Content>
@@ -60,10 +67,12 @@ let style: CSSProperties = {
   border: 'none',
   resize: 'none',
   outline: 'none',
+  fontFamily: textFont,
 }
 
 let buttonStyle: CSSProperties = {
   margin: 0,
   color: '#FFF',
-  fontSize: '18px'
+  fontSize: '18px',
+  fontFamily: displayFont,
 }

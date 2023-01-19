@@ -4,7 +4,7 @@ import { CSSProperties, ReactNode, useRef, useState } from "react";
 
 type TapableProps = { 
   onTap: () => any, 
-  onRemove?: () => any, 
+  onRemove?: (() => any) | null, 
   icon?: string, 
   style?: CSSProperties,
   children?: ReactNode | ReactNode[], 

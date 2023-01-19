@@ -1,41 +1,41 @@
 'use client';
 
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { CSSProperties, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import styles from './markdown.module.css';
 
-import Sheet, { SheetRef } from 'react-modal-sheet';
-import { displayFont, textFont } from "../../pages/_app";
+import Sheet from 'react-modal-sheet';
 
-import Card from "../elements/card";
-import Tapable from "../elements/tapable";
-import Head from "next/head";
+// components
+import darkenTheme     from "../components/darkenTheme";
+import { displayFont } from "../components/fonts";
+import { textFont }    from "../components/fonts";
 
-export default function MarkdownModal({ data, onClose }: any) {
+type MarkdownModalProps = {
+  data?: [string, string] | null,
+  onClose: () => any,
+}
+
+export default function MarkdownModal({ data, onClose }: MarkdownModalProps) {
   useEffect(() => {
-    if (data != null) {
-      document.getElementById('metaModalColor')?.setAttribute('name', 'theme-color');
-      document.getElementById('metaThemeColor')?.setAttribute('name', '');
-    }
-    else {
-      document.getElementById('metaThemeColor')?.setAttribute('name', 'theme-color');
-      document.getElementById('metaModalColor')?.setAttribute('name', '');
-    }
+    // darken theme when opened
+    darkenTheme(data != null)
   }, [data])
 
   return <Sheet rootId='__next' isOpen={data != null} onClose={onClose}>
   <Sheet.Container style={{ background: '#EBEBF0' }}>
     <Sheet.Header />
-    <Sheet.Content disableDrag={true} style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
-      <div style={{ alignItems: 'center', justifyContent: 'center', height: '48px', width: '100%' }}>
-        <p style={{ fontSize: '24px', margin: 'revert' }} className={ displayFont.className }>{data && data[0]}</p>
+    <Sheet.Content disableDrag={true} style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: 20 }}>
+      <div style={{ alignItems: 'center', justifyContent: 'center', height: 48, width: '100%' }}>
+        <p style={{ fontSize: 24, margin: 'revert', fontFamily: displayFont }}>{data && data[0]}</p>
       </div>
-      <ReactMarkdown className={[textFont.className, styles.container].join(' ')}> 
-        {data && data[1].slice(data[1].indexOf('\n')+1)}
+
+      <ReactMarkdown className='markdown'> 
+        { (data && data[1].slice(data[1].indexOf('\n')+1)) ?? ''}
       </ReactMarkdown>
+    
       <div style={copyrightContainer}>
-        <img style={{ height: '16px' }} src='/copyrightIcon.svg'/>
-        <p style={{color: 'var(--textOpacity)'}} className={textFont.className}>2023 Oleksii Besida</p>
+        <img style={{ height: 16 }} src='/copyrightIcon.svg' alt='Copyright'/>
+        <p style={{ color: 'var(--textOpacity)', fontFamily: textFont }}>2023 Oleksii Besida</p>
       </div>
     </Sheet.Content>
   </Sheet.Container>
@@ -45,11 +45,11 @@ export default function MarkdownModal({ data, onClose }: any) {
 }
 
 let copyrightContainer: CSSProperties = {
-  padding: '16px',
+  padding: 16,
   background: 'var(--textTint)',
-  borderRadius: '8px',
+  borderRadius: 8,
   justifyContent: 'center',
-  fontSize: '14px',
-  gap: '4px',
+  fontSize: 14,
+  gap: 4,
   lineHeight: '16px'
 }

@@ -3,39 +3,47 @@
 import { CSSProperties, useEffect } from "react";
 
 import Sheet from 'react-modal-sheet';
-import { displayFont } from "../components/fonts";
-import Card from "../elements/card";
+
+// elements
+import Card    from "../elements/card";
 import Tapable from "../elements/tapable";
 
-export default function DeleteModal({ isOpen, onClose }: any) {
+// components
+import darkenTheme     from "../components/darkenTheme";
+import { displayFont } from "../components/fonts";
+
+type DeleteModalProps = {
+  isOpen: boolean,
+  onClose: (arg0?: boolean) => any,
+}
+
+export default function DeleteModal({ isOpen, onClose }: DeleteModalProps) {
   useEffect(() => {
-    if (isOpen) {
-      document.getElementById('metaModalColor')?.setAttribute('name', 'theme-color');
-      document.getElementById('metaThemeColor')?.setAttribute('name', '');
-    }
-    else {
-      document.getElementById('metaThemeColor')?.setAttribute('name', 'theme-color');
-      document.getElementById('metaModalColor')?.setAttribute('name', '');
-    }
+    // darken thee when open
+    darkenTheme(isOpen);
   }, [isOpen])
 
   return <Sheet detent="content-height" snapPoints={[448, 0]} initialSnap={0} rootId='__next' isOpen={isOpen} onClose={onClose}>
   <Sheet.Container style={{ background: '#EBEBF0' }}>
     <Sheet.Header />
     <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
+
       <div style={{ alignItems: 'center', justifyContent: 'center', height: '48px', width: '100%' }}>
         <p style={{ fontSize: '24px', margin: 'revert', fontFamily: displayFont }}>You sure?</p>
       </div>
+
       <Card>
         <Tapable style={{ justifyContent: 'center' }} onTap={ () => { onClose(false) }}>
           <p style={{ ...buttonStyle, color: 'var(--text)' }}>Cancel</p>
         </Tapable>        
       </Card>
+
       <Card innerStyle={{ background: '#BF5656' }}>
         <Tapable style={{ justifyContent: 'center' }} onTap={ () => { onClose(true) }}>
           <p style={buttonStyle}>Delete</p>
         </Tapable>        
       </Card>
+
     </Sheet.Content>
   </Sheet.Container>
 

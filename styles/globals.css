@@ -125,3 +125,24 @@ a:active {
     background: #3F3C49
   }
 }
+
+.markdown {
+  margin: revert;
+  margin-top: -1em;
+}
+
+.markdown, .markdown * {
+  display: revert;
+}
+
+.markdown p, .markdown li {
+  color: var(--textOpacity);
+  line-height: 28px;
+  margin: revert;
+}
+
+.markdown h1, .markdown h2 {
+  margin: revert;
+  margin-top: 2em;
+  margin-bottom: 0;
+}

@@ -1,29 +1,39 @@
 'use client';
 
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 
 import Sheet from 'react-modal-sheet';
-import { displayFont, textFont } from "../../pages/_app";
-import Background from "../widgets/background";
-import Tapable from "../elements/tapable";
-import Scratch from "../widgets/scratch";
-
 import styles from '/styles/card.module.css'
 
+// elements
+import Tapable from "../elements/tapable";
 
-export default function PreviewModal({ isOpen, onClose, image, theme, text, title }: any) {
+// components
+import darkenTheme     from "../components/darkenTheme";
+import { displayFont } from "../components/fonts";
+import { textFont }    from "../components/fonts";
+
+// widgets
+import Background from "../widgets/background";
+import Scratch from "../widgets/scratch";
+
+type PreviewModalProps = {
+  isOpen: boolean, 
+  onClose: () => any, 
+  title: string | null,
+  image: File | Blob | null, 
+  text: string | null, 
+  theme: number, 
+}
+
+export default function PreviewModal({ isOpen, onClose, image, theme, text, title }: PreviewModalProps) {
+  // declare states
   let [isScratched, setScratched] = useState<boolean>(false);
   let [foreground, setForeground] = useState<boolean>(false);
 
   useEffect(() => {
-    if (isOpen) {
-      document.getElementById('metaModalColor')?.setAttribute('name', 'theme-color');
-      document.getElementById('metaThemeColor')?.setAttribute('name', '');
-    }
-    else {
-      document.getElementById('metaThemeColor')?.setAttribute('name', 'theme-color');
-      document.getElementById('metaModalColor')?.setAttribute('name', '');
-    }
+    // darken when shows
+    darkenTheme(isOpen)
   }, [isOpen])
 
   let note;
@@ -41,18 +51,18 @@ export default function PreviewModal({ isOpen, onClose, image, theme, text, titl
       <Background id={theme} style={{ left: 0, top: -24, height: '100vh' }}/>
       
       <div style={{ position: 'absolute', left: 24, right: 24, top: 64, bottom: 24, flexDirection: 'column', ...(isScratched ? { left: 0, right: 0, top: -58, bottom: 0 } : {}) }}>
-        <p style={{ lineHeight: title && !isScratched ? '24px' : '0px', margin: 'auto', ...textFont.style, opacity: .5, paddingBottom: title && !isScratched ? 16 : 0 }}>{title ?? ''}</p>
+        <p style={{ lineHeight: title && !isScratched ? '24px' : '0px', margin: 'auto', fontFamily: textFont, opacity: .5, paddingBottom: title && !isScratched ? 16 : 0 }}>{title ?? ''}</p>
         <div className={styles.content + ' ' + (isScratched && styles.fullscreen)}>
           { isOpen && <Scratch text={text} theme={theme} image={image} setScratched={setScratched} setForeground={setForeground} reply={false}/> }
-          { note && <div className={ styles.scratchNote }>
-            <p className={displayFont.className}>{note}</p>
+          { note && <div className={ styles.scratchNote } style={{ fontFamily: displayFont }}>
+            <p>{note}</p>
           </div> }
         </div>
       </div>
 
       <div style={{ alignItems: 'center', zIndex: 1, justifyContent: 'space-between', height: '48px', width: '100%' }}>
-        <Tapable onTap={onClose} icon={foreground && isScratched ? '/backIconLight.svg' : '/backIconDark.svg'} justify="center" height="48px" style={{ borderRadius: 12 }}/>
-        <p style={{ fontSize: '24px', margin: 'revert', color: foreground && isScratched ? '#FFF' : 'var(--text)' }} className={ displayFont.className }>Preview</p>
+        <Tapable onTap={onClose} icon={foreground && isScratched ? '/backIconLight.svg' : '/backIconDark.svg'} style={{ borderRadius: 12, justifyItems: 'center', height: 48 }}/>
+        <p style={{ fontSize: '24px', margin: 'revert', color: foreground && isScratched ? '#FFF' : 'var(--text)', fontFamily: displayFont }}>Preview</p>
         <div style={{ width: "48px" }}/>
       </div>
     </Sheet.Content>
@@ -60,19 +70,4 @@ export default function PreviewModal({ isOpen, onClose, image, theme, text, titl
 
   <Sheet.Backdrop />
 </Sheet>
-}
-
-let style: CSSProperties = {
-  padding: '16px',
-  height: '100%',
-  fontSize: '16px',
-  border: 'none',
-  resize: 'none',
-  outline: 'none',
-}
-
-let buttonStyle: CSSProperties = {
-  margin: 0,
-  color: '#FFF',
-  fontSize: '18px'
 }
