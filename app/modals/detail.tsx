@@ -13,7 +13,7 @@ import { ref as databaseRef, remove } from "firebase/database";
 
 // modals
 import     PreviewModal from "./preview";
-import ShareSkriboModal from "./shareSkribo";
+import ShareModal from "./share";
 import      DeleteModal from "./delete";
 
 // elements
@@ -21,9 +21,19 @@ import Card from "../elements/card";
 import Tapable from "../elements/tapable";
 
 // components
-import darkenTheme     from "../components/darkenTheme";
+import   darkenTheme   from "../components/darkenTheme";
 import { displayFont } from "../components/fonts";
-import { textFont }    from "../components/fonts";
+import    { textFont } from "../components/fonts";
+
+// icons
+import openedIcon from '../../assets/icons/opened.svg';
+import  replyIcon from '../../assets/icons/reply.svg';
+import   fireIcon from '../../assets/icons/fire.svg';
+import   dateIcon from '../../assets/icons/date.svg';
+import   backIcon from '../../assets/icons/back.svg';
+import   boltIcon from '../../assets/icons/bolt.svg';
+import  shareIcon from '../../assets/icons/share.svg';
+import deleteIcon from '../../assets/icons/delete.svg';
 
 type DetailModalProps = {
   skribo: Record<string, any> | null,
@@ -60,9 +70,9 @@ export default function SkriboDetails({ skribo, onClose }: DetailModalProps) {
 
   // list of metadata tp show
   const toRender = {
-    'timeLeft':        { image: '/fireIcon.svg',        text: 'Time left' },
-    'timeCreated':     { image: '/dateCreatedIcon.svg', text: 'Created' },
-    'firstTimeOpened': { image: '/openedIcon.svg',      text: 'Opened' },
+    'timeLeft':        { image: fireIcon.src,   text: 'Time left' },
+    'timeCreated':     { image: dateIcon.src,   text: 'Created' },
+    'firstTimeOpened': { image: openedIcon.src, text: 'Opened' },
   }
 
   return <Sheet detent='content-height' rootId='__next' isOpen={skribo != null} onClose={onClose}>
@@ -71,7 +81,7 @@ export default function SkriboDetails({ skribo, onClose }: DetailModalProps) {
     <Sheet.Content disableDrag={true} style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
 
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 48, width: '100%' }}>
-        <Tapable onTap={onClose} icon='/backIcon.svg' style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
+        <Tapable onTap={onClose} icon={backIcon.src} style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
         <p style={{ fontSize: '24px', margin: 'revert', textOverflow: 'ellipsis', fontFamily: displayFont }}>{skribo?.title ?? 'No title'}</p>
         <div style={{ width: "48px" }}/>
       </div>
@@ -93,7 +103,7 @@ export default function SkriboDetails({ skribo, onClose }: DetailModalProps) {
         }) }
       </Card>
 
-      <Card separators header={{ icon: '/replyIcon.svg', title: 'Replies' }}>
+      <Card separators header={{ icon: replyIcon.src, title: 'Replies' }}>
         { skribo?.replies?.length ? Object.entries(skribo?.replies as Record<string, { time: number, text: string }>).map(([key, value]) => {        
           return <div style={{ gap: 8, padding: 16, boxSizing: 'border-box', flexDirection: 'column' }} key={key}>
             <p style={{ fontFamily: textFont, minWidth: 'max-content', fontSize: 16 }}>{value.text}</p>
@@ -106,23 +116,23 @@ export default function SkriboDetails({ skribo, onClose }: DetailModalProps) {
 
       <Card separators>
         { skribo?.timeLeft != 0 && (skribo?.image || skribo?.text) && <Tapable style={{ gap: 8, justifyContent: 'center' }} onTap={ () => setPreviewModal(true)}>
-          <img src="/lightningIcon.svg" alt="Preview Icon"/>
+          <img src={boltIcon.src} alt="Preview Icon"/>
           <p style={{ ...buttonStyle, color: 'var(--text)' }}>Preview</p>
         </Tapable> }
         <Tapable style={{ gap: 8, justifyContent: 'center' }} onTap={ () => setDeleteModal(true) }>
-          <img src="/deleteIcon.svg" alt="Delete Icon"/>
+          <img src={deleteIcon.src} alt="Delete Icon"/>
           <p style={{ ...buttonStyle, color: '#BF5656' }}>Delete</p>
         </Tapable>
       </Card>
 
       <Card innerStyle={{ background: 'var(--text)' }}>
         <Tapable style={{ gap: 8, justifyContent: 'center' }} onTap={ () => setShareModal(true) }>
-          <img src="/shareIcon.svg" alt="Share Icon"/>
+          <img src={shareIcon.src} alt="Share Icon"/>
           <p style={buttonStyle}>Share skribo</p>
         </Tapable>
       </Card>
 
-      <ShareSkriboModal link={window.origin + '/' + skribo?.id + localStorage.getItem(skribo?.id)} theme={skribo?.theme} isOpen={shareModal} onClose={() => setShareModal(false)}/>
+      <ShareModal link={window.origin + '/' + skribo?.id + localStorage.getItem(skribo?.id)} theme={skribo?.theme} isOpen={shareModal} onClose={() => setShareModal(false)}/>
       <PreviewModal isOpen={previewModal} onClose={() => setPreviewModal(false)} image={skribo?.image ? new Blob([skribo?.image]) : null} text={skribo?.text} title={skribo?.title} theme={skribo?.theme}/>
       <DeleteModal isOpen={deleteModal} onClose={(sure?: boolean) => (setDeleteModal(false), sure && onDelete())}/>
 

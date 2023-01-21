@@ -9,20 +9,24 @@ import Card    from "../elements/card";
 import Tapable from "../elements/tapable";
 
 // componnets
-import darkenTheme     from "../components/darkenTheme";
+import   darkenTheme   from "../components/darkenTheme";
 import { displayFont } from "../components/fonts";
 import { textFont }    from "../components/fonts";
 
 // modals
 import SkriboDetails from "./detail";
 
-type YourSkribosModalProps = { 
+// icons
+import backIcon from '../../assets/icons/back.svg';
+import fireIcon from '../../assets/icons/fire.svg';
+
+type LibraryModalProps = { 
   isOpen: boolean, 
   onClose: () => any, 
   skribos: Record<string, Record<string, any>> | null
 }
 
-export default function YourSkribosModal({ isOpen, onClose, skribos }: YourSkribosModalProps) {
+export default function LibraryModal({ isOpen, onClose, skribos }: LibraryModalProps) {
   // declare refs
   const ref = useRef<SheetRef>();
   const [modal, setModal] = useState<Record<string, any> | null>(null);
@@ -37,7 +41,7 @@ export default function YourSkribosModal({ isOpen, onClose, skribos }: YourSkrib
     <Sheet.Header />
     <Sheet.Content disableDrag={true} style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: 16, minHeight: 256 }}>
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 48, width: '100%' }}>
-        <Tapable onTap={onClose} icon='/backIcon.svg' style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
+        <Tapable onTap={onClose} icon={backIcon.src} style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
         <p style={{ fontSize: 24, margin: 'revert', fontFamily: displayFont }}>Your Skribos</p>
         <div style={{ width: 48 }}/>
       </div>
@@ -49,7 +53,7 @@ export default function YourSkribosModal({ isOpen, onClose, skribos }: YourSkrib
 
         return <Card key={id}>
           <Tapable onTap={() => setModal(skribo)} style={{ flexDirection: 'row', padding: 12, gap: 16 }}>
-            <img style={{ minWidth: 56, maxWidth: 56, height: 72, borderRadius: 4, objectFit: image ? 'cover' : 'contain', padding: image ? 0 : 16, boxSizing: 'border-box', background: 'var(--textDisabled)', opacity: image ? 1 : .25 }} src={image ?? '/fireIcon.svg'} alt="Fire Icon"/> 
+            <img style={{ minWidth: 56, maxWidth: 56, height: 72, borderRadius: 4, objectFit: image ? 'cover' : 'contain', padding: image ? 0 : 16, boxSizing: 'border-box', background: 'var(--textDisabled)', opacity: image ? 1 : .25 }} src={image ?? fireIcon.src} alt="Fire Icon"/> 
             <div style={{ flexDirection: 'column', justifyContent: 'center', gap: 4, width: '100%' }}>
               <p style={{ fontFamily: displayFont, fontSize: 20, color: 'var(--text)' }}>{skribos[id].label ?? 'No label'}</p>
               <p style={{ fontFamily: textFont, fontSize: 14, color: 'var(--secondary)' }}>{ skribos[id].replies.length } replies</p>

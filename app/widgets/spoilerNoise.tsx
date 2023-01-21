@@ -1,8 +1,15 @@
 'use client';
 
-import React, { useEffect, useRef, forwardRef, ForwardedRef, useState, CSSProperties }  from 'react';
+import React, { useEffect, useRef, CSSProperties }  from 'react';
 
-type DotData = { vx: number, vy: number, x: number, y: number, for: number, since: number }
+type DotData = { 
+  vx: number, 
+  vy: number, 
+  x: number, 
+  y: number, 
+  for: number, 
+  since: number 
+}
 
 export default function SpoilerNoise({ style }: { style: CSSProperties }) {
   // references

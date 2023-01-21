@@ -1,6 +1,10 @@
 import { CSSProperties } from 'react';
 
-export default function Loading({ style }: { style: CSSProperties }) {
+type LoadingProps = { 
+  style: CSSProperties 
+}
+
+export default function Loading({ style }: LoadingProps) {
   return <div style={{ ...styles.container, ...style }}><div style={ styles.child }/></div>
 }
 

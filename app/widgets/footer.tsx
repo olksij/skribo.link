@@ -1,16 +1,20 @@
 'use client';
 
-import styles from './footer.module.css'
-import { textFont } from '../components/fonts';
-import MarkdownModal from '../modals/markdown';
 import { useState } from 'react';
+import styles from './footer.module.css'
+
+// components
+import { textFont } from '../components/fonts';
+
+// modals
+import MarkdownModal from '../modals/markdown';
 
 //@ts-ignore
 import privacy from '../../PRIVACY.md'; 
 //@ts-ignore
 import terms from '../../TERMS.md'; 
 //@ts-ignore
-import about from '../../README.md';
+import about from '../../ABOUT.md';
 
 export default function Footer() {
   // declare state

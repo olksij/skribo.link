@@ -4,19 +4,33 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 import Sheet from 'react-modal-sheet';
 
 // assets
-import backgrounds, { themeColors } from '../../assets/backgrounds/import'
-import patterns                     from '../../assets/patterns/import'
+import { themeColors } from '../../assets/backgrounds/import'
+import   backgrounds   from '../../assets/backgrounds/import'
+import   patterns      from '../../assets/patterns/import'
 
 // elements
-import Card from "../elements/card";
+import Card    from "../elements/card";
 import Tapable from "../elements/tapable";
 
 // components
-import darkenTheme     from "../components/darkenTheme";
 import { displayFont } from "../components/fonts";
-import loadImage from "../components/loadImage";
+import   darkenTheme   from "../components/darkenTheme";
+import   loadImage     from "../components/loadImage";
 
-export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { link: string | undefined, theme: number | undefined, isOpen: boolean, onClose: () => void }) {
+// icons
+import backIcon from '../../assets/icons/back.svg';
+import linkIcon from '../../assets/icons/link.svg';
+import   qrIcon from '../../assets/icons/qrcode.svg';
+import doneIcon from '../../assets/icons/done.svg';
+
+type ShareModalProps = {
+  link:     string | undefined, 
+  theme:    number | undefined, 
+  isOpen:   boolean, 
+  onClose: () => void
+}
+
+export default function ShareModal({ link, theme, isOpen, onClose }: ShareModalProps) {
   // declare refs
   const ref = useRef<HTMLCanvasElement>(null);
   const renderId = useRef<number>(0);
@@ -138,7 +152,7 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
     <Sheet.Header />
     <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: 20 }}>
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 48, width: '100%' }}>
-        <Tapable onTap={onClose} icon='/backIcon.svg' style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
+        <Tapable onTap={onClose} icon={backIcon.src} style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
         <p style={{ fontSize: 24, margin: 'revert', fontFamily: displayFont }}>Share skribo</p>
         <div style={{ width: 48 }}/>
       </div>
@@ -148,7 +162,7 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
       </Card>
 
       <Card innerStyle={{ height: 56 }}>
-        <Tapable icon='/QRIcon.svg' style={{ justifyContent: 'center', gap: 8 }} onTap={ () => {
+        <Tapable icon={qrIcon.src} style={{ justifyContent: 'center', gap: 8 }} onTap={ () => {
           ref.current?.toBlob(function (blob) {
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob!);
@@ -166,11 +180,11 @@ export default function ShareSkriboModal({ link, theme, isOpen, onClose }: { lin
           });       
         }}>
           <div style={{ opacity: copied ? 0 : 1, marginTop: copied ? -32 : 0, position: 'absolute', gap: 8 }}>
-            <img width={24} src="/linkIcon.svg" alt="Link Icon"/>
+            <img width={24} src={linkIcon.src} alt="Link Icon"/>
             <p style={{ ...buttonStyle, color: '#FFF' }}>Copy link</p>
           </div>
           <div style={{ opacity: copied ? 1 : 0, marginTop: copied ? 0 : 32, position: 'absolute', gap: 8 }}>
-            <img width={24} src="/doneIcon.svg" alt="Done Icon"/>
+            <img width={24} src={doneIcon.src} alt="Done Icon"/>
             <p style={{ ...buttonStyle, color: '#141A17' }}>Copied!</p>
           </div>
         </Tapable>

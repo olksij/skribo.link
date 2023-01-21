@@ -2,7 +2,11 @@
 
 import { CSSProperties, useEffect, useRef, useState } from 'react';
 
+// components
 import { textFont } from '../components/fonts';
+
+// icons
+import sendIcon from '../../assets/icons/send.svg';
 
 type ReplyTextfieldProps = {
   onReply: (arg0: string) => any
@@ -23,7 +27,7 @@ export default function ReplyTextfield({ onReply }: ReplyTextfieldProps) {
 
   return <div style={{ position: 'fixed', bottom: 24, left: 24, right: 24 }}>
     <input ref={inputRef} onInput={(e) => setContent(e.currentTarget.value)} type='text' placeholder='Reply to sender' style={ replyArea }/>
-    <img onClick={sendReply} style={{ position: 'absolute', padding: 12, right: 0, opacity: content ? 1 : .3 }} src='/sendIcon.svg' alt="Reply Icon"/>
+    <img onClick={sendReply} style={{ position: 'absolute', padding: 12, right: 0, opacity: content ? 1 : .3 }} src={sendIcon.src} alt="Reply Icon"/>
   </div>
 }
 

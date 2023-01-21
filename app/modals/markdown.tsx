@@ -6,9 +6,12 @@ import ReactMarkdown from "react-markdown";
 import Sheet from 'react-modal-sheet';
 
 // components
-import darkenTheme     from "../components/darkenTheme";
+import   darkenTheme   from "../components/darkenTheme";
 import { displayFont } from "../components/fonts";
-import { textFont }    from "../components/fonts";
+import    { textFont } from "../components/fonts";
+
+// icons 
+import copyrightIcon from '../../assets/icons/copyright.svg'
 
 type MarkdownModalProps = {
   data?: [string, string] | null,
@@ -34,7 +37,7 @@ export default function MarkdownModal({ data, onClose }: MarkdownModalProps) {
       </ReactMarkdown>
     
       <div style={copyrightContainer}>
-        <img style={{ height: 16 }} src='/copyrightIcon.svg' alt='Copyright'/>
+        <img style={{ height: 16 }} src={copyrightIcon.src} alt='Copyright'/>
         <p style={{ color: 'var(--textOpacity)', fontFamily: textFont }}>2023 Oleksii Besida</p>
       </div>
     </Sheet.Content>

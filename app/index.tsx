@@ -9,14 +9,18 @@ import Card    from './elements/card';
 import Tapable from './elements/tapable';
 
 // widgets
-import LibraryWidget from './widgets/yourSkribosWidget';
-import Footer        from './widgets/footer';
-import Logo          from './widgets/logo';
+import Library from './widgets/libraryWidget';
+import Footer  from './widgets/footer';
+import Logo    from './widgets/logo';
 
 // modals
-import   NewSkriboModal from './modals/newSkribo';
+import   CreateModal from './modals/create';
 import        TextModal from './modals/text';
-import ShareSkriboModal from './modals/shareSkribo';
+import ShareModal from './modals/share';
+
+// icons
+import imageIcon from '../assets/icons/image.svg';
+import textIcon  from '../assets/icons/text.svg';
 
 export default function Home() {
   // declare states for content
@@ -46,20 +50,20 @@ export default function Home() {
     <Logo/>
     
     <Card effects={ styles.buttonEffects } innerStyle={ styles.buttonInnerStyle } separators>
-      <Tapable style={styles.tapableStyle} onTap={() => filePicker.current?.click()} icon='/imageIcon.svg'>
+      <Tapable style={styles.tapableStyle} onTap={() => filePicker.current?.click()} icon={imageIcon.src}>
         <p style={ styles.buttonCapton }>Upload image</p>
       </Tapable>
-      <Tapable style={styles.tapableStyle} onTap={() => setTextModalOpen(true)} icon='/textIcon.svg'>
+      <Tapable style={styles.tapableStyle} onTap={() => setTextModalOpen(true)} icon={textIcon.src}>
         <p style={ styles.buttonCapton }>Write caption</p>
       </Tapable>
     </Card>
 
-    <LibraryWidget/>
+    <Library/>
 
-    <NewSkriboModal image={image} setImage={setImage} text={text} setText={setText} setShareLink={setShareLink}/>
+    <CreateModal image={image} setImage={setImage} text={text} setText={setText} setShareLink={setShareLink}/>
     <TextModal title="Write caption" caption="The caption will be under your image and has to be scratched as well." isOpen={textModalOpen} onClose={() => setTextModalOpen(false)} text={text} setText={setText} />
 
-    <ShareSkriboModal link={shareLink?.link} theme={shareLink?.theme} isOpen={shareLink != null} onClose={() => setShareLink(null)}/>
+    <ShareModal link={shareLink?.link} theme={shareLink?.theme} isOpen={shareLink != null} onClose={() => setShareLink(null)}/>
 
     <Footer/>
   </main>

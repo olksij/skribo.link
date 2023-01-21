@@ -9,9 +9,12 @@ import Card    from "../elements/card";
 import Tapable from "../elements/tapable";
 
 // components
-import darkenTheme     from "../components/darkenTheme";
+import   darkenTheme   from "../components/darkenTheme";
 import { displayFont } from "../components/fonts";
 import { textFont }    from "../components/fonts";
+
+// icons
+import backIcon from '../../assets/icons/back.svg';
 
 type TextModalProps = {
   isOpen: boolean, 
@@ -40,7 +43,7 @@ export default function TextModal({ isOpen, text, setText, onClose, title, capti
     <Sheet.Header />
     <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: 20 }}>
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 48, width: '100%' }}>
-        <Tapable onTap={onClose} icon='/backIcon.svg' style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
+        <Tapable onTap={onClose} icon={backIcon.src} style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
         <p style={{ fontSize: 24, margin: 'revert', fontFamily: displayFont }}>{title}</p>
         <div style={{ width: 48 }}/>
       </div>

@@ -10,9 +10,9 @@ import { auth, database, storage } from '../components/firebase';
 import { deriveKeys, decryptData } from '../components/crypto';
 
 // firebase methods
-import { signInAnonymously }           from 'firebase/auth';
-import { get, ref as databaseRef }     from 'firebase/database';
-import { getBytes, ref as storageRef } from 'firebase/storage';
+import { get, ref      as databaseRef } from 'firebase/database';
+import { getBytes, ref as storageRef }  from 'firebase/storage';
+import { signInAnonymously }            from 'firebase/auth';
 
 // elements
 import Card      from '../elements/card';
@@ -20,9 +20,13 @@ import Tapable   from '../elements/tapable';
 import Indicator from '../elements/indicator';
 
 // modals
-import YourSkribosModal from '../modals/yourSkribos';
+import LibraryModal from '../modals/library';
 
-export default function YourSkribosWidget() {
+// icons
+import cactusIcon from '../../assets/icons/cactus.svg';
+import   fireIcon from '../../assets/icons/fireThin.svg';
+
+export default function LibraryWidget() {
   // declare states
   const [modal,   setModal]   = useState(false);
   const [skribos, setSkribos] = useState<Record<string, any> | null>(null);
@@ -92,12 +96,12 @@ export default function YourSkribosWidget() {
 
         <div style={{ alignItems: 'center', justifyContent: 'center', width: 144, height: '100%' }}>
           { [0, 1, 2].map(i => <img style={{ width: 38, height: 64, objectFit: 'cover', borderRadius: 4, boxShadow: 'var(--shadowNormal)', position: 'absolute', transform: `rotate(${previews[i] ? (previews.length == 1 && i == 0 ? 0 : -5+i*20) : -30}deg) scale(${previews[i] ? 1 : .7})`, zIndex: 3-i, opacity: previews[i] ? 1.3 - i * .30 : 0, transition: `.5s cubic-bezier(.75, 0, 0, 1) ${i*0.025}s` }} key={i} src={previews[i]} alt="Preview"/>) }
-          <img style={{ height: 36, opacity: !loading && (empty || !previews.length) ? .25 : 0, transform: `scale(${!loading && (empty || !previews.length) ? 1 : .8})`, transitionDelay: '.15s', position: 'absolute' }} src={empty ? '/cactusIcon.svg' : 'fireThin.svg'} alt="No image"/>
+          <img style={{ height: 36, opacity: !loading && (empty || !previews.length) ? .25 : 0, transform: `scale(${!loading && (empty || !previews.length) ? 1 : .8})`, transitionDelay: '.15s', position: 'absolute' }} src={empty ? cactusIcon.src : fireIcon.src} alt="No image"/>
           <Indicator foreground={true} value={null} style={{ opacity: loading ? 1 : 0, transform: `scale(${loading ? 1 : .8})`, position: 'absolute' }}/>
         </div>
       </Tapable>
     </Card>
 
-    <YourSkribosModal skribos={skribos} isOpen={modal} onClose={() => setModal(false)} />
+    <LibraryModal skribos={skribos} isOpen={modal} onClose={() => setModal(false)} />
   </>
 }

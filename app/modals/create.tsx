@@ -23,15 +23,25 @@ import { ref as storageRef, uploadBytes } from "firebase/storage";
 import { signInAnonymously } from "firebase/auth";
 
 // components
-import darkenTheme     from "../components/darkenTheme";
+import   darkenTheme   from "../components/darkenTheme";
 import { displayFont } from "../components/fonts";
-import { textFont }    from "../components/fonts";
-import loadImage       from "../components/loadImage";
+import    { textFont } from "../components/fonts";
+import      loadImage  from "../components/loadImage";
 
 // crypto
 import { encryptData, genKeys, obtainAccessToken } from "../components/crypto";
 
-type NewSkriboModalProps = { 
+// icons
+import imageIcon from '../../assets/icons/image.svg';
+import titleIcon from '../../assets/icons/title.svg';
+import  textIcon from '../../assets/icons/text.svg';
+import  fireIcon from '../../assets/icons/fire.svg';
+import  backIcon from '../../assets/icons/back.svg';
+import  boltIcon from '../../assets/icons/bolt.svg';
+import  doneIcon from '../../assets/icons/doneWhite.svg';
+import themeIcon from '../../assets/icons/theme.svg';
+
+type CreateModalProps = { 
   image: File | null,
   setImage: (arg0: File | null) => any, 
   text: string | null, 
@@ -39,7 +49,7 @@ type NewSkriboModalProps = {
   setShareLink: (arg0: any) => any, 
 }
 
-export default function NewSkriboModal({ image, setImage, text, setText, setShareLink }: NewSkriboModalProps) {
+export default function CreateModal({ image, setImage, text, setText, setShareLink }: CreateModalProps) {
   // skribo properties states
   const [timer, setTimer] = useState<number>(30);
   const [theme, setTheme] = useState<number>(0);
@@ -97,22 +107,22 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
       <p style={selectedImageButton}>Tap to reselect</p>
     </Tapable>
     // show regular button
-    : <Tapable onTap={() => filePicker.current?.click()} icon='/imageIcon.svg' style={{ gap: 8, height: 56 }}>
+    : <Tapable onTap={() => filePicker.current?.click()} icon={imageIcon.src} style={{ gap: 8, height: 56 }}>
       <p style={buttonCapton}>Upload image</p>
     </Tapable>
 
   // write caption button
-  const textButton = <Tapable onTap={ () => setTextModalOpen(true) } onRemove={ text ? (() => setText(null)) : null } icon='/textIcon.svg' style={{ gap: 8 }}>
+  const textButton = <Tapable onTap={ () => setTextModalOpen(true) } onRemove={ text ? (() => setText(null)) : null } icon={textIcon.src} style={{ gap: 8 }}>
     <p style={ text ? selectedImageButton : buttonCapton }>{ text ?? "Write caption" }</p>
   </Tapable>
 
   // title skribo button
-  const titleButton = <Tapable style={{ gap: 8 }} onTap={ () => setTitleModalOpen(true) } onRemove={ title ? () => setTitle(null) : null } icon='/titleIcon.svg'>
+  const titleButton = <Tapable style={{ gap: 8 }} onTap={ () => setTitleModalOpen(true) } onRemove={ title ? () => setTitle(null) : null } icon={titleIcon.src}>
     <p style={ title ? selectedImageButton : buttonCapton }>{ title ?? "Title Skribo" }</p>
   </Tapable>
 
   // self destruction button
-  const selfDestructButton = <Tapable icon='/fireIcon.svg' style={{ gap: 8, height: 56 }} onTap={() => setTimer(timers[(timers.indexOf(timer) + 1) % timers.length])}>
+  const selfDestructButton = <Tapable icon={fireIcon.src} style={{ gap: 8, height: 56 }} onTap={() => setTimer(timers[(timers.indexOf(timer) + 1) % timers.length])}>
     <p style={{ ...buttonCapton, width: '100%' }}>Self-destruct timer</p>
     { timers.map((value, i) => <p key={i} style={{ ...cardProperty, position: 'absolute', marginTop: i == timers.indexOf(timer) 
       ? 0 : (i < timers.indexOf(timer) ? -24 : 24), right: 4, opacity: value == timer ? 1 : 0 }}>{value}s</p>) }
@@ -126,7 +136,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
       <Sheet.Header />
       <Sheet.Content disableDrag={true} style={{ padding: '0 24px', flexDirection: 'column', gap: '20px' }}>
         <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
-          <Tapable onTap={onClose} icon='/backIcon.svg' style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
+          <Tapable onTap={onClose} icon={backIcon.src} style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
           <p style={{ fontSize: '24px', margin: 'revert', fontFamily: displayFont }}>New skribo</p>
           <div style={{ width: "48px" }}/>
         </div>
@@ -134,12 +144,12 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
         <Card>{ titleButton }</Card>
         <Card separators>{[ imageButton, textButton ]}</Card>
         <Card>{ selfDestructButton }</Card>
-        <Card header={{ icon: '/themeIcon.svg', title: 'Color theme' }} innerStyle={{ padding: 12, gap: 8, flexDirection: 'row', overflow: 'scroll' }}>
+        <Card header={{ icon: themeIcon.src, title: 'Color theme' }} innerStyle={{ padding: 12, gap: 8, flexDirection: 'row', overflow: 'scroll' }}>
           { themes.map(id => <ThemesWidget key={id} id={id} theme={theme} setTheme={setTheme}/> )}
         </Card>
 
         <Card>
-          <Tapable style={{ justifyContent: 'center', gap: 8, height: 56 }} onTap={ () => setPreview(true) } icon='/lightningIcon.svg'>
+          <Tapable style={{ justifyContent: 'center', gap: 8, height: 56 }} onTap={ () => setPreview(true) } icon={boltIcon.src}>
             <p style={{ ...buttonStyle, color: 'var(--text)', position: 'relative' }}>Preview</p>
           </Tapable>
         </Card>
@@ -213,7 +223,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
               setShareLink({ link: window.origin + '/' + data.id + data.secret, theme })
             }
             catch(e) { 
-              console.log(e), 
+              console.error(e), 
               setFailed(true), 
               setLoading(false), 
               setTimeout(() => setFailed(false), 1000) 
@@ -225,7 +235,7 @@ export default function NewSkriboModal({ image, setImage, text, setText, setShar
             </div>
 
             <div style={{ opacity: loading || failed ? 0 : 1, marginTop: loading || failed ? -32 : 0, position: 'absolute', gap: 8 }}>
-              <img width={24} src='/doneIconWhite.svg' alt="Done Icon"/>
+              <img width={24} src={doneIcon.src} alt="Done Icon"/>
               <p style={{ ...buttonStyle }}>Finish</p>
             </div>
           </Tapable>

@@ -2,6 +2,9 @@
 
 import { CSSProperties, ReactNode, useRef, useState } from "react";
 
+// icons
+import removeIcon from '../../assets/icons/remove.svg';
+
 type TapableProps = { 
   onTap: () => any, 
   onRemove?: (() => any) | null, 
@@ -25,7 +28,7 @@ export default function Tapable({ icon, children, onTap, onRemove, style }: Tapa
 
     <div style={{ transform: `scale(${scale})`, width: '100%', ...style, height: 'revert', padding: 'revert', opacity: pressed ? .5 : 1, alignItems: 'center', }}>
       { onRemove && <>
-        <img onClick={ (e) => { e.stopPropagation(); onRemove(); }} src='removeIcon.svg' width={20} height={20} alt='Remove'/>
+        <img onClick={ (e) => { e.stopPropagation(); onRemove(); }} src={removeIcon.src} width={20} height={20} alt='Remove'/>
         <div style={{ width: 16 - (style?.gap as number ?? 0) + 'px' }} />
       </> }
 

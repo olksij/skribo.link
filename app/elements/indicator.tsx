@@ -58,7 +58,7 @@ export default function Indicator({ value, foreground, children, style }: Indica
     { children }
     <svg style={styles.loader} viewBox="0 0 32 32">
       <circle style={{ ...styles.placeholder, stroke: foreground ? '#FFF' : '#000' }} cx="16" cy="16" r={value ? 14 : 12} fill="none"></circle>
-      <circle style={{ ...styles.spinner,     stroke: foreground ? '#FFF' : '#000', transition: value ? 'all 1s cubic-bezier(.5, .5, 0, 1), stroke 0s' : '' }} cx="16" cy="16" r={value ? 14 : 12} fill="none" ref={spinner}></circle>
+      <circle style={{ ...styles.spinner,     stroke: foreground ? '#FFF' : '#000', ...(value ? { transition: 'all 1s cubic-bezier(.5, .5, 0, 1), stroke 0s' } : {}) }} cx="16" cy="16" r={value ? 14 : 12} fill="none" ref={spinner}></circle>
     </svg>
   </div>
 }

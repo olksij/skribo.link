@@ -7,7 +7,7 @@ type Argorithm = {
   length?: number;
 }
 
-const importAlgorithm: Argorithm = { name: 'HKDF', hash: 'SHA-256' }
+const importAlgorithm:  Argorithm = { name: 'HKDF', hash: 'SHA-256' }
 const encryptAlgorithm: Argorithm = { name: 'AES-GCM', length: 256 }
 
 export function deserialize(data: string) {

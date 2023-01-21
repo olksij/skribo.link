@@ -9,13 +9,17 @@ import styles from '../[link]/card.module.css'
 import Tapable from "../elements/tapable";
 
 // components
-import darkenTheme     from "../components/darkenTheme";
+import   darkenTheme   from "../components/darkenTheme";
 import { displayFont } from "../components/fonts";
-import { textFont }    from "../components/fonts";
+import    { textFont } from "../components/fonts";
 
 // widgets
 import Background from "../widgets/background";
-import Scratch from "../widgets/scratch";
+import Scratch    from "../widgets/scratch";
+
+// icons
+import backLightIcon from '../../assets/icons/backLight.svg'
+import  backDarkIcon from '../../assets/icons/backDark.svg'
 
 type PreviewModalProps = {
   isOpen: boolean, 
@@ -61,7 +65,7 @@ export default function PreviewModal({ isOpen, onClose, image, theme, text, titl
       </div>
 
       <div style={{ alignItems: 'center', zIndex: 1, justifyContent: 'space-between', height: '48px', width: '100%' }}>
-        <Tapable onTap={onClose} icon={foreground && isScratched ? '/backIconLight.svg' : '/backIconDark.svg'} style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
+        <Tapable onTap={onClose} icon={foreground && isScratched ? backLightIcon.src : backDarkIcon.src} style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
         <p style={{ fontSize: '24px', margin: 'revert', color: foreground && isScratched ? '#FFF' : 'var(--text)', fontFamily: displayFont }}>Preview</p>
         <div style={{ width: "48px" }}/>
       </div>

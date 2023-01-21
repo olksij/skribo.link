@@ -1,25 +1,27 @@
 'use client';
 
-import React, { CSSProperties, useEffect, useRef, useState } from 'react';
-
-// import fonts
-import { textFont, displayFont } from '../components/fonts';
-
-import Scratch from '../widgets/scratch';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './card.module.css'
 
-type CardPageParams = {
-  id: string,
-  secret: string,
-}
+// import fonts
+import { displayFont } from '../components/fonts';
+import    { textFont } from '../components/fonts';
 
-export default function CardPage({ id, secret }: CardPageParams) {
+// widgets
+import Scratch from '../widgets/scratch';
+
+// icons
+import fireLightIcon from '../../assets/icons/fireFilledLight.svg';
+import fireIcon      from '../../assets/icons/fireFilled.svg';
+
+export default function CardPage() {
   // [timeLeft] counter
   let [counter, setCounter] = useState<number | null>(null);
 
   // ref to retrieved data
   let dataRef = useRef<Record<string, any> | null>(null);
   let keysRef = useRef<Record<string, any> | null>(null);
+  let linkRef = useRef<[string, string]    | null>(null);
 
   // declare states
   let [isScratched, setScratched] = useState<boolean>(false);
@@ -31,6 +33,8 @@ export default function CardPage({ id, secret }: CardPageParams) {
   useEffect(() => {
     // if there is no data -> return
     if (counter === null || !isScratched) return;
+
+    let id = linkRef.current![0];
 
     // no time left
     if (counter == 0) {
@@ -46,7 +50,7 @@ export default function CardPage({ id, secret }: CardPageParams) {
     // update the state in cloud
     const docRef = databaseRef(database, `cards/${id}`);
     set(docRef, { ...dataRef.current, timeLeft: counter });
-  }, [counter, id, image, isScratched])
+  }, [counter, image, isScratched])
 
   let note;
   if (!isScratched)     note = "Scratch to unveil";
@@ -54,6 +58,11 @@ export default function CardPage({ id, secret }: CardPageParams) {
   if (counter == 0)     note = "Time is out";
   
   useEffect(() => {
+    // retreive id and secret from url
+    let link = window.location.pathname;
+    linkRef.current = [link.substring(1, 9), link.substring(9, 17)];
+    let [id, secret] = linkRef.current!;
+
     // get the access token from secret so client can access database
     obtainAccessToken(secret).then(async accessToken => {
       // sign in to firebase so server can allow access to the data
@@ -95,7 +104,7 @@ export default function CardPage({ id, secret }: CardPageParams) {
       set(docRef, { ...dataRef.current, lastTimeOpened: Date.now(), 
         firstTimeOpened: dataRef.current?.firstTimeOpened ?? Date.now() })
     });
-  }, [id, secret]);
+  });
   
   useEffect(() => {
     // update theme-color when on fullscreen
@@ -121,14 +130,14 @@ export default function CardPage({ id, secret }: CardPageParams) {
       <div style={{ alignItems: 'center', gap: 16 }}>
         <Counter value={ counter ?? 0 } style={{ fontFamily: textFont, opacity: counter ? 1 : 0, transition: '.3s cubic-bezier(0, 0, 0, 1)', color: foreground && fullScreen ? '#FFF' : '#000', margin: 0 }} />
         <Indicator style={{ opacity: counter != 0 ? 1 : 0 }} value={counter && dataRef.current ? counter / dataRef.current.timeAssigned : null} foreground={fullScreen && foreground}>
-          <img style={{ position: 'absolute', padding: 9, opacity: counter ? 1 : 0, height: 14, transition: '1s cubic-bezier(.5, 0, 0, 1)' }} src={foreground && fullScreen ? '/fireFilledLight.svg' : '/fireFilled.svg'} alt="Fire icon"/>
+          <img style={{ position: 'absolute', padding: 9, opacity: counter ? 1 : 0, height: 14, transition: '1s cubic-bezier(.5, 0, 0, 1)' }} src={foreground && fullScreen ? fireLightIcon.src : fireIcon.src} alt="Fire icon"/>
         </Indicator>
       </div>
     </div>
     <ReplyTextfield onReply={async (reply: string) => {
       const encrypted = await encryptData(keysRef.current!.encryptKey, new TextEncoder().encode(reply).buffer, new Uint8Array(dataRef.current!.iv))
 
-      const docRef = databaseRef(database, `cards/${id}`);
+      const docRef = databaseRef(database, `cards/${linkRef.current![0]}`);
       dataRef.current = { ...dataRef.current, replies: [...(dataRef.current!.replies ?? []), { text: new Uint8Array(encrypted.data), time: Date.now() }]}
       set(docRef, dataRef.current)
     }}/>

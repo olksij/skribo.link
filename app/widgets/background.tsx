@@ -1,8 +1,11 @@
 'use client';
 
 import { CSSProperties, useEffect } from 'react';
-import backgrounds, { themeColors } from '../../assets/backgrounds/import'
-import patterns    from '../../assets/patterns/import'
+
+// assets
+import { themeColors } from '../../assets/backgrounds/import'
+import   backgrounds   from '../../assets/backgrounds/import'
+import   patterns      from '../../assets/patterns/import'
 
 type Props = { 
   id: number | null, 

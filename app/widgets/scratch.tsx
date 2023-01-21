@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useRef, forwardRef, ForwardedRef, useState }  from 'react';
+import React, { useEffect, useRef, useState }  from 'react';
 
-import styles from './scratch.module.css'
+import styles       from './scratch.module.css'
 import SpoilerNoise from './spoilerNoise';
 
 // assets

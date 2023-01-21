@@ -2,12 +2,17 @@ import Background from './widgets/background';
 import './globals.css'
 
 // componets
-import { InitAppCheck }    from './components/firebase';
+import { InitAppCheck }     from './components/firebase';
 import { AnalyticsWrapper } from './components/analytics';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+type RootLayoutProps = {
+  children: React.ReactNode,
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
+
       <head>
         <title>Skribo</title>
         <meta name="description" content="Share a link to your image or caption and make your friends scratch it off to see." />
@@ -23,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AnalyticsWrapper/>
         { children }
       </body>
+
     </html>
   );
 }
