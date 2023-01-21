@@ -41,7 +41,7 @@ export default function LibraryModal({ isOpen, onClose, skribos }: LibraryModalP
     <Sheet.Header />
     <Sheet.Content disableDrag={true} style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: 16, minHeight: 256 }}>
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 48, width: '100%' }}>
-        <Tapable onTap={onClose} icon={backIcon.src} style={{ borderRadius: 12, justifyContent: 'center', height: 48, width: 48 }}/>
+        <Tapable onTap={onClose} icon={backIcon.src} style={{ borderRadius: 12, justifyContent: 'center', height: 48, width: 56 }}/>
         <p style={{ fontSize: 24, margin: 'revert', fontFamily: displayFont }}>Your Skribos</p>
         <div style={{ width: 48 }}/>
       </div>

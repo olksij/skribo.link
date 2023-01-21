@@ -41,15 +41,15 @@ https://github.com/Gamote/lottie-react/blob/main/LICENSE
 
 ---
 
-#### marked
-https://marked.js.org/
+#### phosphor-icons
+https://phosphoricons.com/
 
-Copyright (c) 2011-2022, Christopher Jeffrey.
+Copyright (c) 2020 Phosphor Icons.
 
 ###### License:
 The MIT License
 
-https://github.com/markedjs/marked/blob/master/LICENSE.md
+https://github.com/phosphor-icons/homepage/blob/master/LICENSE
 
 ---
 

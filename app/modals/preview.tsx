@@ -65,7 +65,7 @@ export default function PreviewModal({ isOpen, onClose, image, theme, text, titl
       </div>
 
       <div style={{ alignItems: 'center', zIndex: 1, justifyContent: 'space-between', height: '48px', width: '100%' }}>
-        <Tapable onTap={onClose} icon={foreground && isScratched ? backLightIcon.src : backDarkIcon.src} style={{ borderRadius: 12, justifyContent: 'center', height: 48, width: 48 }}/>
+        <Tapable onTap={onClose} icon={foreground && isScratched ? backLightIcon.src : backDarkIcon.src} style={{ borderRadius: 12, justifyContent: 'center', height: 48, width: 56 }}/>
         <p style={{ fontSize: '24px', margin: 'revert', color: foreground && isScratched ? '#FFF' : 'var(--text)', fontFamily: displayFont }}>Preview</p>
         <div style={{ width: "48px" }}/>
       </div>
