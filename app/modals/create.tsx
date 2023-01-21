@@ -5,22 +5,22 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 import Sheet from 'react-modal-sheet';
 
 // elements
-import ThemesWidget from "../elements/theme";
-import Card         from "../elements/card";
-import Loading      from "../elements/loading";
-import Tapable      from "../elements/tapable";
-
-// modals
-import TextModal    from "./text";
-import PreviewModal from "./preview";
+import Loading from "../elements/loading";
+import Themes  from "../elements/theme";
+import Card    from "../elements/card";
+import Tapable from "../elements/tapable";
 
 // import firebase instances
 import { auth, database, storage } from '../components/firebase';
 
 // import firebase methods
-import { ref as databaseRef, set } from "firebase/database";
-import { ref as storageRef, uploadBytes } from "firebase/storage";
-import { signInAnonymously } from "firebase/auth";
+import { ref as storageRef,  uploadBytes } from "firebase/storage";
+import { ref as databaseRef, set }         from "firebase/database";
+import { signInAnonymously }               from "firebase/auth";
+
+// modals
+import PreviewModal from "./preview";
+import TextModal    from "./text";
 
 // components
 import   darkenTheme   from "../components/darkenTheme";
@@ -136,7 +136,7 @@ export default function CreateModal({ image, setImage, text, setText, setShareLi
       <Sheet.Header />
       <Sheet.Content disableDrag={true} style={{ padding: '0 24px', flexDirection: 'column', gap: '20px' }}>
         <div style={{ alignItems: 'center', justifyContent: 'space-between', height: '48px', width: '100%' }}>
-          <Tapable onTap={onClose} icon={backIcon.src} style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
+          <Tapable onTap={onClose} icon={backIcon.src} style={{ borderRadius: 12, justifyContent: 'center', height: 48, width: 48 }}/>
           <p style={{ fontSize: '24px', margin: 'revert', fontFamily: displayFont }}>New skribo</p>
           <div style={{ width: "48px" }}/>
         </div>
@@ -145,7 +145,7 @@ export default function CreateModal({ image, setImage, text, setText, setShareLi
         <Card separators>{[ imageButton, textButton ]}</Card>
         <Card>{ selfDestructButton }</Card>
         <Card header={{ icon: themeIcon.src, title: 'Color theme' }} innerStyle={{ padding: 12, gap: 8, flexDirection: 'row', overflow: 'scroll' }}>
-          { themes.map(id => <ThemesWidget key={id} id={id} theme={theme} setTheme={setTheme}/> )}
+          { themes.map(id => <Themes key={id} id={id} theme={theme} setTheme={setTheme}/> )}
         </Card>
 
         <Card>

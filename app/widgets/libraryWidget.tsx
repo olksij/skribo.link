@@ -15,9 +15,9 @@ import { getBytes, ref as storageRef }  from 'firebase/storage';
 import { signInAnonymously }            from 'firebase/auth';
 
 // elements
+import Indicator from '../elements/indicator';
 import Card      from '../elements/card';
 import Tapable   from '../elements/tapable';
-import Indicator from '../elements/indicator';
 
 // modals
 import LibraryModal from '../modals/library';
@@ -40,7 +40,7 @@ export default function LibraryWidget() {
     signInAnonymously(auth).then(async ({ user }) => {
       if (!owned) return;
 
-      let currCount:   number = 0;
+      let currCount: number = 0;
 
       let datas = owned.map(async id => {
         //if (!localStorage.getItem(id)) return;

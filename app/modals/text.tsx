@@ -5,8 +5,8 @@ import { CSSProperties, useEffect, useRef } from "react";
 import Sheet from 'react-modal-sheet';
 
 // elements
-import Card    from "../elements/card";
 import Tapable from "../elements/tapable";
+import Card    from "../elements/card";
 
 // components
 import   darkenTheme   from "../components/darkenTheme";
@@ -43,7 +43,7 @@ export default function TextModal({ isOpen, text, setText, onClose, title, capti
     <Sheet.Header />
     <Sheet.Content style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: 20 }}>
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 48, width: '100%' }}>
-        <Tapable onTap={onClose} icon={backIcon.src} style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
+        <Tapable onTap={onClose} icon={backIcon.src} style={{ borderRadius: 12, justifyContent: 'center', height: 48, width: 48 }}/>
         <p style={{ fontSize: 24, margin: 'revert', fontFamily: displayFont }}>{title}</p>
         <div style={{ width: 48 }}/>
       </div>

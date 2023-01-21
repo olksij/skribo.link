@@ -6,19 +6,19 @@ import Sheet from 'react-modal-sheet';
 
 // firebase instances
 import { database, storage } from "../components/firebase";
-import { deleteObject, ref as storageRef } from "firebase/storage";
 
 // firebase methods
-import { ref as databaseRef, remove } from "firebase/database";
+import { ref as  storageRef, deleteObject } from "firebase/storage";
+import { ref as databaseRef, remove }       from "firebase/database";
 
 // modals
-import     PreviewModal from "./preview";
-import ShareModal from "./share";
-import      DeleteModal from "./delete";
+import PreviewModal from "./preview";
+import   ShareModal from "./share";
+import  DeleteModal from "./delete";
 
 // elements
-import Card from "../elements/card";
 import Tapable from "../elements/tapable";
+import Card    from "../elements/card";
 
 // components
 import   darkenTheme   from "../components/darkenTheme";
@@ -81,7 +81,7 @@ export default function SkriboDetails({ skribo, onClose }: DetailModalProps) {
     <Sheet.Content disableDrag={true} style={{ padding: '0 24px 24px 24px', flexDirection: 'column', gap: '20px' }}>
 
       <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 48, width: '100%' }}>
-        <Tapable onTap={onClose} icon={backIcon.src} style={{ borderRadius: 12, justifyItems: 'center', height: 48, width: 48 }}/>
+        <Tapable onTap={onClose} icon={backIcon.src} style={{ borderRadius: 12, justifyContent: 'center', height: 48, width: 48 }}/>
         <p style={{ fontSize: '24px', margin: 'revert', textOverflow: 'ellipsis', fontFamily: displayFont }}>{skribo?.title ?? 'No title'}</p>
         <div style={{ width: "48px" }}/>
       </div>

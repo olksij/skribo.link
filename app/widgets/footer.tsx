@@ -12,9 +12,9 @@ import MarkdownModal from '../modals/markdown';
 //@ts-ignore
 import privacy from '../../PRIVACY.md'; 
 //@ts-ignore
-import terms from '../../TERMS.md'; 
+import terms   from '../../TERMS.md'; 
 //@ts-ignore
-import about from '../../ABOUT.md';
+import about   from '../../ABOUT.md';
 
 export default function Footer() {
   // declare state
@@ -22,8 +22,8 @@ export default function Footer() {
 
   // define button functions
   const buttons: Record<string, () => any> = {
-    About: () => setData(['About Skribo', about]),
-    Terms: () => setData(['Terms & Conditions', terms]),
+    About:   () => setData(['About Skribo', about]),
+    Terms:   () => setData(['Terms & Conditions', terms]),
     Privacy: () => setData(['Privacy Policy', privacy]),
   }
 

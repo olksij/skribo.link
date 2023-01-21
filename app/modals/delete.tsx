@@ -5,11 +5,11 @@ import { CSSProperties, useEffect } from "react";
 import Sheet from 'react-modal-sheet';
 
 // elements
-import Card    from "../elements/card";
 import Tapable from "../elements/tapable";
+import Card    from "../elements/card";
 
 // components
-import darkenTheme     from "../components/darkenTheme";
+import   darkenTheme   from "../components/darkenTheme";
 import { displayFont } from "../components/fonts";
 
 type DeleteModalProps = {

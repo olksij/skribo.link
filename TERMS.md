@@ -24,4 +24,4 @@ These terms and conditions are effective as of `2023-01-01`
 
 ## Contact me
 
-If you have any questions or concerns about our privacy policy or the personal data we collect and use, please don't hesitate to contact us at [human@oleksii.xyz](mailto:human@oleksii.xyz).
+If you have any questions or concerns about my privacy policy or the personal data I collect and use, please don't hesitate to contact me at [human@oleksii.xyz](mailto:human@oleksii.xyz).

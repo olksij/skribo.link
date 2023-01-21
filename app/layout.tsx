@@ -2,8 +2,8 @@ import Background from './widgets/background';
 import './globals.css'
 
 // componets
-import { InitAppCheck }     from './components/firebase';
 import { AnalyticsWrapper } from './components/analytics';
+import { InitAppCheck }     from './components/firebase';
 
 type RootLayoutProps = {
   children: React.ReactNode,
