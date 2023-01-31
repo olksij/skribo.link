@@ -1,0 +1,14 @@
+[
+  {
+      "relation": [
+          "delegate_permission/common.handle_all_urls"
+      ],
+      "target": {
+          "namespace": "android_app",
+          "package_name": "link.skribo.app",
+          "sha256_cert_fingerprints": [
+              "13:c4:dd:e5:28:f8:37:6e:0d:c7:82:30:ab:e9:61:c2:73:c6:a0:23:9d:08:a7:d5:5a:ff:a5:33:d1:b7:0e:6a"
+          ]
+      }
+  }
+]

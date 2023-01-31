@@ -1,0 +1,11 @@
+{
+  "applinks": {
+      "apps": [],
+      "details": [
+          {
+              "appID": "link.skribo.app",
+              "paths": [ "*" ]
+          }
+      ]
+  }
+}
