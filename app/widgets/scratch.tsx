@@ -196,14 +196,16 @@ export default function ScratchCard({ setScratched, image, setForeground, theme,
       bgContext.shadowOffsetY = 12 * rt;
       
       bgContext.beginPath()
-      bgContext.roundRect(24 * rt, cHeight - 24 * rt - padding, cWidth - 48 * rt, (40 + lines.length * 24) * rt * -1, 12 * rt)
+      roundedRect(bgContext, 24 * rt, cHeight - 24 * rt - padding, cWidth - 48 * rt, (40 + lines.length * 24) * rt * -1, 12 * rt)
+      //bgContext.roundRect(24 * rt, cHeight - 24 * rt - padding, cWidth - 48 * rt, (40 + lines.length * 24) * rt * -1, 12 * rt)
       bgContext.globalCompositeOperation = 'overlay';
       bgContext.stroke()
       bgContext.fill()
       bgContext.globalCompositeOperation = 'source-over';
       
       bgContext.beginPath()
-      bgContext.roundRect(24 * rt, cHeight - 24 * rt - padding, cWidth - 48 * rt, (40 + lines.length * 24) * rt * -1, 12 * rt)
+      roundedRect(bgContext, 24 * rt, cHeight - 24 * rt - padding, cWidth - 48 * rt, (40 + lines.length * 24) * rt * -1, 12 * rt)
+      //bgContext.roundRect(24 * rt, cHeight - 24 * rt - padding, cWidth - 48 * rt, (40 + lines.length * 24) * rt * -1, 12 * rt)
       bgContext.fill()
 
       bgContext.fillStyle = 'black'
@@ -283,3 +285,23 @@ export default function ScratchCard({ setScratched, image, setForeground, theme,
 
 const array = ({ mouse, touch }: PointerEvent) => (touch ? Array.from(touch?.changedTouches) 
   : [{ clientX: mouse!.clientX, clientY: mouse!.clientY, identifier: '#' }]);
+
+function roundedRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+}

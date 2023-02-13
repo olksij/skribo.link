@@ -30,6 +30,26 @@ type ShareModalProps = {
   onClose: () => void
 }
 
+function roundedRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+}
+
 export default function ShareModal({ link, theme, isOpen, onClose }: ShareModalProps) {
   // declare refs
   const ref = useRef<HTMLCanvasElement>(null);
@@ -99,7 +119,8 @@ export default function ShareModal({ link, theme, isOpen, onClose }: ShareModalP
 
       context.strokeStyle = '#0006';
       context.lineWidth = ratio*3;
-      context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
+      roundedRect(context, halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio)
+      //context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
       context.stroke()
       context.strokeStyle = '#0000';
 
@@ -158,7 +179,7 @@ export default function ShareModal({ link, theme, isOpen, onClose }: ShareModalP
       </div>
 
       <Card innerStyle={{ boxShadow: 'none' }} outerStyle={{ height: '100%' }}>
-        <canvas ref={ref} style={{ position: 'sticky', borderRadius: 12 }}/>
+        <canvas ref={ref} style={{ position: 'absolute', borderRadius: 12, height: '100%' }}/>
       </Card>
 
       <Card innerStyle={{ height: 56 }}>
