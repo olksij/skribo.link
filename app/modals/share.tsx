@@ -136,7 +136,8 @@ export default function ShareModal({ link, theme, isOpen, onClose }: ShareModalP
 
       context.strokeStyle = '#000A';
       context.beginPath();
-      context.roundRect(0, 0, width, height, 12 * ratio);
+      roundedRect(context, 0, 0, width, height, 12 * ratio)
+      //context.roundRect(0, 0, width, height, 12 * ratio);
       context.stroke()
 
       context.globalCompositeOperation = 'multiply';
@@ -150,7 +151,8 @@ export default function ShareModal({ link, theme, isOpen, onClose }: ShareModalP
 
       context.fillStyle = themeColors[theme].card;
       context.beginPath();
-      context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
+      roundedRect(context, halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio)
+      //context.roundRect(halfWidth-bgSize/2, halfHeight-bgSize/2, bgSize, bgSize, 16 * ratio);
       context.fill()
 
       context?.drawImage(bitmap, halfWidth-qrSize/2, halfHeight-qrSize/2, qrSize, qrSize)
